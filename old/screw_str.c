@@ -1,10 +1,10 @@
 /* Automatically generated file. Do not edit. 
  * Format:     ANSI C source code
  * Creator:    McStas <http://www.mcstas.org>
- * Instrument: LIRA_oct.instr (H3)
- * Date:       Tue Dec 18 18:54:32 2018
- * File:       ./LIRA_oct.c
- * Compile:    cc -o H3.out ./LIRA_oct.c 
+ * Instrument: screw_str.instr (H3)
+ * Date:       Tue Dec 18 18:54:24 2018
+ * File:       ./screw_str.c
+ * Compile:    cc -o H3.out ./screw_str.c 
  * CFLAGS=
  */
 
@@ -692,7 +692,7 @@ NXhandle nxhandle;
 #endif /* MCCODE_R_H */
 /* End of file "mccode-r.h". */
 
-#line 695 "./LIRA_oct.c"
+#line 695 "./screw_str.c"
 
 #line 1 "mcstas-r.h"
 /*******************************************************************************
@@ -925,7 +925,7 @@ void mcsetstate(double x, double y, double z, double vx, double vy, double vz,
 #endif /* MCSTAS_R_H */
 /* End of file "mcstas-r.h". */
 
-#line 928 "./LIRA_oct.c"
+#line 928 "./screw_str.c"
 
 #line 1 "mccode-r.c"
 /*******************************************************************************
@@ -4944,7 +4944,7 @@ void neutronics_main_(float *inx, float *iny, float *inz, float *invx, float *in
 /* End of file "mccode-r.c". */
 /* End of file "mccode-r.c". */
 
-#line 4947 "./LIRA_oct.c"
+#line 4947 "./screw_str.c"
 
 #line 1 "mcstas-r.c"
 /*******************************************************************************
@@ -5304,7 +5304,7 @@ plane_intersect(double *t, double x, double y, double z,
 #endif /* !MCSTAS_H */
 /* End of file "mcstas-r.c". */
 
-#line 5307 "./LIRA_oct.c"
+#line 5307 "./screw_str.c"
 #ifdef MC_TRACE_ENABLED
 int mctraceenabled = 1;
 #else
@@ -5313,7 +5313,7 @@ int mctraceenabled = 0;
 #define MCSTAS "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../"
 int mcdefaultmain = 1;
 char mcinstrument_name[] = "H3";
-char mcinstrument_source[] = "LIRA_oct.instr";
+char mcinstrument_source[] = "screw_str.instr";
 char *mcinstrument_exe=NULL; /* will be set to argv[0] in main */
 int main(int argc, char *argv[]){return mccode_main(argc, argv);}
 void mcinit(void);
@@ -6800,7 +6800,7 @@ char *str_dup_numeric(char *orig)
   }
 #endif
 
-#line 6803 "./LIRA_oct.c"
+#line 6803 "./screw_str.c"
 
 /* Shared user declarations for all components 'Guide_gravity'. */
 #line 124 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
@@ -7156,7 +7156,7 @@ void TableReflecFunc(double mc_pol_q, t_Table *mc_pol_par, double *mc_pol_r) {
 
 
 #endif
-#line 7159 "./LIRA_oct.c"
+#line 7159 "./screw_str.c"
 
 /* Shared user declarations for all components 'Guide_anyshape'. */
 #line 86 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_anyshape.comp"
@@ -8154,7 +8154,7 @@ void off_display(off_struct data)
 /* end of interoff-lib.c */
 
 
-#line 8157 "./LIRA_oct.c"
+#line 8157 "./screw_str.c"
 
 /* Shared user declarations for all components 'Monitor_nD'. */
 #line 214 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
@@ -10098,25 +10098,23 @@ void Monitor_nD_McDisplay(MonitornD_Defines_type *DEFS,
 
 
 
-#line 10101 "./LIRA_oct.c"
+#line 10101 "./screw_str.c"
 
 /* Instrument parameters. */
-MCNUM mcipL0;
-MCNUM mcipL1;
-MCNUM mciplambda;
+MCNUM mcipL;
 MCNUM mcipguide_m;
 MCNUM mcipw;
 MCNUM mciph;
+MCNUM mciplambda;
 
-#define mcNUMIPAR 6
-int mcnumipar = 6;
+#define mcNUMIPAR 5
+int mcnumipar = 5;
 struct mcinputtable_struct mcinputtable[mcNUMIPAR+1] = {
-  "L0", &mcipL0, instr_type_double, "20", 
-  "L1", &mcipL1, instr_type_double, "0.01", 
-  "lambda", &mciplambda, instr_type_double, "5", 
+  "L", &mcipL, instr_type_double, "45", 
   "guide_m", &mcipguide_m, instr_type_double, "6", 
   "w", &mcipw, instr_type_double, "0.03", 
-  "h", &mciph, instr_type_double, "0.15", 
+  "h", &mciph, instr_type_double, "0.2", 
+  "lambda", &mciplambda, instr_type_double, "5", 
   NULL, NULL, instr_type_double, ""
 };
 
@@ -10125,21 +10123,21 @@ struct mcinputtable_struct mcinputtable[mcNUMIPAR+1] = {
 #define mccompcurtype  INSTRUMENT
 #define mccompcurindex 0
 #define mcposaH3 coords_set(0,0,0)
-#define L0 mcipL0
-#define L1 mcipL1
-#define lambda mciplambda
+#define L mcipL
 #define guide_m mcipguide_m
 #define w mcipw
 #define h mciph
-#line 34 "LIRA_oct.instr"
+#define lambda mciplambda
+#line 33 "screw_str.instr"
 //temp
 double cold_regime=1;
+//guide_start_width = 0.03, guide_start_height = 0.2, 
 double source_lambda_max, source_lambda_min;
 
 //[Cold source parameters
 double source_height = 0.2, source_width = 0.12;
 double source_I1 = 5.38e12, source_I2= 2.50e12, source_I3 = 9.51e12;
-double source_T1 = 204.6, source_T2 = 73.9, source_T3 = 23.9;
+double source_T1 = 204.6, source_T2 = 73.9; source_T3 = 23.9;
 
 //Thermal regime parameters
 double source_thermal_T1 = 312.2;
@@ -10152,13 +10150,12 @@ double source_no_I1 = 7.05e12;
 //Distance to neutron guides
 double guide_start_dist = 1.82;
 
-#line 10155 "./LIRA_oct.c"
+#line 10153 "./screw_str.c"
+#undef lambda
 #undef h
 #undef w
 #undef guide_m
-#undef lambda
-#undef L1
-#undef L0
+#undef L
 #undef mcposaH3
 #undef mccompcurindex
 #undef mccompcurtype
@@ -10259,7 +10256,7 @@ char mccGuide_bunker_straight_reflect[16384];
 
 /* Definition parameters for component 'geks' [6]. */
 #define mccgeks_reflect 0 /* declared as a string. May produce warnings at compile */
-#define mccgeks_geometry "geks.off" /* declared as a string. May produce warnings at compile */
+#define mccgeks_geometry "rectangle.off" /* declared as a string. May produce warnings at compile */
 /* Setting parameters for component 'geks' [6]. */
 MCNUM mccgeks_xwidth;
 MCNUM mccgeks_yheight;
@@ -10378,7 +10375,7 @@ double IntermediateCnts;
 time_t StartTime;
 time_t EndTime;
 time_t CurrentTime;
-#line 10381 "./LIRA_oct.c"
+#line 10378 "./screw_str.c"
 #undef minutes
 #undef flag_save
 #undef percent
@@ -10462,7 +10459,7 @@ time_t CurrentTime;
   double pTable_dymin;
   double pTable_dymax;
 
-#line 10465 "./LIRA_oct.c"
+#line 10462 "./screw_str.c"
 #undef target_index
 #undef zdepth
 #undef I3
@@ -10565,7 +10562,7 @@ time_t CurrentTime;
 #line 334 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
   Gravity_guide_Vars_type GVars;
   t_Table pTable;
-#line 10568 "./LIRA_oct.c"
+#line 10565 "./screw_str.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -10635,7 +10632,7 @@ time_t CurrentTime;
 #line 95 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_anyshape.comp"
 off_struct offdata;
 t_Table pTable;
-#line 10638 "./LIRA_oct.c"
+#line 10635 "./screw_str.c"
 #undef W
 #undef m
 #undef alpha
@@ -10691,7 +10688,7 @@ t_Table pTable;
   MonitornD_Variables_type Vars;
   MCDETECTOR detector;
   off_struct offdata;
-#line 10694 "./LIRA_oct.c"
+#line 10691 "./screw_str.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -10761,7 +10758,7 @@ t_Table pTable;
   MonitornD_Variables_type Vars;
   MCDETECTOR detector;
   off_struct offdata;
-#line 10764 "./LIRA_oct.c"
+#line 10761 "./screw_str.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -10831,7 +10828,7 @@ t_Table pTable;
   MonitornD_Variables_type Vars;
   MCDETECTOR detector;
   off_struct offdata;
-#line 10834 "./LIRA_oct.c"
+#line 10831 "./screw_str.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -10892,13 +10889,12 @@ void mcinit(void) {
 #define mccompcurtype  INSTRUMENT
 #define mccompcurindex 0
 #define mcposaH3 coords_set(0,0,0)
-#define L0 mcipL0
-#define L1 mcipL1
-#define lambda mciplambda
+#define L mcipL
 #define guide_m mcipguide_m
 #define w mcipw
 #define h mciph
-#line 57 "LIRA_oct.instr"
+#define lambda mciplambda
+#line 57 "screw_str.instr"
 {
 //thermal regime of CNS
 if (cold_regime==0){
@@ -10917,13 +10913,12 @@ if (cold_regime==-1){
 source_lambda_min = lambda-0.1;
 source_lambda_max = lambda+0.1;
 }
-#line 10920 "./LIRA_oct.c"
+#line 10916 "./screw_str.c"
+#undef lambda
 #undef h
 #undef w
 #undef guide_m
-#undef lambda
-#undef L1
-#undef L0
+#undef L
 #undef mcposaH3
 #undef mccompcurindex
 #undef mccompcurtype
@@ -10941,31 +10936,31 @@ source_lambda_max = lambda+0.1;
     /* Component Origin. */
   /* Setting parameters for component Origin. */
   SIG_MESSAGE("Origin (Init:SetPar)");
-#line 39 "LIRA_oct.instr"
+#line 39 "screw_str.instr"
   if("NULL") strncpy(mccOrigin_profile, "NULL" ? "NULL" : "", 16384); else mccOrigin_profile[0]='\0';
-#line 39 "LIRA_oct.instr"
+#line 39 "screw_str.instr"
   mccOrigin_percent = 10;
-#line 39 "LIRA_oct.instr"
+#line 39 "screw_str.instr"
   mccOrigin_flag_save = 0;
-#line 39 "LIRA_oct.instr"
+#line 39 "screw_str.instr"
   mccOrigin_minutes = 0;
-#line 10952 "./LIRA_oct.c"
+#line 10947 "./screw_str.c"
 
   SIG_MESSAGE("Origin (Init:Place/Rotate)");
   rot_set_rotation(mcrotaOrigin,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 10959 "./LIRA_oct.c"
+#line 10954 "./screw_str.c"
   rot_copy(mcrotrOrigin, mcrotaOrigin);
   mcposaOrigin = coords_set(
-#line 79 "LIRA_oct.instr"
+#line 79 "screw_str.instr"
     0,
-#line 79 "LIRA_oct.instr"
+#line 79 "screw_str.instr"
     0,
-#line 79 "LIRA_oct.instr"
+#line 79 "screw_str.instr"
     0);
-#line 10968 "./LIRA_oct.c"
+#line 10963 "./screw_str.c"
   mctc1 = coords_neg(mcposaOrigin);
   mcposrOrigin = rot_apply(mcrotaOrigin, mctc1);
   mcDEBUG_COMPONENT("Origin", mcposaOrigin, mcrotaOrigin)
@@ -10976,85 +10971,85 @@ source_lambda_max = lambda+0.1;
     /* Component H3. */
   /* Setting parameters for component H3. */
   SIG_MESSAGE("H3 (Init:SetPar)");
-#line 129 "LIRA_oct.instr"
+#line 129 "screw_str.instr"
   if("NULL") strncpy(mccH3_flux_file, "NULL" ? "NULL" : "", 16384); else mccH3_flux_file[0]='\0';
-#line 129 "LIRA_oct.instr"
+#line 129 "screw_str.instr"
   if("NULL") strncpy(mccH3_xdiv_file, "NULL" ? "NULL" : "", 16384); else mccH3_xdiv_file[0]='\0';
-#line 129 "LIRA_oct.instr"
+#line 129 "screw_str.instr"
   if("NULL") strncpy(mccH3_ydiv_file, "NULL" ? "NULL" : "", 16384); else mccH3_ydiv_file[0]='\0';
-#line 130 "LIRA_oct.instr"
+#line 130 "screw_str.instr"
   mccH3_radius = 0.0;
-#line 84 "LIRA_oct.instr"
+#line 84 "screw_str.instr"
   mccH3_dist = guide_start_dist;
-#line 84 "LIRA_oct.instr"
+#line 84 "screw_str.instr"
   mccH3_focus_xw = mcipw;
-#line 85 "LIRA_oct.instr"
+#line 85 "screw_str.instr"
   mccH3_focus_yh = mciph;
-#line 130 "LIRA_oct.instr"
+#line 130 "screw_str.instr"
   mccH3_focus_aw = 0;
-#line 130 "LIRA_oct.instr"
+#line 130 "screw_str.instr"
   mccH3_focus_ah = 0;
-#line 131 "LIRA_oct.instr"
+#line 131 "screw_str.instr"
   mccH3_E0 = 0;
-#line 131 "LIRA_oct.instr"
+#line 131 "screw_str.instr"
   mccH3_dE = 0;
-#line 131 "LIRA_oct.instr"
+#line 131 "screw_str.instr"
   mccH3_lambda0 = 0;
-#line 131 "LIRA_oct.instr"
+#line 131 "screw_str.instr"
   mccH3_dlambda = 0;
-#line 85 "LIRA_oct.instr"
+#line 85 "screw_str.instr"
   mccH3_I1 = source_I1;
-#line 85 "LIRA_oct.instr"
+#line 85 "screw_str.instr"
   mccH3_yheight = source_height;
-#line 86 "LIRA_oct.instr"
+#line 86 "screw_str.instr"
   mccH3_xwidth = source_width;
-#line 132 "LIRA_oct.instr"
+#line 132 "screw_str.instr"
   mccH3_verbose = 0;
-#line 86 "LIRA_oct.instr"
+#line 86 "screw_str.instr"
   mccH3_T1 = source_T1;
-#line 133 "LIRA_oct.instr"
+#line 133 "screw_str.instr"
   mccH3_flux_file_perAA = 0;
-#line 133 "LIRA_oct.instr"
+#line 133 "screw_str.instr"
   mccH3_flux_file_log = 0;
-#line 86 "LIRA_oct.instr"
+#line 86 "screw_str.instr"
   mccH3_Lmin = source_lambda_min;
-#line 87 "LIRA_oct.instr"
+#line 87 "screw_str.instr"
   mccH3_Lmax = source_lambda_max;
-#line 134 "LIRA_oct.instr"
+#line 134 "screw_str.instr"
   mccH3_Emin = 0;
-#line 134 "LIRA_oct.instr"
+#line 134 "screw_str.instr"
   mccH3_Emax = 0;
-#line 87 "LIRA_oct.instr"
+#line 87 "screw_str.instr"
   mccH3_T2 = source_T2;
-#line 87 "LIRA_oct.instr"
+#line 87 "screw_str.instr"
   mccH3_I2 = source_I2;
-#line 87 "LIRA_oct.instr"
+#line 87 "screw_str.instr"
   mccH3_T3 = source_T3;
-#line 88 "LIRA_oct.instr"
+#line 88 "screw_str.instr"
   mccH3_I3 = source_I3;
-#line 134 "LIRA_oct.instr"
+#line 134 "screw_str.instr"
   mccH3_zdepth = 0;
-#line 134 "LIRA_oct.instr"
+#line 134 "screw_str.instr"
   mccH3_target_index = + 1;
-#line 11039 "./LIRA_oct.c"
+#line 11034 "./screw_str.c"
 
   SIG_MESSAGE("H3 (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11046 "./LIRA_oct.c"
+#line 11041 "./screw_str.c"
   rot_mul(mctr1, mcrotaOrigin, mcrotaH3);
   rot_transpose(mcrotaOrigin, mctr1);
   rot_mul(mcrotaH3, mctr1, mcrotrH3);
   mctc1 = coords_set(
-#line 89 "LIRA_oct.instr"
+#line 89 "screw_str.instr"
     0,
-#line 89 "LIRA_oct.instr"
+#line 89 "screw_str.instr"
     0,
-#line 89 "LIRA_oct.instr"
+#line 89 "screw_str.instr"
     0);
-#line 11057 "./LIRA_oct.c"
+#line 11052 "./screw_str.c"
   rot_transpose(mcrotaOrigin, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH3 = coords_add(mcposaOrigin, mctc2);
@@ -11074,18 +11069,18 @@ source_lambda_max = lambda+0.1;
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11077 "./LIRA_oct.c"
+#line 11072 "./screw_str.c"
   rot_mul(mctr1, mcrotaOrigin, mcrotaGuide_start_arm);
   rot_transpose(mcrotaH3, mctr1);
   rot_mul(mcrotaGuide_start_arm, mctr1, mcrotrGuide_start_arm);
   mctc1 = coords_set(
-#line 95 "LIRA_oct.instr"
+#line 95 "screw_str.instr"
     0,
-#line 95 "LIRA_oct.instr"
+#line 95 "screw_str.instr"
     0,
-#line 95 "LIRA_oct.instr"
+#line 95 "screw_str.instr"
     guide_start_dist);
-#line 11088 "./LIRA_oct.c"
+#line 11083 "./screw_str.c"
   rot_transpose(mcrotaOrigin, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaGuide_start_arm = coords_add(mcposaOrigin, mctc2);
@@ -11099,93 +11094,93 @@ source_lambda_max = lambda+0.1;
     /* Component Guide_bunker_straight. */
   /* Setting parameters for component Guide_bunker_straight. */
   SIG_MESSAGE("Guide_bunker_straight (Init:SetPar)");
-#line 101 "LIRA_oct.instr"
+#line 101 "screw_str.instr"
   mccGuide_bunker_straight_w1 = mcipw;
-#line 101 "LIRA_oct.instr"
+#line 101 "screw_str.instr"
   mccGuide_bunker_straight_h1 = mciph;
-#line 113 "LIRA_oct.instr"
+#line 113 "screw_str.instr"
   mccGuide_bunker_straight_w2 = 0;
-#line 113 "LIRA_oct.instr"
+#line 113 "screw_str.instr"
   mccGuide_bunker_straight_h2 = 0;
-#line 101 "LIRA_oct.instr"
+#line 101 "screw_str.instr"
   mccGuide_bunker_straight_l = 25;
-#line 114 "LIRA_oct.instr"
+#line 114 "screw_str.instr"
   mccGuide_bunker_straight_R0 = 0.995;
-#line 114 "LIRA_oct.instr"
+#line 114 "screw_str.instr"
   mccGuide_bunker_straight_Qc = 0.0218;
-#line 114 "LIRA_oct.instr"
+#line 114 "screw_str.instr"
   mccGuide_bunker_straight_alpha = 4.38;
-#line 114 "LIRA_oct.instr"
+#line 114 "screw_str.instr"
   mccGuide_bunker_straight_m = 1.0;
-#line 114 "LIRA_oct.instr"
+#line 114 "screw_str.instr"
   mccGuide_bunker_straight_W = 0.003;
-#line 114 "LIRA_oct.instr"
+#line 114 "screw_str.instr"
   mccGuide_bunker_straight_nslit = 1;
-#line 114 "LIRA_oct.instr"
+#line 114 "screw_str.instr"
   mccGuide_bunker_straight_d = 0.0005;
-#line 101 "LIRA_oct.instr"
+#line 101 "screw_str.instr"
   mccGuide_bunker_straight_mleft = 1;
-#line 101 "LIRA_oct.instr"
+#line 101 "screw_str.instr"
   mccGuide_bunker_straight_mright = 1;
-#line 102 "LIRA_oct.instr"
+#line 102 "screw_str.instr"
   mccGuide_bunker_straight_mtop = 3;
-#line 102 "LIRA_oct.instr"
+#line 102 "screw_str.instr"
   mccGuide_bunker_straight_mbottom = 3;
-#line 115 "LIRA_oct.instr"
+#line 115 "screw_str.instr"
   mccGuide_bunker_straight_nhslit = 1;
-#line 102 "LIRA_oct.instr"
+#line 102 "screw_str.instr"
   mccGuide_bunker_straight_G = -9.81;
-#line 116 "LIRA_oct.instr"
+#line 116 "screw_str.instr"
   mccGuide_bunker_straight_aleft = -1;
-#line 116 "LIRA_oct.instr"
+#line 116 "screw_str.instr"
   mccGuide_bunker_straight_aright = -1;
-#line 116 "LIRA_oct.instr"
+#line 116 "screw_str.instr"
   mccGuide_bunker_straight_atop = -1;
-#line 116 "LIRA_oct.instr"
+#line 116 "screw_str.instr"
   mccGuide_bunker_straight_abottom = -1;
-#line 117 "LIRA_oct.instr"
+#line 117 "screw_str.instr"
   mccGuide_bunker_straight_wavy = 0;
-#line 117 "LIRA_oct.instr"
+#line 117 "screw_str.instr"
   mccGuide_bunker_straight_wavy_z = 0;
-#line 117 "LIRA_oct.instr"
+#line 117 "screw_str.instr"
   mccGuide_bunker_straight_wavy_tb = 0;
-#line 117 "LIRA_oct.instr"
+#line 117 "screw_str.instr"
   mccGuide_bunker_straight_wavy_lr = 0;
-#line 118 "LIRA_oct.instr"
+#line 118 "screw_str.instr"
   mccGuide_bunker_straight_chamfers = 0;
-#line 118 "LIRA_oct.instr"
+#line 118 "screw_str.instr"
   mccGuide_bunker_straight_chamfers_z = 0;
-#line 118 "LIRA_oct.instr"
+#line 118 "screw_str.instr"
   mccGuide_bunker_straight_chamfers_lr = 0;
-#line 118 "LIRA_oct.instr"
+#line 118 "screw_str.instr"
   mccGuide_bunker_straight_chamfers_tb = 0;
-#line 118 "LIRA_oct.instr"
+#line 118 "screw_str.instr"
   mccGuide_bunker_straight_nelements = 1;
-#line 119 "LIRA_oct.instr"
+#line 119 "screw_str.instr"
   mccGuide_bunker_straight_nu = 0;
-#line 119 "LIRA_oct.instr"
+#line 119 "screw_str.instr"
   mccGuide_bunker_straight_phase = 0;
-#line 119 "LIRA_oct.instr"
+#line 119 "screw_str.instr"
   if("NULL") strncpy(mccGuide_bunker_straight_reflect, "NULL" ? "NULL" : "", 16384); else mccGuide_bunker_straight_reflect[0]='\0';
-#line 11170 "./LIRA_oct.c"
+#line 11165 "./screw_str.c"
 
   SIG_MESSAGE("Guide_bunker_straight (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11177 "./LIRA_oct.c"
+#line 11172 "./screw_str.c"
   rot_mul(mctr1, mcrotaGuide_start_arm, mcrotaGuide_bunker_straight);
   rot_transpose(mcrotaGuide_start_arm, mctr1);
   rot_mul(mcrotaGuide_bunker_straight, mctr1, mcrotrGuide_bunker_straight);
   mctc1 = coords_set(
-#line 103 "LIRA_oct.instr"
+#line 103 "screw_str.instr"
     0,
-#line 103 "LIRA_oct.instr"
+#line 103 "screw_str.instr"
     0,
-#line 103 "LIRA_oct.instr"
+#line 103 "screw_str.instr"
     0);
-#line 11188 "./LIRA_oct.c"
+#line 11183 "./screw_str.c"
   rot_transpose(mcrotaGuide_start_arm, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaGuide_bunker_straight = coords_add(mcposaGuide_start_arm, mctc2);
@@ -11205,18 +11200,18 @@ source_lambda_max = lambda+0.1;
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11208 "./LIRA_oct.c"
+#line 11203 "./screw_str.c"
   rot_mul(mctr1, mcrotaGuide_bunker_straight, mcrotaarm_geks);
   rot_transpose(mcrotaGuide_bunker_straight, mctr1);
   rot_mul(mcrotaarm_geks, mctr1, mcrotrarm_geks);
   mctc1 = coords_set(
-#line 120 "LIRA_oct.instr"
+#line 117 "screw_str.instr"
     0,
-#line 120 "LIRA_oct.instr"
+#line 117 "screw_str.instr"
     0,
-#line 120 "LIRA_oct.instr"
+#line 117 "screw_str.instr"
     25.02);
-#line 11219 "./LIRA_oct.c"
+#line 11214 "./screw_str.c"
   rot_transpose(mcrotaGuide_bunker_straight, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaarm_geks = coords_add(mcposaGuide_bunker_straight, mctc2);
@@ -11230,45 +11225,45 @@ source_lambda_max = lambda+0.1;
     /* Component geks. */
   /* Setting parameters for component geks. */
   SIG_MESSAGE("geks (Init:SetPar)");
-#line 79 "LIRA_oct.instr"
+#line 79 "screw_str.instr"
   mccgeks_xwidth = 0;
-#line 79 "LIRA_oct.instr"
+#line 79 "screw_str.instr"
   mccgeks_yheight = 0;
-#line 79 "LIRA_oct.instr"
+#line 79 "screw_str.instr"
   mccgeks_zdepth = 0;
-#line 132 "LIRA_oct.instr"
+#line 134 "screw_str.instr"
   mccgeks_center = 0;
-#line 79 "LIRA_oct.instr"
+#line 79 "screw_str.instr"
   mccgeks_transmit = 0;
-#line 132 "LIRA_oct.instr"
+#line 134 "screw_str.instr"
   mccgeks_R0 = 0.99;
-#line 132 "LIRA_oct.instr"
+#line 134 "screw_str.instr"
   mccgeks_Qc = 0.0219;
-#line 132 "LIRA_oct.instr"
+#line 134 "screw_str.instr"
   mccgeks_alpha = 3.1;
-#line 132 "LIRA_oct.instr"
+#line 134 "screw_str.instr"
   mccgeks_m = mcipguide_m;
-#line 133 "LIRA_oct.instr"
+#line 135 "screw_str.instr"
   mccgeks_W = 0.003;
-#line 11253 "./LIRA_oct.c"
+#line 11248 "./screw_str.c"
 
   SIG_MESSAGE("geks (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11260 "./LIRA_oct.c"
+#line 11255 "./screw_str.c"
   rot_mul(mctr1, mcrotaarm_geks, mcrotageks);
   rot_transpose(mcrotaarm_geks, mctr1);
   rot_mul(mcrotageks, mctr1, mcrotrgeks);
   mctc1 = coords_set(
-#line 136 "LIRA_oct.instr"
+#line 138 "screw_str.instr"
     0,
-#line 136 "LIRA_oct.instr"
+#line 138 "screw_str.instr"
     0,
-#line 136 "LIRA_oct.instr"
+#line 138 "screw_str.instr"
     0);
-#line 11271 "./LIRA_oct.c"
+#line 11266 "./screw_str.c"
   rot_transpose(mcrotaarm_geks, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposageks = coords_add(mcposaarm_geks, mctc2);
@@ -11282,67 +11277,67 @@ source_lambda_max = lambda+0.1;
     /* Component Octo_large. */
   /* Setting parameters for component Octo_large. */
   SIG_MESSAGE("Octo_large (Init:SetPar)");
-#line 139 "LIRA_oct.instr"
-  mccOcto_large_xwidth = mciph;
-#line 139 "LIRA_oct.instr"
-  mccOcto_large_yheight = mcipw;
-#line 201 "LIRA_oct.instr"
+#line 141 "screw_str.instr"
+  mccOcto_large_xwidth = mcipw;
+#line 141 "screw_str.instr"
+  mccOcto_large_yheight = mciph;
+#line 201 "screw_str.instr"
   mccOcto_large_zdepth = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_large_xmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_large_xmax = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_large_ymin = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_large_ymax = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_large_zmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_large_zmax = 0;
-#line 139 "LIRA_oct.instr"
+#line 141 "screw_str.instr"
   mccOcto_large_bins = 100;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_large_min = -1e40;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_large_max = 1e40;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_large_restore_neutron = 0;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_large_radius = 0;
-#line 139 "LIRA_oct.instr"
-  if("dy limits = [-1.5 1.5] ") strncpy(mccOcto_large_options, "dy limits = [-1.5 1.5] " ? "dy limits = [-1.5 1.5] " : "", 16384); else mccOcto_large_options[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 141 "screw_str.instr"
+  if("dx limits=[-1.5 1.5]") strncpy(mccOcto_large_options, "dx limits=[-1.5 1.5]" ? "dx limits=[-1.5 1.5]" : "", 16384); else mccOcto_large_options[0]='\0';
+#line 204 "screw_str.instr"
   if("NULL") strncpy(mccOcto_large_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_large_filename[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 204 "screw_str.instr"
   if("NULL") strncpy(mccOcto_large_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_large_geometry[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 205 "screw_str.instr"
   if("NULL") strncpy(mccOcto_large_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_large_username1[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 205 "screw_str.instr"
   if("NULL") strncpy(mccOcto_large_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_large_username2[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 205 "screw_str.instr"
   if("NULL") strncpy(mccOcto_large_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_large_username3[0]='\0';
-#line 206 "LIRA_oct.instr"
+#line 206 "screw_str.instr"
   mccOcto_large_nowritefile = 0;
-#line 11327 "./LIRA_oct.c"
+#line 11322 "./screw_str.c"
 
   SIG_MESSAGE("Octo_large (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11334 "./LIRA_oct.c"
+#line 11329 "./screw_str.c"
   rot_mul(mctr1, mcrotaarm_geks, mcrotaOcto_large);
   rot_transpose(mcrotageks, mctr1);
   rot_mul(mcrotaOcto_large, mctr1, mcrotrOcto_large);
   mctc1 = coords_set(
-#line 140 "LIRA_oct.instr"
+#line 142 "screw_str.instr"
     0,
-#line 140 "LIRA_oct.instr"
+#line 142 "screw_str.instr"
     0,
-#line 140 "LIRA_oct.instr"
-    2 * mcipL0 + mcipL1 + 0.001);
-#line 11345 "./LIRA_oct.c"
+#line 142 "screw_str.instr"
+    mcipL + 0.02);
+#line 11340 "./screw_str.c"
   rot_transpose(mcrotaarm_geks, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaOcto_large = coords_add(mcposaarm_geks, mctc2);
@@ -11356,67 +11351,67 @@ source_lambda_max = lambda+0.1;
     /* Component Octo_medium. */
   /* Setting parameters for component Octo_medium. */
   SIG_MESSAGE("Octo_medium (Init:SetPar)");
-#line 147 "LIRA_oct.instr"
-  mccOcto_medium_xwidth = mciph;
-#line 147 "LIRA_oct.instr"
-  mccOcto_medium_yheight = mcipw;
-#line 201 "LIRA_oct.instr"
+#line 145 "screw_str.instr"
+  mccOcto_medium_xwidth = mcipw;
+#line 145 "screw_str.instr"
+  mccOcto_medium_yheight = mciph;
+#line 201 "screw_str.instr"
   mccOcto_medium_zdepth = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_medium_xmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_medium_xmax = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_medium_ymin = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_medium_ymax = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_medium_zmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_medium_zmax = 0;
-#line 147 "LIRA_oct.instr"
+#line 145 "screw_str.instr"
   mccOcto_medium_bins = 100;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_medium_min = -1e40;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_medium_max = 1e40;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_medium_restore_neutron = 0;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_medium_radius = 0;
-#line 147 "LIRA_oct.instr"
-  if("dy limits = [-0.5 0.5] ") strncpy(mccOcto_medium_options, "dy limits = [-0.5 0.5] " ? "dy limits = [-0.5 0.5] " : "", 16384); else mccOcto_medium_options[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 145 "screw_str.instr"
+  if("dx limits = [-0.5 0.5] ") strncpy(mccOcto_medium_options, "dx limits = [-0.5 0.5] " ? "dx limits = [-0.5 0.5] " : "", 16384); else mccOcto_medium_options[0]='\0';
+#line 204 "screw_str.instr"
   if("NULL") strncpy(mccOcto_medium_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_filename[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 204 "screw_str.instr"
   if("NULL") strncpy(mccOcto_medium_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_geometry[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 205 "screw_str.instr"
   if("NULL") strncpy(mccOcto_medium_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_username1[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 205 "screw_str.instr"
   if("NULL") strncpy(mccOcto_medium_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_username2[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 205 "screw_str.instr"
   if("NULL") strncpy(mccOcto_medium_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_username3[0]='\0';
-#line 206 "LIRA_oct.instr"
+#line 206 "screw_str.instr"
   mccOcto_medium_nowritefile = 0;
-#line 11401 "./LIRA_oct.c"
+#line 11396 "./screw_str.c"
 
   SIG_MESSAGE("Octo_medium (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11408 "./LIRA_oct.c"
+#line 11403 "./screw_str.c"
   rot_mul(mctr1, mcrotaOcto_large, mcrotaOcto_medium);
   rot_transpose(mcrotaOcto_large, mctr1);
   rot_mul(mcrotaOcto_medium, mctr1, mcrotrOcto_medium);
   mctc1 = coords_set(
-#line 148 "LIRA_oct.instr"
+#line 146 "screw_str.instr"
     0,
-#line 148 "LIRA_oct.instr"
+#line 146 "screw_str.instr"
     0,
-#line 148 "LIRA_oct.instr"
-    0.001);
-#line 11419 "./LIRA_oct.c"
+#line 146 "screw_str.instr"
+    0.0001);
+#line 11414 "./screw_str.c"
   rot_transpose(mcrotaOcto_large, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaOcto_medium = coords_add(mcposaOcto_large, mctc2);
@@ -11430,67 +11425,67 @@ source_lambda_max = lambda+0.1;
     /* Component Octo_small. */
   /* Setting parameters for component Octo_small. */
   SIG_MESSAGE("Octo_small (Init:SetPar)");
-#line 151 "LIRA_oct.instr"
-  mccOcto_small_xwidth = mciph;
-#line 151 "LIRA_oct.instr"
-  mccOcto_small_yheight = mcipw;
-#line 201 "LIRA_oct.instr"
+#line 149 "screw_str.instr"
+  mccOcto_small_xwidth = mcipw;
+#line 149 "screw_str.instr"
+  mccOcto_small_yheight = mciph;
+#line 201 "screw_str.instr"
   mccOcto_small_zdepth = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_small_xmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_small_xmax = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_small_ymin = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_small_ymax = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_small_zmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 202 "screw_str.instr"
   mccOcto_small_zmax = 0;
-#line 151 "LIRA_oct.instr"
+#line 149 "screw_str.instr"
   mccOcto_small_bins = 100;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_small_min = -1e40;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_small_max = 1e40;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_small_restore_neutron = 0;
-#line 203 "LIRA_oct.instr"
+#line 203 "screw_str.instr"
   mccOcto_small_radius = 0;
-#line 151 "LIRA_oct.instr"
-  if("dy limits = [-0.1 0.1] ") strncpy(mccOcto_small_options, "dy limits = [-0.1 0.1] " ? "dy limits = [-0.1 0.1] " : "", 16384); else mccOcto_small_options[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 149 "screw_str.instr"
+  if("dx limits = [-0.1 0.1] ") strncpy(mccOcto_small_options, "dx limits = [-0.1 0.1] " ? "dx limits = [-0.1 0.1] " : "", 16384); else mccOcto_small_options[0]='\0';
+#line 204 "screw_str.instr"
   if("NULL") strncpy(mccOcto_small_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_small_filename[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 204 "screw_str.instr"
   if("NULL") strncpy(mccOcto_small_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_small_geometry[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 205 "screw_str.instr"
   if("NULL") strncpy(mccOcto_small_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_small_username1[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 205 "screw_str.instr"
   if("NULL") strncpy(mccOcto_small_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_small_username2[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 205 "screw_str.instr"
   if("NULL") strncpy(mccOcto_small_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_small_username3[0]='\0';
-#line 206 "LIRA_oct.instr"
+#line 206 "screw_str.instr"
   mccOcto_small_nowritefile = 0;
-#line 11475 "./LIRA_oct.c"
+#line 11470 "./screw_str.c"
 
   SIG_MESSAGE("Octo_small (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11482 "./LIRA_oct.c"
+#line 11477 "./screw_str.c"
   rot_mul(mctr1, mcrotaOcto_medium, mcrotaOcto_small);
   rot_transpose(mcrotaOcto_medium, mctr1);
   rot_mul(mcrotaOcto_small, mctr1, mcrotrOcto_small);
   mctc1 = coords_set(
-#line 152 "LIRA_oct.instr"
+#line 150 "screw_str.instr"
     0,
-#line 152 "LIRA_oct.instr"
+#line 150 "screw_str.instr"
     0,
-#line 152 "LIRA_oct.instr"
+#line 150 "screw_str.instr"
     0.0001);
-#line 11493 "./LIRA_oct.c"
+#line 11488 "./screw_str.c"
   rot_transpose(mcrotaOcto_medium, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaOcto_small = coords_add(mcposaOcto_medium, mctc2);
@@ -11527,7 +11522,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
     percent=1e5*100.0/mcget_ncount();
   }
 }
-#line 11530 "./LIRA_oct.c"
+#line 11525 "./screw_str.c"
 #undef minutes
 #undef flag_save
 #undef percent
@@ -11864,7 +11859,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
       printf("Source_gen: component %s unactivated", NAME_CURRENT_COMP);
   );
 }
-#line 11867 "./LIRA_oct.c"
+#line 11862 "./screw_str.c"
 #undef target_index
 #undef zdepth
 #undef I3
@@ -12012,7 +12007,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
   } else printf("Guide_gravity: %s: unactivated (l=0 or nelements=0)\n", NAME_CURRENT_COMP);
 
 }
-#line 12015 "./LIRA_oct.c"
+#line 12010 "./screw_str.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -12088,7 +12083,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
       Table_Rebin(&pTable);         /* rebin as evenly, increasing array */
   }
 }
-#line 12091 "./LIRA_oct.c"
+#line 12086 "./screw_str.c"
 #undef W
 #undef m
 #undef alpha
@@ -12219,7 +12214,7 @@ MPI_MASTER(
 );
 #endif
 }
-#line 12222 "./LIRA_oct.c"
+#line 12217 "./screw_str.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -12364,7 +12359,7 @@ MPI_MASTER(
 );
 #endif
 }
-#line 12367 "./LIRA_oct.c"
+#line 12362 "./screw_str.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -12509,7 +12504,7 @@ MPI_MASTER(
 );
 #endif
 }
-#line 12512 "./LIRA_oct.c"
+#line 12507 "./screw_str.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -12695,7 +12690,7 @@ MCNUM minutes = mccOrigin_minutes;
     if (flag_save) mcsave(NULL);
   }
 }
-#line 12698 "./LIRA_oct.c"
+#line 12693 "./screw_str.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -12943,7 +12938,7 @@ int target_index = mccH3_target_index;
     SCATTER;
   }
 }
-#line 12946 "./LIRA_oct.c"
+#line 12941 "./screw_str.c"
 }   /* End of H3=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -13374,7 +13369,7 @@ char* reflect = mccGuide_bunker_straight_reflect;
 
   } /* if l */
 }
-#line 13377 "./LIRA_oct.c"
+#line 13372 "./screw_str.c"
 }   /* End of Guide_bunker_straight=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -13670,7 +13665,7 @@ MCNUM W = mccgeks_W;
   /* end of main loop */
 
 }
-#line 13673 "./LIRA_oct.c"
+#line 13668 "./screw_str.c"
 }   /* End of geks=Guide_anyshape() SETTING parameter declarations. */
 #undef offdata
 #undef pTable
@@ -13977,7 +13972,7 @@ int nowritefile = mccOcto_large_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 13980 "./LIRA_oct.c"
+#line 13975 "./screw_str.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14287,7 +14282,7 @@ int nowritefile = mccOcto_medium_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 14290 "./LIRA_oct.c"
+#line 14285 "./screw_str.c"
 }   /* End of Octo_medium=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14597,7 +14592,7 @@ int nowritefile = mccOcto_small_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 14600 "./LIRA_oct.c"
+#line 14595 "./screw_str.c"
 }   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14713,7 +14708,7 @@ MCNUM minutes = mccOrigin_minutes;
 
   }
 }
-#line 14716 "./LIRA_oct.c"
+#line 14711 "./screw_str.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -14762,7 +14757,7 @@ int nowritefile = mccOcto_large_nowritefile;
   /* save results, but do not free pointers */
   detector = Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 14765 "./LIRA_oct.c"
+#line 14760 "./screw_str.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14814,7 +14809,7 @@ int nowritefile = mccOcto_medium_nowritefile;
   /* save results, but do not free pointers */
   detector = Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 14817 "./LIRA_oct.c"
+#line 14812 "./screw_str.c"
 }   /* End of Octo_medium=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14866,7 +14861,7 @@ int nowritefile = mccOcto_small_nowritefile;
   /* save results, but do not free pointers */
   detector = Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 14869 "./LIRA_oct.c"
+#line 14864 "./screw_str.c"
 }   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14913,7 +14908,7 @@ MCNUM minutes = mccOrigin_minutes;
     fprintf(stdout, "%g [min] ", difftime(NowTime,StartTime)/60.0);
   fprintf(stdout, "\n");
 }
-#line 14916 "./LIRA_oct.c"
+#line 14911 "./screw_str.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -14985,7 +14980,7 @@ int target_index = mccH3_target_index;
   Table_Free(&pTable_x);
   Table_Free(&pTable_y);
 }
-#line 14987 "./LIRA_oct.c"
+#line 14982 "./screw_str.c"
 }   /* End of H3=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -15063,7 +15058,7 @@ if (GVars.warnings > 100) {
   fprintf(stderr,"%s: warning: This message has been repeated %g times\n", GVars.compcurname, GVars.warnings);
 }
 }
-#line 15063 "./LIRA_oct.c"
+#line 15058 "./screw_str.c"
 }   /* End of Guide_bunker_straight=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -15121,7 +15116,7 @@ int nowritefile = mccOcto_large_nowritefile;
     Monitor_nD_Finally(&DEFS, &Vars);
   }
 }
-#line 15118 "./LIRA_oct.c"
+#line 15113 "./screw_str.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15178,7 +15173,7 @@ int nowritefile = mccOcto_medium_nowritefile;
     Monitor_nD_Finally(&DEFS, &Vars);
   }
 }
-#line 15174 "./LIRA_oct.c"
+#line 15169 "./screw_str.c"
 }   /* End of Octo_medium=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15235,7 +15230,7 @@ int nowritefile = mccOcto_small_nowritefile;
     Monitor_nD_Finally(&DEFS, &Vars);
   }
 }
-#line 15230 "./LIRA_oct.c"
+#line 15225 "./screw_str.c"
 }   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15285,7 +15280,7 @@ MCNUM minutes = mccOrigin_minutes;
 {
   
 }
-#line 15279 "./LIRA_oct.c"
+#line 15274 "./screw_str.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -15398,7 +15393,7 @@ int target_index = mccH3_target_index;
     dashed_line(0,0,0, -focus_xw/2, focus_yh/2,dist, 4);
   }
 }
-#line 15392 "./LIRA_oct.c"
+#line 15387 "./screw_str.c"
 }   /* End of H3=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -15435,7 +15430,7 @@ int target_index = mccH3_target_index;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 15429 "./LIRA_oct.c"
+#line 15424 "./screw_str.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -15546,7 +15541,7 @@ char* reflect = mccGuide_bunker_straight_reflect;
   }
 
 }
-#line 15540 "./LIRA_oct.c"
+#line 15535 "./screw_str.c"
 }   /* End of Guide_bunker_straight=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -15568,7 +15563,7 @@ char* reflect = mccGuide_bunker_straight_reflect;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 15562 "./LIRA_oct.c"
+#line 15557 "./screw_str.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -15608,7 +15603,7 @@ MCNUM W = mccgeks_W;
             (-offdata.zmin+offdata.zmax));
   */
 }
-#line 15602 "./LIRA_oct.c"
+#line 15597 "./screw_str.c"
 }   /* End of geks=Guide_anyshape() SETTING parameter declarations. */
 #undef offdata
 #undef pTable
@@ -15662,7 +15657,7 @@ int nowritefile = mccOcto_large_nowritefile;
     Monitor_nD_McDisplay(&DEFS, &Vars);
   }
 }
-#line 15656 "./LIRA_oct.c"
+#line 15651 "./screw_str.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15719,7 +15714,7 @@ int nowritefile = mccOcto_medium_nowritefile;
     Monitor_nD_McDisplay(&DEFS, &Vars);
   }
 }
-#line 15713 "./LIRA_oct.c"
+#line 15708 "./screw_str.c"
 }   /* End of Octo_medium=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15776,7 +15771,7 @@ int nowritefile = mccOcto_small_nowritefile;
     Monitor_nD_McDisplay(&DEFS, &Vars);
   }
 }
-#line 15770 "./LIRA_oct.c"
+#line 15765 "./screw_str.c"
 }   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15800,4 +15795,4 @@ int nowritefile = mccOcto_small_nowritefile;
 #undef circle
 #undef cylinder
 #undef sphere
-/* end of generated C code ./LIRA_oct.c */
+/* end of generated C code ./screw_str.c */

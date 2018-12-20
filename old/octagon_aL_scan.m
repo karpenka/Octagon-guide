@@ -6,7 +6,7 @@ if numvarargs > 3
         'requires at most 3 optional inputs');
 end
 % set defaults for optional inputs
-optargs = {6 1e5};
+optargs = {6 5e5};
 % now put these defaults into the valuesToUse cell array, 
 % and overwrite the ones specified in varargin.
 optargs(1:numvarargs) = varargin;
@@ -26,11 +26,11 @@ h = 0.15;
 % a = 0.15;
 % b = a/sqrt(2);
 a_min = 0.01;
-a_step = 0.05;
+a_step = 0.01;
 a_max = 0.21;
 L_min = 1;
 L_step = 10;
-L_max = 21;
+L_max = 101;
 i=1;
 j=1;
 %Screw param
@@ -60,6 +60,10 @@ for L = L_min:L_step:L_max
         Il(l,k)=p1l/I0l;
         Im(l,k)=p1m/I0m;
         Is(l,k)=p1s/I0s;
+        
+        I_l(l,k)=p1l;
+        I_m(l,k)=p1m;
+        I_s(l,k)=p1s;
         frac1 = ((a-a_min)/a_step+1)/((a_max-a_min)/a_step+1);
         frac2 = ((b-L_min)/L_step+1)/((L_max-L_min)/L_step+1);
         progressbar(frac1, frac2);
@@ -70,8 +74,8 @@ for L = L_min:L_step:L_max
 end
 
 dlmwrite(strjoin({strjoin({'oct_ab','lambda',num2str(lambda),'l'},'_'),'.dat'},''),Il,' ');
-aa=a_min:a_step:a_max;
-bb=L_min:L_step:L_max;
+bb=a_min:a_step:a_max;
+aa=L_min:L_step:L_max;
 [X,Y]=meshgrid(aa,bb);
 figure;
 surf(X,Y,Il)
@@ -96,21 +100,21 @@ title(strjoin({'Divergence = \pm0.1\circ, ','lambda = ',num2str(lambda)}))
 savefig(strjoin({'oct_ab','lambda',num2str(lambda),'s'},'_'));
 
 figure;
-surf(X,Y,p1l)
+surf(X,Y,I_l)
 xlabel('a [m]')
 ylabel('L [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence(m) = \pm1.5\circ, ','lambda = ',num2str(lambda)}))
 savefig(strjoin({'oct_ab_max','lambda',num2str(lambda),'l'},'_'));
 figure;
-surf(X,Y,p1m)
+surf(X,Y,I_m)
 xlabel('a [m]')
 ylabel('L [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence(m) = \pm0.5\circ, ','lambda = ',num2str(lambda)}))
 savefig(strjoin({'oct_ab_max','lambda',num2str(lambda),'m'},'_'));
 figure;
-surf(X,Y,p1s)
+surf(X,Y,I_s)
 xlabel('a [m]')
 ylabel('L [m]')
 zlabel('I_{oct}/I_{str}')
