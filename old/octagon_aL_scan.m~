@@ -90,14 +90,14 @@ xlabel('a [m]')
 ylabel('L [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence = \pm0.5\circ, ','lambda = ',num2str(lambda)}))
-savefig(strjoin({'oct_ab_20','lambda',num2str(lambda),'m'},'_'));
+savefig(strjoin({'oct_ab','lambda',num2str(lambda),'m'},'_'));
 figure;
 surf(X,Y,Is)
 xlabel('a [m]')
 ylabel('L [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence = \pm0.1\circ, ','lambda = ',num2str(lambda)}))
-savefig(strjoin({'oct_ab_20','lambda',num2str(lambda),'s'},'_'));
+savefig(strjoin({'oct_ab','lambda',num2str(lambda),'s'},'_'));
 
 figure;
 surf(X,Y,I_l)
@@ -105,18 +105,18 @@ xlabel('a [m]')
 ylabel('L [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence(m) = \pm1.5\circ, ','lambda = ',num2str(lambda)}))
-savefig(strjoin({'oct_ab_max_20','lambda',num2str(lambda),'l'},'_'));
+savefig(strjoin({'oct_ab_max','lambda',num2str(lambda),'l'},'_'));
 figure;
 surf(X,Y,I_m)
 xlabel('a [m]')
 ylabel('L [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence(m) = \pm0.5\circ, ','lambda = ',num2str(lambda)}))
-savefig(strjoin({'oct_ab_max_20','lambda',num2str(lambda),'m'},'_'));
+savefig(strjoin({'oct_ab_max','lambda',num2str(lambda),'m'},'_'));
 figure;
 surf(X,Y,I_s)
 xlabel('a [m]')
 ylabel('L [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence(m) = \pm0.1\circ, ','lambda = ',num2str(lambda)}))
-savefig(strjoin({'oct_ab_max_20','lambda',num2str(lambda),'s'},'_'));
+savefig(strjoin({'oct_ab_max','lambda',num2str(lambda),'s'},'_'));
