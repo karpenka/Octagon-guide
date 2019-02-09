@@ -1,0 +1,87 @@
+name_for_png = 'screw_length_scan';
+m = 6; ncount = 1e6;
+d = 'D:\JOB\github\Octagon-guide\simulation\data\length';
+f1 = '\extra_fine';
+f2 = '\super';
+ff1 = [d f1];
+ff2 = [d f2];
+filename = ff1;
+files = dir(fullfile(filename, '*.off'));
+filenames = {files.name};
+%writing a mcstas file
+i = 1;
+figure
+while i <= length(filenames(i))
+    dlmwrite('screw_n.instr',' ')
+    fid = fopen('screw_part1.instr','r');
+    tmp = textscan(fid,'%s','Delimiter','\n');
+    fclose(fid);
+    for i=1:length(tmp{1,1})
+        if isempty(char(tmp{1,1}(i))) == 1
+            dlmwrite('screw_n.instr',' ','-append','delimiter','')
+        else
+            dlmwrite('screw_n.instr',char(tmp{1,1}(i)),'-append','delimiter','')
+        end
+    end
+    a = 'geometry = "';
+    b = filenames{i};
+    c = '",';
+    z = char(strjoin([a b c],''));
+    file = fopen('screw_n.instr','a');
+    fprintf(file,z);
+    fclose(file);
+    dlmwrite('screw_n.instr',' ','-append','delimiter','\n')
+    fid = fopen('screw_part2.instr','rt');
+    tmp = textscan(fid,'%s','Delimiter','\n');
+    fclose(fid);
+    for i=1:length(tmp{1,1})
+        if isempty(char(tmp{1,1}(i))) == 1
+            dlmwrite('scre.w_n.instr',' ','-append','delimiter','')
+        else
+            dlmwrite('screw_n.instr',char(tmp{1,1}(i)),'-append','delimiter','')
+        end
+    end
+    length = '';
+    for j = 1:length(filenames{i})
+        nn = filenames{i}(j);
+        if  strcmp(nn,'.') == 0
+            length = [length nn];
+        end
+    end
+    length = str2num(length);
+    LL(i) = length;
+    model = mccode('screw_n.instr');
+    model.ncount = ncount;
+    parameters.m = m;
+    parameters.L = length;
+    results = iData(model,parameters);
+    sum_Lb(i) = sum(results, 0);
+    
+    model_str = mccode('screw_str.instr');
+    model_str.ncount = ncount;
+    parameters.m=m;
+    parameters.L=length;
+    results_str = iData(model_str,parameters_str);
+    sum_L_str = sum(results_str, 0);
+    
+    sum_L_on_L_str(i) = sum_Lb(i)/sum_L_str;
+    i = i + 1;
+end
+
+plot(LL,sum_Lb,LL,sum_L_on_L_str,'LineWidth',2);
+title(name)
+grid on
+xlabel('L, m')
+ylabel('transmission')
+legend('I')
+legend('Location','south')
+print(gcf,[name 'i'],'-dpng','-r300')
+
+plot(LL,sum_L_on_L_str,'LineWidth',2);
+title([name 'ii0'])
+grid on
+xlabel('L, m')
+ylabel('transmission')
+legend('I/I0')
+legend('Location','south')
+print(gcf,[name 'i'],'-dpng','-r300')
