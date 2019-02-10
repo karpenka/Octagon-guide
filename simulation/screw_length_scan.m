@@ -34,14 +34,14 @@ while i <= a(2)
     model = mccode('screw_n.instr');
     model.ncount = ncount;
     parameters.m = m;
-    parameters.L = length;
+    parameters.L = LL(i);
     results = iData(model,parameters);
     sum_Lb(i) = sum(results, 0);
     
     model_str = mccode('screw_str.instr');
     model_str.ncount = ncount;
     parameters.m=m;
-    parameters.L=length;
+    parameters.L=LL(i);
     results_str = iData(model_str,parameters_str);
     sum_L_str = sum(results_str, 0);
     
