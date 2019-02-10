@@ -13,19 +13,16 @@ i = 1;
 figure
 a = size(filenames);
 
+length = '';
 for j = 1:a(2)
-    length = '';
     nn = filenames{j};
-    nn_size = size(nn);
-    nn_size = nn_size(2);
-    for k = 1:nn_size
-        if  strcmp(nn(k),'.') == 1
-            break
-        else
-            length = [length nn(k)];
+    for k = 1:s(nn)
+        if  strcmp(nn(k),'.') == 0
+            length = [length nn];
         end
     end
-    LL(j) = str2num(length);
+    length = str2num(length);
+    LL(i) = length;
 end
 
 
