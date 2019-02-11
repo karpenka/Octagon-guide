@@ -6,7 +6,7 @@ f1 = '/extra_fine';
 f2 = '/super';
 ff1 = [d f1];
 ff2 = [d f2];
-filename = ff2;
+filename = ff1;
 files = dir(fullfile(filename, '*.off'));
 filenames = {files.name};
 %writing a mcstas file
@@ -38,7 +38,7 @@ while i <= a(2)
     parameters.L = LL(i);
     parameters.lambda = lambda;
     results = iData(model,parameters);
-    sum_Lb(i) = results.UserData.monitors.Data.values(1);
+    sum_Lb(i) = results.UserData.monitors(1).Data.values(1);
     
     model_str = mccode('screw_str.instr','ncount=1e6');
     parameters_str.m=m;
