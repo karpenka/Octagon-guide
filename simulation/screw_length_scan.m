@@ -1,4 +1,4 @@
-name_for_png = 'screw_length_scan_super';
+name_for_png = 'screw_length_scan_ext2';
 m = 6; ncount = 1e6;
 lambda = 5;
 d = 'data/length';
@@ -38,20 +38,26 @@ while i <= a(2)
     parameters.L = LL(i);
     parameters.lambda = lambda;
     results = iData(model,parameters);
-    sum_Lb(i) = results.UserData.monitors(1).Data.values(1);
+    sum_Lb_l(i) = results.UserData.monitors(1).Data.values(1);
+    sum_Lb_m(i) = results.UserData.monitors(2).Data.values(1);
+    sum_Lb_s(i) = results.UserData.monitors(3).Data.values(1);
     
     model_str = mccode('screw_str.instr','ncount=1e6');
     parameters_str.m=m;
     parameters_str.L=LL(i);
     parameters_str.lambda = lambda;
     results_str = iData(model_str,parameters_str);
-    sum_L_str = results_str.UserData.monitors(1).Data.values(1);
+    sum_L_str_l = results_str.UserData.monitors(1).Data.values(1);
+    sum_L_str_m = results_str.UserData.monitors(2).Data.values(1);
+    sum_L_str_s = results_str.UserData.monitors(3).Data.values(1);
     
-    sum_L_on_L_str(i) = sum_Lb(i)/sum_L_str;
+    sum_L_on_L_str_l(i) = sum_Lb(i)/sum_L_str;
+    sum_L_on_L_str_m(i) = sum_Lb(i)/sum_L_str;
+    sum_L_on_L_str_s(i) = sum_Lb(i)/sum_L_str;
     i = i + 1;
 end
 
-plot(LL,sum_Lb,'o');
+plot(LL,sum_Lb_l,'*',LL,sum_Lb_m,'-',LL,sum_Lb_s,'o');
 title(name_for_png)
 grid on
 xlabel('L, m')
@@ -61,7 +67,7 @@ legend('Location','south')
 print(gcf,[name_for_png 'i'],'-dpng','-r300');
 
 figure;
-plot(LL,sum_L_on_L_str,'o');
+plot(LL,sum_L_on_L_str_l,'*',LL,sum_L_on_L_str_l,'-',LL,sum_L_on_L_str_l,'o');
 title([name_for_png 'ii0'])
 grid on
 xlabel('L, m')
