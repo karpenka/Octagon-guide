@@ -1,4 +1,5 @@
- DEFINE INSTRUMENT H3(L=1, guide_m=6,lambda = 5)
+ 
+DEFINE INSTRUMENT H3(L=10, guide_m=6,lambda = 5)
  
 DECLARE
 %{
@@ -76,13 +77,12 @@ w1 = w, h1 = h, l = 25, mleft = 1, mright = 1,
 mtop = 3, mbottom = 3, G = -9.81)
 AT (0, 0, 0) RELATIVE PREVIOUS
  
- 
 COMPONENT arm_geks = Arm(
 )
 AT (0, 0, 25.02) RELATIVE Guide_bunker_straight
  
 COMPONENT screw = Guide_anyshape(
-geometry = "data/n_scan/long.off", 
+geometry = "data/length/extra_fine/7.off", 
 center = 0, R0 = 0.99, Qc = 0.0219, alpha = 2.3, m = guide_m,
 W = 0.003)
 AT (-w/2, -h/2, 0) RELATIVE PREVIOUS
@@ -90,13 +90,13 @@ ROTATED (-90,0,0) RELATIVE PREVIOUS
 /**************** monitors ***************/
 COMPONENT Octo_large = Monitor_nD(
 xwidth = h, yheight = w, bins = 100, options = "dy limits = [-2 2] ")
-AT (0, 0, L+0.02) RELATIVE arm_geks
+AT (0, 0, L+0.1) RELATIVE arm_geks
 COMPONENT Octo_med = Monitor_nD(
 xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.5 0.5] ")
-AT (0, 0, L+0.03) RELATIVE arm_geks
-COMPONENT Octo_sm = Monitor_nD(
+AT (0, 0, L+0.101) RELATIVE arm_geks
+COMPONENT Octo_small = Monitor_nD(
 xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.1 0.1] ")
-AT (0, 0, L+0.04) RELATIVE arm_geks
+AT (0, 0, L+0.102) RELATIVE arm_geks
 /**********/
 FINALLY
 %{

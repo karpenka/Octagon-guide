@@ -7,15 +7,15 @@
 
   COMPONENT Octo_large = Monitor_nD(
     xwidth = h, yheight = w, bins = 100, options = "dy limits = [-2 2] ")
-  AT (0, 0, L+0.02) RELATIVE arm_geks
+  AT (0, 0, L+0.1) RELATIVE arm_geks
 
   COMPONENT Octo_med = Monitor_nD(
     xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.5 0.5] ")
-  AT (0, 0, L+0.03) RELATIVE arm_geks
+  AT (0, 0, L+0.101) RELATIVE arm_geks
 
-  COMPONENT Octo_sm = Monitor_nD(
+  COMPONENT Octo_small = Monitor_nD(
     xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.1 0.1] ")
-  AT (0, 0, L+0.04) RELATIVE arm_geks
+  AT (0, 0, L+0.102) RELATIVE arm_geks
 
 /**********/
 

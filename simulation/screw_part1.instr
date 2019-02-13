@@ -76,7 +76,6 @@ COMPONENT Guide_bunker_straight = Guide_gravity(
     mtop = 3, mbottom = 3, G = -9.81)
   AT (0, 0, 0) RELATIVE PREVIOUS
 
-
 COMPONENT arm_geks = Arm(
     )
   AT (0, 0, 25.02) RELATIVE Guide_bunker_straight
