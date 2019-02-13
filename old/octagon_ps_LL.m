@@ -26,10 +26,10 @@ h = 0.1;
 a = 0.07;
 b = 0.05;
 L_min = 5;
-L_step = 5;
+L_step = 50;
 L_max = 105;
 L1_mi = 0.1;
-L1_st = 0.05;
+L1_st = 0.4;
 L1_ma = 0.9;
 i=1;
 j=1;
@@ -45,7 +45,7 @@ for L = L_min:L_step:L_max
     L1_step = L1_st*L;
     L1_max = L1_ma*L;
     rect(w,h,L);
-    [p0,m0]=mcstas('screw_str.instr',struct('lambda',lambda,'L',L,'guide_m',m,'w',w,'h',h),struct('ncount',ncount,'mpi',4));
+    [p0,m0]=mcstas('screw_str.instr',struct('lambda',lambda,'L',L,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
     p0l=p0(1,:,:).Signal;
     p0m=p0(2,:,:).Signal;
     p0s=p0(3,:,:).Signal;
@@ -55,7 +55,7 @@ for L = L_min:L_step:L_max
 for L1 = L1_min:L1_step:L1_max
     pause(0.0001)
     geks_ps(a,b,w,h,(L-L1)/2,L1);
-    [p1,m1]=mcstas('LIRA_oct.instr',struct('lambda',lambda,'L0',(L-L1)/2,'L1',L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount,'mpi',4));
+    [p1,m1]=mcstas('LIRA_oct.instr',struct('lambda',lambda,'L0',(L-L1)/2,'L1',L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
     p1l=p1(1,:,:).Signal;
     p1m=p1(2,:,:).Signal;
     p1s=p1(3,:,:).Signal;

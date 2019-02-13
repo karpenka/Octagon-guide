@@ -1,0 +1,4 @@
+*.exe
+*.c
+old/screw_str.c
+*.c

@@ -6,7 +6,7 @@ if numvarargs > 3
         'requires at most 3 optional inputs');
 end
 % set defaults for optional inputs
-optargs = {6 1e6};
+optargs = {6 1e5};
 % now put these defaults into the valuesToUse cell array, 
 % and overwrite the ones specified in varargin.
 optargs(1:numvarargs) = varargin;
@@ -28,10 +28,10 @@ L0 = 40;
 % a = 0.15;
 % b = a/sqrt(2);
 a_min = 0.01;
-a_step = 0.01;
+a_step = 0.1;
 a_max = 0.21;
 b_min = 0.01;
-b_step = 0.01;
+b_step = 0.1;
 b_max = 0.21;
 i=1;
 j=1;

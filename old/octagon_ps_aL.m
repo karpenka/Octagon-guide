@@ -5,7 +5,7 @@ function octagon_ps_aL()
 
 %guide parameters for geks function
 w = 0.03;
-h = 0.2;
+h = 0.15;
 L1 = 10;
 a = 0.09;
 b = 0.035;
