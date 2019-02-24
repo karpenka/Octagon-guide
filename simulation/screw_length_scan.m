@@ -1,8 +1,8 @@
 clear all;
 
-name_for_png = 'screw_length_scan_lam5_m3';
-m = 3; ncount = 1e6;
-lambda = 5;
+name_for_png = 'screw_length_scan_lam2_m6  ';
+m = 6; ncount = 1e6;
+lambda = 2;
 d = 'data/length';
 f1 = '/extra_fine';
 f2 = '/super';
