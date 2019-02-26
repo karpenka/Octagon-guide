@@ -1,9 +1,8 @@
-DEFINE INSTRUMENT H3(L=10, guide_m=6,lambda = 5)
+DEFINE INSTRUMENT H3(L=10, guide_m=6,lambda = 5, w=0.01, h=0.15)
 
 DECLARE
 %{
 //temp
-double w=0.03,h=0.15;
 double L_st = 0.01;
 
 double cold_regime=1;
