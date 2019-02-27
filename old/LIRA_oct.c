@@ -2,14 +2,14 @@
  * Format:     ANSI C source code
  * Creator:    McStas <http://www.mcstas.org>
  * Instrument: LIRA_oct.instr (H3)
- * Date:       Tue Dec 18 18:54:32 2018
- * File:       ./LIRA_oct.c
- * Compile:    cc -o H3.out ./LIRA_oct.c 
+ * Date:       Mon Feb 25 13:54:46 2019
+ * File:       LIRA_oct.c
+ * Compile:    cc -o H3.exe LIRA_oct.c 
  * CFLAGS=
  */
 
 
-#define MCCODE_STRING "McStas 2.5 - Dec. 12, 2018"
+#define MCCODE_STRING "McStas 2.4.1 - Jun. 26, 2017"
 #define FLAVOR "mcstas"
 #define FLAVOR_UPPER "MCSTAS"
 #define MC_USE_DEFAULT_MAIN
@@ -29,7 +29,7 @@
 * %Identification
 * Written by: KN
 * Date:    Aug 29, 1997
-* Release: McStas 2.5
+* Release: McStas 2.4.1
 * Version: $Revision$
 *
 * Runtime system header for McStas/McXtrace.
@@ -107,15 +107,15 @@
 
 /* the version string is replaced when building distribution with mkdist */
 #ifndef MCCODE_STRING
-#define MCCODE_STRING "McStas 2.5 - Dec. 12, 2018"
+#define MCCODE_STRING "McStas 2.4.1 - Jun. 26, 2017"
 #endif
 
 #ifndef MCCODE_DATE
-#define MCCODE_DATE "Dec. 12, 2018"
+#define MCCODE_DATE "Jun. 26, 2017"
 #endif
 
 #ifndef MCCODE_VERSION
-#define MCCODE_VERSION "2.5"
+#define MCCODE_VERSION "2.4.1"
 #endif
 
 #ifndef MCCODE_NAME
@@ -346,7 +346,7 @@ unsigned long long mcget_run_num(void);           /* wrapper to get mcrun_num=0:
 #endif
 
 #ifdef DEBUG
-#define mcDEBUG_INSTR() if(!mcdotrace); else { printf("\nINSTRUMENT:\n"); printf("Instrument '%s' (%s)\n", mcinstrument_name, mcinstrument_source); }
+#define mcDEBUG_INSTR() if(!mcdotrace); else { printf("INSTRUMENT:\n"); printf("Instrument '%s' (%s)\n", mcinstrument_name, mcinstrument_source); }
 #define mcDEBUG_COMPONENT(name,c,t) if(!mcdotrace); else {\
   printf("COMPONENT: \"%s\"\n" \
          "POS: %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g\n", \
@@ -393,10 +393,6 @@ void mcdis_rectangle(char* plane, double x, double y, double z,
 void mcdis_box(double x, double y, double z,
 	       double width, double height, double length);
 void mcdis_circle(char *plane, double x, double y, double z, double r);
-void mcdis_Circle(double x, double y, double z, double r, double nx, double ny, double nz);
-void mcdis_cylinder( double x, double y, double z,
-        double r, double height, int N, double nx, double ny, double nz);
-void mcdis_sphere(double x, double y, double z, double r, int N);
 
 /* selection of random number generator. default is MT */
 #ifndef MC_RAND_ALG
@@ -692,7 +688,7 @@ NXhandle nxhandle;
 #endif /* MCCODE_R_H */
 /* End of file "mccode-r.h". */
 
-#line 695 "./LIRA_oct.c"
+#line 691 "LIRA_oct.c"
 
 #line 1 "mcstas-r.h"
 /*******************************************************************************
@@ -925,7 +921,7 @@ void mcsetstate(double x, double y, double z, double vx, double vy, double vz,
 #endif /* MCSTAS_R_H */
 /* End of file "mcstas-r.h". */
 
-#line 928 "./LIRA_oct.c"
+#line 924 "LIRA_oct.c"
 
 #line 1 "mccode-r.c"
 /*******************************************************************************
@@ -974,13 +970,9 @@ void mcsetstate(double x, double y, double z, double vx, double vy, double vz,
 // UNIX specific headers (non-Windows)
 #if defined(__unix__) || defined(__APPLE__)
 #include <unistd.h>
+#include <sys/stat.h>
 #endif
 
-#include <sys/stat.h>
-
-#ifdef _WIN32 
-# define  mkdir( D, M )   _mkdir( D ) 
-#endif 
 
 #ifndef DANSE
 #ifdef MC_ANCIENT_COMPATIBILITY
@@ -1036,8 +1028,8 @@ int mc_MPI_Sum(double *sbuf, long count)
     while (offset < count) {
       if (!length || offset+length > count-1) length=count-offset;
       else length=MPI_REDUCE_BLOCKSIZE;
-      if (MPI_Reduce((double*)(sbuf+offset), (double*)(rbuf+offset),
-              length, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD) != MPI_SUCCESS)
+      if (MPI_Allreduce((double*)(sbuf+offset), (double*)(rbuf+offset),
+              length, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD) != MPI_SUCCESS)
         return MPI_ERR_COUNT;
       offset += length;
     }
@@ -1864,17 +1856,16 @@ static void mcruninfo_out(char *pre, FILE *f)
 
   /* output parameter string ================================================ */
   for(i = 0; i < mcnumipar; i++) {
-      if (mcinputtable[i].par){
-	/* Parameters with a default value */
-	if(mcinputtable[i].val && strlen(mcinputtable[i].val)){
-	  (*mcinputtypes[mcinputtable[i].type].printer)(Parameters, mcinputtable[i].par);
-	  fprintf(f, "%sParam: %s=%s\n", pre, mcinputtable[i].name, Parameters);
-        /* ... and those without */
-	}else{
-	  fprintf(f, "%sParam: %s=NULL\n", pre, mcinputtable[i].name);
-	}
-      } 
+    if (mcget_run_num() || (mcinputtable[i].val && strlen(mcinputtable[i].val))) {
+      if (mcinputtable[i].par == NULL)
+        strncpy(Parameters, (mcinputtable[i].val ? mcinputtable[i].val : ""), CHAR_BUF_LENGTH);
+      else
+        (*mcinputtypes[mcinputtable[i].type].printer)(Parameters, mcinputtable[i].par);
+
+      fprintf(f, "%sParam: %s=%s\n", pre, mcinputtable[i].name, Parameters);
+    }
   }
+  fflush(f);
 } /* mcruninfo_out */
 
 /*******************************************************************************
@@ -2202,7 +2193,7 @@ static int nxstr(char type, NXhandle *f, char *tag, char *format, ...)
 *******************************************************************************/
 char *mcinfo_readfile(char *filename)
 {
-  FILE *f = fopen(filename, "rb");
+  FILE *f = fopen(filename, "r");
   if (!f) return(NULL);
   fseek(f, 0, SEEK_END);
   long fsize = ftell(f);
@@ -2676,9 +2667,8 @@ MCDETECTOR mcdetector_out_0D_nexus(MCDETECTOR detector)
   return(detector);
 } /* mcdetector_out_0D_ascii */
 
-MCDETECTOR mcdetector_out_1D_nexus(MCDETECTOR detector_inc)
+MCDETECTOR mcdetector_out_1D_nexus(MCDETECTOR detector)
 {
-  MCDETECTOR detector = detector_inc;
   MPI_MASTER(
   mcdatainfo_out_nexus(nxhandle, detector);
   mcdetector_out_data_nexus(nxhandle, detector);
@@ -2686,9 +2676,8 @@ MCDETECTOR mcdetector_out_1D_nexus(MCDETECTOR detector_inc)
   return(detector);
 } /* mcdetector_out_1D_ascii */
 
-MCDETECTOR mcdetector_out_2D_nexus(MCDETECTOR detector_inc)
+MCDETECTOR mcdetector_out_2D_nexus(MCDETECTOR detector)
 {
-  MCDETECTOR detector = detector_inc;
   MPI_MASTER(
   mcdatainfo_out_nexus(nxhandle, detector);
   mcdetector_out_data_nexus(nxhandle, detector);
@@ -3081,7 +3070,7 @@ mcsetseed(char *arg)
 *******************************************************************************/
 
 void mcdis_magnify(char *what){
-  // Do nothing here, better use interactive zoom from the tools
+  printf("MCDISPLAY: magnify('%s')\n", what);
 }
 
 void mcdis_line(double x1, double y1, double z1,
@@ -3170,86 +3159,6 @@ void mcdis_box(double x, double y, double z,
 
 void mcdis_circle(char *plane, double x, double y, double z, double r){
   printf("MCDISPLAY: circle('%s',%g,%g,%g,%g)\n", plane, x, y, z, r);
-}
-
-/* Draws a circle with center (x,y,z), radius (r), and in the plane
- * with normal (nx,ny,nz)*/
-void mcdis_Circle(double x, double y, double z, double r, double nx, double ny, double nz){
-    int i;
-    if(nx==0 && ny && nz==0){
-        for (i=0;i<24; i++){
-            mcdis_line(x+r*sin(i*2*M_PI/24),y,z+r*cos(i*2*M_PI/24),
-                    x+r*sin((i+1)*2*M_PI/24),y,z+r*cos((i+1)*2*M_PI/24));
-        }
-    }else{
-        double mx,my,mz;
-        /*generate perpendicular vector using (nx,ny,nz) and (0,1,0)*/
-        vec_prod(mx,my,mz, 0,1,0, nx,ny,nz);
-        NORM(mx,my,mz);
-        /*draw circle*/
-        for (i=0;i<24; i++){
-            double ux,uy,uz;
-            double wx,wy,wz;
-            rotate(ux,uy,uz, mx,my,mz, i*2*M_PI/24, nx,ny,nz);
-            rotate(wx,wy,wz, mx,my,mz, (i+1)*2*M_PI/24, nx,ny,nz);
-            mcdis_line(x+ux*r,y+uy*r,z+uz*r,
-                    x+wx*r,y+wy*r,z+wz*r);
-        }
-    }
-}
-
-/* Draws a cylinder with center at (x,y,z) with extent (r,height).
- * The cylinder axis is along the vector nx,ny,nz.
- * N determines how many vertical lines are drawn.*/
-void mcdis_cylinder( double x, double y, double z,
-        double r, double height, int N, double nx, double ny, double nz){
-    int i;
-    /*no lines make little sense - so trigger the default*/
-    if(N<=0) N=5;
-
-    NORM(nx,ny,nz);
-    double h_2=height/2.0;
-    mcdis_Circle(x+nx*h_2,y+ny*h_2,z+nz*h_2,r,nx,ny,nz);
-    mcdis_Circle(x-nx*h_2,y-ny*h_2,z-nz*h_2,r,nx,ny,nz);
-
-    double mx,my,mz;
-    /*generate perpendicular vector using (nx,ny,nz) and (0,1,0)*/
-    if(nx==0 && ny && nz==0){
-        mx=my=0;mz=1;
-    }else{
-        vec_prod(mx,my,mz, 0,1,0, nx,ny,nz);
-        NORM(mx,my,mz);
-    }
-    /*draw circle*/
-    for (i=0; i<24; i++){
-        double ux,uy,uz;
-        rotate(ux,uy,uz, mx,my,mz, i*2*M_PI/24, nx,ny,nz);
-        mcdis_line(x+nx*h_2+ux*r, y+ny*h_2+uy*r, z+nz*h_2+uz*r,
-                 x-nx*h_2+ux*r, y-ny*h_2+uy*r, z-nz*h_2+uz*r);
-    }
-}
-
-/* draws a sphere with center at (x,y,z) with extent (r)
- * The sphere is drawn using N longitudes and N latitudes.*/
-void mcdis_sphere(double x, double y, double z, double r, int N){
-    double nx,ny,nz;
-    int i;
-    /*no lines make little sense - so trigger the default*/
-    if(N<=0) N=5;
-
-    nx=0;ny=0;nz=1;
-    mcdis_Circle(x,y,z,r,nx,ny,nz);
-    for (i=1;i<N;i++){
-        rotate(nx,ny,nz, nx,ny,nz, M_PI/N, 0,1,0);
-        mcdis_Circle(x,y,z,r,nx,ny,nz);
-    }
-    /*lastly draw a great circle perpendicular to all N circles*/
-    //mcdis_Circle(x,y,z,radius,1,0,0);
-
-    for (i=1;i<=N;i++){
-        double yy=-r+ 2*r*((double)i/(N+1));
-        mcdis_Circle(x,y+yy ,z,  sqrt(r*r-yy*yy) ,0,1,0);
-    }
 }
 
 /* SECTION: coordinates handling ============================================ */
@@ -4523,7 +4432,7 @@ mcparseoptions(int argc, char *argv[])
     else if(!strncmp("--ncount=", argv[i], 9))
       mcsetn_arg(&argv[i][9]);
     else if(!strcmp("-d", argv[i]) && (i + 1) < argc)
-      usedir=argv[++i];  /* will create directory after parsing all arguments (end of this function) */
+      usedir=argv[++i];  /* will create directory after parsing all arguments (end of this function) */
     else if(!strncmp("-d", argv[i], 2))
       usedir=&argv[i][2];
     else if(!strcmp("--dir", argv[i]) && (i + 1) < argc)
@@ -4606,7 +4515,7 @@ mcparseoptions(int argc, char *argv[])
 #ifdef USE_MPI
   if (mcdotrace) mpi_node_count=1; /* disable threading when in trace mode */
 #endif
-  if (usedir && strlen(usedir) && !mcdisable_output_files) mcuse_dir(usedir);
+  if (usedir && strlen(usedir)) mcuse_dir(usedir);
 } /* mcparseoptions */
 
 #ifndef NOSIGNALS
@@ -4944,7 +4853,7 @@ void neutronics_main_(float *inx, float *iny, float *inz, float *invx, float *in
 /* End of file "mccode-r.c". */
 /* End of file "mccode-r.c". */
 
-#line 4947 "./LIRA_oct.c"
+#line 4856 "LIRA_oct.c"
 
 #line 1 "mcstas-r.c"
 /*******************************************************************************
@@ -5304,13 +5213,13 @@ plane_intersect(double *t, double x, double y, double z,
 #endif /* !MCSTAS_H */
 /* End of file "mcstas-r.c". */
 
-#line 5307 "./LIRA_oct.c"
+#line 5216 "LIRA_oct.c"
 #ifdef MC_TRACE_ENABLED
 int mctraceenabled = 1;
 #else
 int mctraceenabled = 0;
 #endif
-#define MCSTAS "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../"
+#define MCSTAS "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\"
 int mcdefaultmain = 1;
 char mcinstrument_name[] = "H3";
 char mcinstrument_source[] = "LIRA_oct.instr";
@@ -5323,7 +5232,7 @@ void mcfinally(void);
 void mcdisplay(void);
 
 /* Shared user declarations for all components 'Source_gen'. */
-#line 140 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../sources/Source_gen.comp"
+#line 140 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\sources\\Source_gen.comp"
 /*******************************************************************************
 *
 * McStas, neutron ray-tracing package
@@ -5503,11 +5412,10 @@ double z11, double z12, double z21, double z22);
 *******************************************************************************/
 void * Table_File_List_Handler(t_Read_table_file_actions action, void *item, void *item_modifier){
 
-    /* logic here is Read_Table should include a call to FIND. If found the return value should just be used as
-     * if the table had been read from disk. If not found then read the table and STORE.
-     * Table_Free should include a call to GC. If this returns non-NULL then we should proceed with freeing the memory
-     * associated with the table item - otherwise only decrement the reference counter since there are more references
-     * that may need it.*/
+    /* logic here is Read_Table should include a call to FIND. If found the return value shoud just be used as
+     * if the table had been read. If not found then read the table and STORE.
+     * Table_Free should include a call to GC. If this returns non-NULL then we shoudl proceed with freeing the memory
+     * associated with the table item - otherwise do nothing since there are more references that may need it.*/ 
 
     static t_Read_table_file_item read_table_file_list[1024];  
     static int read_table_file_count=0;
@@ -5547,12 +5455,11 @@ void * Table_File_List_Handler(t_Read_table_file_actions action, void *item, voi
                         tr->table_ref->block_number == ((t_Table *)item)->block_number){
                     /*matching item found*/
                     if (tr->ref_count>1){
-                        /*the item is found and no garbage collection needed*/
+                        /*the item is found - no garbage collection needed*/
                         tr->ref_count--;
                         return NULL;
                     }else{
-                        /* The item is found and the reference counter is 1.
-                         * This means we should garbage collect. Move remaining list items up one slot,
+                        /* The item is found - move remaining list items up one slot,
                          * and return the table for garbage collection by caller*/
                         while (tr->table_ref!=NULL){
                             *tr=*(tr+1);
@@ -5564,11 +5471,9 @@ void * Table_File_List_Handler(t_Read_table_file_actions action, void *item, voi
                 }
                 tr++;
             }
-            /* item not found, and so should be garbage collected. This could be the case if freeing a
-             * Table that has been constructed from code - not read from file. Return 0x1 to flag it for
-             * collection.*/
-            return (void *) 0x1 ;
-    }
+            return (void *)0x1 ;/*item not found*/ 
+    } 
+
 }
 
 /* Access functions to the handler*/
@@ -5752,7 +5657,7 @@ void *Table_File_List_store(t_Table *tab){
     t_Table *tab_p= Table_File_List_find(name,block_number,begin);
     if ( tab_p!=NULL ){
         /*table was found in the Table_File_List*/
-        // printf("Reusing input file '%s' (Table_Read_Offset)\n", name);
+        printf("Reusing input file '%s' (Table_Read_Offset)\n", name);
         *Table=*tab_p;
         return Table->rows*Table->columns;
     }
@@ -6253,7 +6158,7 @@ double Table_Value(t_Table Table, double X, long j)
   // Fall back to linear search, if no-one else has set X1, X2 correctly
   if (!((X1 <= X) && (X < X2))) {
     /* look for index surrounding X in the table -> Index */
-    for (Index=1; Index <= Table.rows-1; Index++) {
+    for (Index=1; Index < Table.rows-1; Index++) {
         X1 = Table_Index(Table, Index-1,0);
         X2 = Table_Index(Table, Index  ,0);
         if ((X1 <= X) && (X < X2)) break;
@@ -6326,9 +6231,7 @@ double Table_Value(t_Table Table, double X, long j)
 
 /*******************************************************************************
 * void Table_Free(t_Table *Table)
-*   ACTION: free a single Table. First Call Table_File_list_gc. If this returns
-*   non-zero it means there are more refernces to the table, and so the table
-*   should not bee freed.
+*   ACTION: free a single Table
 *   return: empty Table
 *******************************************************************************/
   void Table_Free(t_Table *Table)
@@ -6562,7 +6465,7 @@ MCDETECTOR Table_Write(t_Table Table, char *file, char *xl, char *yl,
     long allocated=256;
     long nelements=1;
 
-    /* first allocate an initial empty t_Table array */
+    /* fisrt allocate an initial empty t_Table array */
     Table_Array = (t_Table *)malloc(allocated*sizeof(t_Table));
     if (!Table_Array) {
       fprintf(stderr, "Error: Can not allocate memory %li (Table_Read_Array).\n",
@@ -6582,24 +6485,21 @@ MCDETECTOR Table_Write(t_Table Table, char *file, char *xl, char *yl,
       /* access file at offset and get following block. Block number is from the set offset
        * hence the hardcoded 1 - i.e. the next block counted from offset.*/
       nelements = Table_Read_Offset(&Table, File, 1, &offset,0);
-      /*if the block is empty - don't store it*/
-      if (nelements>0){
-          /* if t_Table array is not long enough, expand and realocate */
-          if (block_number >= allocated-1) {
-              allocated += 256;
-              Table_Array = (t_Table *)realloc(Table_Array,
-                      allocated*sizeof(t_Table));
-              if (!Table_Array) {
-                  fprintf(stderr, "Error: Can not re-allocate memory %li (Table_Read_Array).\n",
-                          allocated*sizeof(t_Table));
-                  *blocks = 0;
-                  return (NULL);
-              }
-          }
-          /* store it into t_Table array */
-          //snprintf(Table.filename, 1024, "%s#%li", File, block_number-1);
-          Table_Array[block_number-1] = Table;
+      /* if t_Table array is not long enough, expand and realocate */
+      if (block_number >= allocated-1) {
+        allocated += 256;
+        Table_Array = (t_Table *)realloc(Table_Array,
+           allocated*sizeof(t_Table));
+        if (!Table_Array) {
+          fprintf(stderr, "Error: Can not re-allocate memory %li (Table_Read_Array).\n",
+              allocated*sizeof(t_Table));
+          *blocks = 0;
+          return (NULL);
+        }
       }
+      /* store it into t_Table array */
+      //snprintf(Table.filename, 1024, "%s#%li", File, block_number-1);
+      Table_Array[block_number-1] = Table;
       /* continues until we find an empty block */
     }
     /* send back number of extracted blocks */
@@ -6617,10 +6517,11 @@ MCDETECTOR Table_Write(t_Table Table, char *file, char *xl, char *yl,
 *******************************************************************************/
   void Table_Free_Array(t_Table *Table)
   {
-    long index;
+    long index=0;
     if (!Table) return;
-    for (index=0;index < Table[0].array_length; index++){
+    while (Table[index].data || Table[index].header){
             Table_Free(&Table[index]);
+            index++;
     }
     free(Table);
   } /* end Table_Free_Array */
@@ -6800,10 +6701,10 @@ char *str_dup_numeric(char *orig)
   }
 #endif
 
-#line 6803 "./LIRA_oct.c"
+#line 6704 "LIRA_oct.c"
 
 /* Shared user declarations for all components 'Guide_gravity'. */
-#line 124 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
+#line 124 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_gravity.comp"
 /*****************************************************************************
 *
 * McStas, neutron ray-tracing package
@@ -7156,10 +7057,10 @@ void TableReflecFunc(double mc_pol_q, t_Table *mc_pol_par, double *mc_pol_r) {
 
 
 #endif
-#line 7159 "./LIRA_oct.c"
+#line 7060 "LIRA_oct.c"
 
 /* Shared user declarations for all components 'Guide_anyshape'. */
-#line 86 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_anyshape.comp"
+#line 86 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_anyshape.comp"
 
 /*******************************************************************************
 *
@@ -7523,13 +7424,6 @@ FILE *off_getBlocksIndex(char* filename, long* vtxSize, long* polySize )
   {
     fprintf(stderr, "Error: Can not read 1st line in file %s (interoff/off_getBlocksIndex)\n", filename);
     exit(1);
-  }
-  if (strlen(line)>5)
-  {
-      fprintf(stderr,"Error: First line in %s is too long (=%d). Possibly the line is not terminated by '\\n'.\n" 
-              "       The first line is required to be exactly 'OFF', '3' or 'ply'.\n",filename,strlen(line));
-      fclose(f);
-      return(NULL);
   }
 
   if (strncmp(line,"OFF",3) && strncmp(line,"3",1) && strncmp(line,"ply",1))
@@ -8154,10 +8048,10 @@ void off_display(off_struct data)
 /* end of interoff-lib.c */
 
 
-#line 8157 "./LIRA_oct.c"
+#line 8051 "LIRA_oct.c"
 
 /* Shared user declarations for all components 'Monitor_nD'. */
-#line 214 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 212 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 /*******************************************************************************
 *
 * McStas, neutron ray-tracing package
@@ -8330,7 +8224,7 @@ void off_display(off_struct data)
 /* ========================================================================= */
 
 void Monitor_nD_Init(MonitornD_Defines_type *, MonitornD_Variables_type *, MCNUM, MCNUM, MCNUM, MCNUM, MCNUM, MCNUM, MCNUM, MCNUM, MCNUM, int);
-int Monitor_nD_Trace(MonitornD_Defines_type *, MonitornD_Variables_type *);
+double Monitor_nD_Trace(MonitornD_Defines_type *, MonitornD_Variables_type *);
 MCDETECTOR Monitor_nD_Save(MonitornD_Defines_type *, MonitornD_Variables_type *);
 void Monitor_nD_Finally(MonitornD_Defines_type *, MonitornD_Variables_type *);
 void Monitor_nD_McDisplay(MonitornD_Defines_type *,
@@ -8494,13 +8388,7 @@ void Monitor_nD_Init(MonitornD_Defines_type *DEFS,
     Vars->Flag_Binary_List  = 0;   /* save list as a binary file (smaller) */
     Vars->Coord_Number      = 0;   /* total number of variables to monitor, plus intensity (0) */
     Vars->Coord_NumberNoPixel=0;   /* same but without counting PixelID */
-
-/* Allow to specify size of Monitor_nD buffer via a define*/
-#ifndef MONND_BUFSIZ
-    Vars->Buffer_Block      = 100000;     /* Buffer size for list or auto limits */
-#else
-	Vars->Buffer_Block      = MONND_BUFSIZ;     /* Buffer size for list or auto limits */	
-#endif
+    Vars->Buffer_Block      = 10000;     /* Buffer size for list or auto limits */
     Vars->Neutron_Counter   = 0;   /* event counter, simulation total counts is mcget_ncount() */
     Vars->Buffer_Counter    = 0;   /* index in Buffer size (for realloc) */
     Vars->Buffer_Size       = 0;
@@ -9096,14 +8984,12 @@ void Monitor_nD_Init(MonitornD_Defines_type *DEFS,
 
 /* ========================================================================= */
 /* Monitor_nD_Trace: this routine is used to monitor one propagating neutron */
-/* return values: 0=neutron was absorbed, -1=neutron was outside bounds, 1=neutron was measured*/
 /* ========================================================================= */
 
-int Monitor_nD_Trace(MonitornD_Defines_type *DEFS, MonitornD_Variables_type *Vars)
+double Monitor_nD_Trace(MonitornD_Defines_type *DEFS, MonitornD_Variables_type *Vars)
 {
 
   double  XY=0, pp=0;
-  int     retval;
   long    i =0, j =0;
   double  Coord[MONnD_COORD_NMAX];
   long    Coord_Index[MONnD_COORD_NMAX];
@@ -9161,9 +9047,9 @@ int Monitor_nD_Trace(MonitornD_Defines_type *DEFS, MonitornD_Variables_type *Var
     }
   } /* end if Buffer realloc */
 
-  char    outsidebounds=0;
   while (!While_End)
   { /* we generate Coord[] and Coord_index[] from Buffer (auto limits) or passing neutron */
+    char    outsidebounds=0;
     if ((Vars->Flag_Auto_Limits == 2) && (Vars->Coord_Number > 0))
     { /* Vars->Flag_Auto_Limits == 2: read back from Buffer (Buffer is filled or auto limits have been computed) */
       if (While_Buffer < Vars->Buffer_Block)
@@ -9369,8 +9255,8 @@ int Monitor_nD_Trace(MonitornD_Defines_type *DEFS, MonitornD_Variables_type *Var
               if (Coord_Index[i] >= Vars->Coord_Bin[i]) Coord_Index[i] = Vars->Coord_Bin[i] - 1;
               if (Coord_Index[i] < 0) Coord_Index[i] = 0;
             }
-            //if (0 > Coord_Index[i] || Coord_Index[i] >= Vars->Coord_Bin[i])
-            //  outsidebounds=1;
+            if (0 > Coord_Index[i] || Coord_Index[i] >= Vars->Coord_Bin[i])
+              outsidebounds=1;
           } /* else will get Index later from Buffer when Flag_Auto_Limits == 2 */
         }
         
@@ -9387,7 +9273,7 @@ int Monitor_nD_Trace(MonitornD_Defines_type *DEFS, MonitornD_Variables_type *Var
         pp /= Vars->area;
 
       /* 2D case : Vars->Coord_Number==2 and !Vars->Flag_Multiple and !Vars->Flag_List */
-      if ( Vars->Coord_NumberNoPixel == 2 && !Vars->Flag_Multiple)
+      if ( Vars->Coord_NumberNoPixel == 2 && !Vars->Flag_Multiple && !outsidebounds)
       { /* Dim : Vars->Coord_Bin[1]*Vars->Coord_Bin[2] matrix */
         
         i = Coord_Index[1];
@@ -9401,8 +9287,9 @@ int Monitor_nD_Trace(MonitornD_Defines_type *DEFS, MonitornD_Variables_type *Var
           }
         } else {
           outsidebounds=1; 
+          if (Vars->Flag_Absorb) pp=0;
         }
-      } else {
+      } else if (!outsidebounds) {
         /* 1D and n1D case : Vars->Flag_Multiple */
         /* Dim : Vars->Coord_Number*Vars->Coord_Bin[i] vectors (intensity is not included) */
           
@@ -9413,10 +9300,10 @@ int Monitor_nD_Trace(MonitornD_Defines_type *DEFS, MonitornD_Variables_type *Var
               Vars->Mon2D_N[i-1][j]++;
               Vars->Mon2D_p[i-1][j]  += pp;
               Vars->Mon2D_p2[i-1][j] += pp*pp;
-            }
+            } 
           } else { 
-            outsidebounds=1;
-            break;
+            outsidebounds=1; 
+            if (Vars->Flag_Absorb) { pp=0; break; }
           }
         }
       }
@@ -9442,16 +9329,8 @@ int Monitor_nD_Trace(MonitornD_Defines_type *DEFS, MonitornD_Variables_type *Var
   Vars->Nsum++;
   Vars->psum  += pp;
   Vars->p2sum += pp*pp;
-
-  /*determine return value: 1:neutron was in bounds and measured, -1: outside bounds, 0: outside bounds, should be absorbed.*/
-  if(outsidebounds){
-      if(Vars->Flag_Absorb){
-          return 0;
-      }else{
-          return -1;
-      }
-  }
-  return 1;
+  
+  return pp;
 } /* end Monitor_nD_Trace */
 
 /* ========================================================================= */
@@ -9975,8 +9854,8 @@ void Monitor_nD_McDisplay(MonitornD_Defines_type *DEFS,
       
       /* check width and height of elements (sphere) to make sure the nb
          of plates remains limited */
-      if (width < 10  && NH > 1) { width = 10;  NH=(hdiv_max-hdiv_min)/width; width=(hdiv_max-hdiv_min)/NH; }
-      if (height < 10 && NV > 1) { height = 10; NV=(vdiv_max-vdiv_min)/height; height= (vdiv_max-vdiv_min)/NV; }
+      if (width < 10  && NH > 1) { width = 10;  NH=(hdiv_max-hdiv_min)/width; }
+      if (height < 10 && NV > 1) { height = 10; NV=(vdiv_max-vdiv_min)/height; }
       
       mcdis_magnify("xyz");
       for(ih = 0; ih < NH; ih++)
@@ -10098,7 +9977,7 @@ void Monitor_nD_McDisplay(MonitornD_Defines_type *DEFS,
 
 
 
-#line 10101 "./LIRA_oct.c"
+#line 9980 "LIRA_oct.c"
 
 /* Instrument parameters. */
 MCNUM mcipL0;
@@ -10111,8 +9990,8 @@ MCNUM mciph;
 #define mcNUMIPAR 6
 int mcnumipar = 6;
 struct mcinputtable_struct mcinputtable[mcNUMIPAR+1] = {
-  "L0", &mcipL0, instr_type_double, "20", 
-  "L1", &mcipL1, instr_type_double, "0.01", 
+  "L0", &mcipL0, instr_type_double, "15", 
+  "L1", &mcipL1, instr_type_double, "10", 
   "lambda", &mciplambda, instr_type_double, "5", 
   "guide_m", &mcipguide_m, instr_type_double, "6", 
   "w", &mcipw, instr_type_double, "0.03", 
@@ -10152,7 +10031,7 @@ double source_no_I1 = 7.05e12;
 //Distance to neutron guides
 double guide_start_dist = 1.82;
 
-#line 10155 "./LIRA_oct.c"
+#line 10034 "LIRA_oct.c"
 #undef h
 #undef w
 #undef guide_m
@@ -10259,7 +10138,7 @@ char mccGuide_bunker_straight_reflect[16384];
 
 /* Definition parameters for component 'geks' [6]. */
 #define mccgeks_reflect 0 /* declared as a string. May produce warnings at compile */
-#define mccgeks_geometry "geks.off" /* declared as a string. May produce warnings at compile */
+#define mccgeks_geometry "oct_user_08max.off" /* declared as a string. May produce warnings at compile */
 /* Setting parameters for component 'geks' [6]. */
 MCNUM mccgeks_xwidth;
 MCNUM mccgeks_yheight;
@@ -10297,7 +10176,6 @@ char mccOcto_large_geometry[16384];
 char mccOcto_large_username1[16384];
 char mccOcto_large_username2[16384];
 char mccOcto_large_username3[16384];
-int mccOcto_large_nowritefile;
 
 /* Definition parameters for component 'Octo_medium' [8]. */
 #define mccOcto_medium_user1 FLT_MAX
@@ -10324,7 +10202,6 @@ char mccOcto_medium_geometry[16384];
 char mccOcto_medium_username1[16384];
 char mccOcto_medium_username2[16384];
 char mccOcto_medium_username3[16384];
-int mccOcto_medium_nowritefile;
 
 /* Definition parameters for component 'Octo_small' [9]. */
 #define mccOcto_small_user1 FLT_MAX
@@ -10351,7 +10228,6 @@ char mccOcto_small_geometry[16384];
 char mccOcto_small_username1[16384];
 char mccOcto_small_username2[16384];
 char mccOcto_small_username3[16384];
-int mccOcto_small_nowritefile;
 
 /* User component declarations. */
 
@@ -10367,7 +10243,7 @@ int mccOcto_small_nowritefile;
 #define percent mccOrigin_percent
 #define flag_save mccOrigin_flag_save
 #define minutes mccOrigin_minutes
-#line 44 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../misc/Progress_bar.comp"
+#line 44 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\misc\\Progress_bar.comp"
 #ifndef PROGRESS_BAR
 #define PROGRESS_BAR
 #else
@@ -10378,7 +10254,7 @@ double IntermediateCnts;
 time_t StartTime;
 time_t EndTime;
 time_t CurrentTime;
-#line 10381 "./LIRA_oct.c"
+#line 10257 "LIRA_oct.c"
 #undef minutes
 #undef flag_save
 #undef percent
@@ -10442,7 +10318,7 @@ time_t CurrentTime;
 #define I3 mccH3_I3
 #define zdepth mccH3_zdepth
 #define target_index mccH3_target_index
-#line 184 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../sources/Source_gen.comp"
+#line 184 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\sources\\Source_gen.comp"
 
   double p_in;
   double lambda1;  /* first Maxwellian source */
@@ -10462,7 +10338,7 @@ time_t CurrentTime;
   double pTable_dymin;
   double pTable_dymax;
 
-#line 10465 "./LIRA_oct.c"
+#line 10341 "LIRA_oct.c"
 #undef target_index
 #undef zdepth
 #undef I3
@@ -10562,10 +10438,10 @@ time_t CurrentTime;
 #define nu mccGuide_bunker_straight_nu
 #define phase mccGuide_bunker_straight_phase
 #define reflect mccGuide_bunker_straight_reflect
-#line 334 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
+#line 334 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_gravity.comp"
   Gravity_guide_Vars_type GVars;
   t_Table pTable;
-#line 10568 "./LIRA_oct.c"
+#line 10444 "LIRA_oct.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -10632,10 +10508,10 @@ time_t CurrentTime;
 #define alpha mccgeks_alpha
 #define m mccgeks_m
 #define W mccgeks_W
-#line 95 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_anyshape.comp"
+#line 95 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_anyshape.comp"
 off_struct offdata;
 t_Table pTable;
-#line 10638 "./LIRA_oct.c"
+#line 10514 "LIRA_oct.c"
 #undef W
 #undef m
 #undef alpha
@@ -10685,14 +10561,12 @@ t_Table pTable;
 #define username1 mccOcto_large_username1
 #define username2 mccOcto_large_username2
 #define username3 mccOcto_large_username3
-#define nowritefile mccOcto_large_nowritefile
-#line 223 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 221 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
   MonitornD_Defines_type DEFS;
   MonitornD_Variables_type Vars;
   MCDETECTOR detector;
   off_struct offdata;
-#line 10694 "./LIRA_oct.c"
-#undef nowritefile
+#line 10569 "LIRA_oct.c"
 #undef username3
 #undef username2
 #undef username1
@@ -10755,14 +10629,12 @@ t_Table pTable;
 #define username1 mccOcto_medium_username1
 #define username2 mccOcto_medium_username2
 #define username3 mccOcto_medium_username3
-#define nowritefile mccOcto_medium_nowritefile
-#line 223 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 221 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
   MonitornD_Defines_type DEFS;
   MonitornD_Variables_type Vars;
   MCDETECTOR detector;
   off_struct offdata;
-#line 10764 "./LIRA_oct.c"
-#undef nowritefile
+#line 10637 "LIRA_oct.c"
 #undef username3
 #undef username2
 #undef username1
@@ -10825,14 +10697,12 @@ t_Table pTable;
 #define username1 mccOcto_small_username1
 #define username2 mccOcto_small_username2
 #define username3 mccOcto_small_username3
-#define nowritefile mccOcto_small_nowritefile
-#line 223 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 221 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
   MonitornD_Defines_type DEFS;
   MonitornD_Variables_type Vars;
   MCDETECTOR detector;
   off_struct offdata;
-#line 10834 "./LIRA_oct.c"
-#undef nowritefile
+#line 10705 "LIRA_oct.c"
 #undef username3
 #undef username2
 #undef username1
@@ -10917,7 +10787,7 @@ if (cold_regime==-1){
 source_lambda_min = lambda-0.1;
 source_lambda_max = lambda+0.1;
 }
-#line 10920 "./LIRA_oct.c"
+#line 10790 "LIRA_oct.c"
 #undef h
 #undef w
 #undef guide_m
@@ -10949,14 +10819,14 @@ source_lambda_max = lambda+0.1;
   mccOrigin_flag_save = 0;
 #line 39 "LIRA_oct.instr"
   mccOrigin_minutes = 0;
-#line 10952 "./LIRA_oct.c"
+#line 10822 "LIRA_oct.c"
 
   SIG_MESSAGE("Origin (Init:Place/Rotate)");
   rot_set_rotation(mcrotaOrigin,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 10959 "./LIRA_oct.c"
+#line 10829 "LIRA_oct.c"
   rot_copy(mcrotrOrigin, mcrotaOrigin);
   mcposaOrigin = coords_set(
 #line 79 "LIRA_oct.instr"
@@ -10965,7 +10835,7 @@ source_lambda_max = lambda+0.1;
     0,
 #line 79 "LIRA_oct.instr"
     0);
-#line 10968 "./LIRA_oct.c"
+#line 10838 "LIRA_oct.c"
   mctc1 = coords_neg(mcposaOrigin);
   mcposrOrigin = rot_apply(mcrotaOrigin, mctc1);
   mcDEBUG_COMPONENT("Origin", mcposaOrigin, mcrotaOrigin)
@@ -11036,14 +10906,14 @@ source_lambda_max = lambda+0.1;
   mccH3_zdepth = 0;
 #line 134 "LIRA_oct.instr"
   mccH3_target_index = + 1;
-#line 11039 "./LIRA_oct.c"
+#line 10909 "LIRA_oct.c"
 
   SIG_MESSAGE("H3 (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11046 "./LIRA_oct.c"
+#line 10916 "LIRA_oct.c"
   rot_mul(mctr1, mcrotaOrigin, mcrotaH3);
   rot_transpose(mcrotaOrigin, mctr1);
   rot_mul(mcrotaH3, mctr1, mcrotrH3);
@@ -11054,7 +10924,7 @@ source_lambda_max = lambda+0.1;
     0,
 #line 89 "LIRA_oct.instr"
     0);
-#line 11057 "./LIRA_oct.c"
+#line 10927 "LIRA_oct.c"
   rot_transpose(mcrotaOrigin, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH3 = coords_add(mcposaOrigin, mctc2);
@@ -11074,7 +10944,7 @@ source_lambda_max = lambda+0.1;
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11077 "./LIRA_oct.c"
+#line 10947 "LIRA_oct.c"
   rot_mul(mctr1, mcrotaOrigin, mcrotaGuide_start_arm);
   rot_transpose(mcrotaH3, mctr1);
   rot_mul(mcrotaGuide_start_arm, mctr1, mcrotrGuide_start_arm);
@@ -11085,7 +10955,7 @@ source_lambda_max = lambda+0.1;
     0,
 #line 95 "LIRA_oct.instr"
     guide_start_dist);
-#line 11088 "./LIRA_oct.c"
+#line 10958 "LIRA_oct.c"
   rot_transpose(mcrotaOrigin, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaGuide_start_arm = coords_add(mcposaOrigin, mctc2);
@@ -11167,14 +11037,14 @@ source_lambda_max = lambda+0.1;
   mccGuide_bunker_straight_phase = 0;
 #line 119 "LIRA_oct.instr"
   if("NULL") strncpy(mccGuide_bunker_straight_reflect, "NULL" ? "NULL" : "", 16384); else mccGuide_bunker_straight_reflect[0]='\0';
-#line 11170 "./LIRA_oct.c"
+#line 11040 "LIRA_oct.c"
 
   SIG_MESSAGE("Guide_bunker_straight (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11177 "./LIRA_oct.c"
+#line 11047 "LIRA_oct.c"
   rot_mul(mctr1, mcrotaGuide_start_arm, mcrotaGuide_bunker_straight);
   rot_transpose(mcrotaGuide_start_arm, mctr1);
   rot_mul(mcrotaGuide_bunker_straight, mctr1, mcrotrGuide_bunker_straight);
@@ -11185,7 +11055,7 @@ source_lambda_max = lambda+0.1;
     0,
 #line 103 "LIRA_oct.instr"
     0);
-#line 11188 "./LIRA_oct.c"
+#line 11058 "LIRA_oct.c"
   rot_transpose(mcrotaGuide_start_arm, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaGuide_bunker_straight = coords_add(mcposaGuide_start_arm, mctc2);
@@ -11205,7 +11075,7 @@ source_lambda_max = lambda+0.1;
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11208 "./LIRA_oct.c"
+#line 11078 "LIRA_oct.c"
   rot_mul(mctr1, mcrotaGuide_bunker_straight, mcrotaarm_geks);
   rot_transpose(mcrotaGuide_bunker_straight, mctr1);
   rot_mul(mcrotaarm_geks, mctr1, mcrotrarm_geks);
@@ -11216,7 +11086,7 @@ source_lambda_max = lambda+0.1;
     0,
 #line 120 "LIRA_oct.instr"
     25.02);
-#line 11219 "./LIRA_oct.c"
+#line 11089 "LIRA_oct.c"
   rot_transpose(mcrotaGuide_bunker_straight, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaarm_geks = coords_add(mcposaGuide_bunker_straight, mctc2);
@@ -11250,25 +11120,28 @@ source_lambda_max = lambda+0.1;
   mccgeks_m = mcipguide_m;
 #line 133 "LIRA_oct.instr"
   mccgeks_W = 0.003;
-#line 11253 "./LIRA_oct.c"
+#line 11123 "LIRA_oct.c"
 
   SIG_MESSAGE("geks (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
-    (0.0)*DEG2RAD,
-    (0.0)*DEG2RAD,
-    (0.0)*DEG2RAD);
-#line 11260 "./LIRA_oct.c"
+#line 136 "LIRA_oct.instr"
+    (-90)*DEG2RAD,
+#line 136 "LIRA_oct.instr"
+    (0)*DEG2RAD,
+#line 136 "LIRA_oct.instr"
+    (0)*DEG2RAD);
+#line 11133 "LIRA_oct.c"
   rot_mul(mctr1, mcrotaarm_geks, mcrotageks);
   rot_transpose(mcrotaarm_geks, mctr1);
   rot_mul(mcrotageks, mctr1, mcrotrgeks);
   mctc1 = coords_set(
-#line 136 "LIRA_oct.instr"
-    0,
-#line 136 "LIRA_oct.instr"
-    0,
-#line 136 "LIRA_oct.instr"
+#line 135 "LIRA_oct.instr"
+    - mcipw / 2,
+#line 135 "LIRA_oct.instr"
+    - mciph / 2,
+#line 135 "LIRA_oct.instr"
     0);
-#line 11271 "./LIRA_oct.c"
+#line 11144 "LIRA_oct.c"
   rot_transpose(mcrotaarm_geks, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposageks = coords_add(mcposaarm_geks, mctc2);
@@ -11286,52 +11159,50 @@ source_lambda_max = lambda+0.1;
   mccOcto_large_xwidth = mciph;
 #line 139 "LIRA_oct.instr"
   mccOcto_large_yheight = mcipw;
-#line 201 "LIRA_oct.instr"
+#line 200 "LIRA_oct.instr"
   mccOcto_large_zdepth = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_large_xmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_large_xmax = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_large_ymin = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_large_ymax = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_large_zmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_large_zmax = 0;
 #line 139 "LIRA_oct.instr"
   mccOcto_large_bins = 100;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_large_min = -1e40;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_large_max = 1e40;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_large_restore_neutron = 0;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_large_radius = 0;
 #line 139 "LIRA_oct.instr"
   if("dy limits = [-1.5 1.5] ") strncpy(mccOcto_large_options, "dy limits = [-1.5 1.5] " ? "dy limits = [-1.5 1.5] " : "", 16384); else mccOcto_large_options[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 203 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_large_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_large_filename[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 203 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_large_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_large_geometry[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 204 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_large_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_large_username1[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 204 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_large_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_large_username2[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 204 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_large_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_large_username3[0]='\0';
-#line 206 "LIRA_oct.instr"
-  mccOcto_large_nowritefile = 0;
-#line 11327 "./LIRA_oct.c"
+#line 11198 "LIRA_oct.c"
 
   SIG_MESSAGE("Octo_large (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11334 "./LIRA_oct.c"
+#line 11205 "LIRA_oct.c"
   rot_mul(mctr1, mcrotaarm_geks, mcrotaOcto_large);
   rot_transpose(mcrotageks, mctr1);
   rot_mul(mcrotaOcto_large, mctr1, mcrotrOcto_large);
@@ -11342,7 +11213,7 @@ source_lambda_max = lambda+0.1;
     0,
 #line 140 "LIRA_oct.instr"
     2 * mcipL0 + mcipL1 + 0.001);
-#line 11345 "./LIRA_oct.c"
+#line 11216 "LIRA_oct.c"
   rot_transpose(mcrotaarm_geks, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaOcto_large = coords_add(mcposaarm_geks, mctc2);
@@ -11356,67 +11227,65 @@ source_lambda_max = lambda+0.1;
     /* Component Octo_medium. */
   /* Setting parameters for component Octo_medium. */
   SIG_MESSAGE("Octo_medium (Init:SetPar)");
-#line 147 "LIRA_oct.instr"
+#line 144 "LIRA_oct.instr"
   mccOcto_medium_xwidth = mciph;
-#line 147 "LIRA_oct.instr"
+#line 144 "LIRA_oct.instr"
   mccOcto_medium_yheight = mcipw;
-#line 201 "LIRA_oct.instr"
+#line 200 "LIRA_oct.instr"
   mccOcto_medium_zdepth = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_medium_xmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_medium_xmax = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_medium_ymin = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_medium_ymax = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_medium_zmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_medium_zmax = 0;
-#line 147 "LIRA_oct.instr"
+#line 144 "LIRA_oct.instr"
   mccOcto_medium_bins = 100;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_medium_min = -1e40;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_medium_max = 1e40;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_medium_restore_neutron = 0;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_medium_radius = 0;
-#line 147 "LIRA_oct.instr"
+#line 144 "LIRA_oct.instr"
   if("dy limits = [-0.5 0.5] ") strncpy(mccOcto_medium_options, "dy limits = [-0.5 0.5] " ? "dy limits = [-0.5 0.5] " : "", 16384); else mccOcto_medium_options[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 203 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_medium_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_filename[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 203 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_medium_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_geometry[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 204 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_medium_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_username1[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 204 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_medium_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_username2[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 204 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_medium_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_medium_username3[0]='\0';
-#line 206 "LIRA_oct.instr"
-  mccOcto_medium_nowritefile = 0;
-#line 11401 "./LIRA_oct.c"
+#line 11270 "LIRA_oct.c"
 
   SIG_MESSAGE("Octo_medium (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11408 "./LIRA_oct.c"
+#line 11277 "LIRA_oct.c"
   rot_mul(mctr1, mcrotaOcto_large, mcrotaOcto_medium);
   rot_transpose(mcrotaOcto_large, mctr1);
   rot_mul(mcrotaOcto_medium, mctr1, mcrotrOcto_medium);
   mctc1 = coords_set(
-#line 148 "LIRA_oct.instr"
+#line 145 "LIRA_oct.instr"
     0,
-#line 148 "LIRA_oct.instr"
+#line 145 "LIRA_oct.instr"
     0,
-#line 148 "LIRA_oct.instr"
+#line 145 "LIRA_oct.instr"
     0.001);
-#line 11419 "./LIRA_oct.c"
+#line 11288 "LIRA_oct.c"
   rot_transpose(mcrotaOcto_large, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaOcto_medium = coords_add(mcposaOcto_large, mctc2);
@@ -11430,67 +11299,65 @@ source_lambda_max = lambda+0.1;
     /* Component Octo_small. */
   /* Setting parameters for component Octo_small. */
   SIG_MESSAGE("Octo_small (Init:SetPar)");
-#line 151 "LIRA_oct.instr"
+#line 148 "LIRA_oct.instr"
   mccOcto_small_xwidth = mciph;
-#line 151 "LIRA_oct.instr"
+#line 148 "LIRA_oct.instr"
   mccOcto_small_yheight = mcipw;
-#line 201 "LIRA_oct.instr"
+#line 200 "LIRA_oct.instr"
   mccOcto_small_zdepth = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_small_xmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_small_xmax = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_small_ymin = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_small_ymax = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_small_zmin = 0;
-#line 202 "LIRA_oct.instr"
+#line 201 "LIRA_oct.instr"
   mccOcto_small_zmax = 0;
-#line 151 "LIRA_oct.instr"
+#line 148 "LIRA_oct.instr"
   mccOcto_small_bins = 100;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_small_min = -1e40;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_small_max = 1e40;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_small_restore_neutron = 0;
-#line 203 "LIRA_oct.instr"
+#line 202 "LIRA_oct.instr"
   mccOcto_small_radius = 0;
-#line 151 "LIRA_oct.instr"
+#line 148 "LIRA_oct.instr"
   if("dy limits = [-0.1 0.1] ") strncpy(mccOcto_small_options, "dy limits = [-0.1 0.1] " ? "dy limits = [-0.1 0.1] " : "", 16384); else mccOcto_small_options[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 203 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_small_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_small_filename[0]='\0';
-#line 204 "LIRA_oct.instr"
+#line 203 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_small_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_small_geometry[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 204 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_small_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_small_username1[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 204 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_small_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_small_username2[0]='\0';
-#line 205 "LIRA_oct.instr"
+#line 204 "LIRA_oct.instr"
   if("NULL") strncpy(mccOcto_small_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_small_username3[0]='\0';
-#line 206 "LIRA_oct.instr"
-  mccOcto_small_nowritefile = 0;
-#line 11475 "./LIRA_oct.c"
+#line 11342 "LIRA_oct.c"
 
   SIG_MESSAGE("Octo_small (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11482 "./LIRA_oct.c"
+#line 11349 "LIRA_oct.c"
   rot_mul(mctr1, mcrotaOcto_medium, mcrotaOcto_small);
   rot_transpose(mcrotaOcto_medium, mctr1);
   rot_mul(mcrotaOcto_small, mctr1, mcrotrOcto_small);
   mctc1 = coords_set(
-#line 152 "LIRA_oct.instr"
+#line 149 "LIRA_oct.instr"
     0,
-#line 152 "LIRA_oct.instr"
+#line 149 "LIRA_oct.instr"
     0,
-#line 152 "LIRA_oct.instr"
+#line 149 "LIRA_oct.instr"
     0.0001);
-#line 11493 "./LIRA_oct.c"
+#line 11360 "LIRA_oct.c"
   rot_transpose(mcrotaOcto_medium, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaOcto_small = coords_add(mcposaOcto_medium, mctc2);
@@ -11515,7 +11382,7 @@ source_lambda_max = lambda+0.1;
 #define percent mccOrigin_percent
 #define flag_save mccOrigin_flag_save
 #define minutes mccOrigin_minutes
-#line 57 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../misc/Progress_bar.comp"
+#line 57 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\misc\\Progress_bar.comp"
 {
 IntermediateCnts=0;
 StartTime=0;
@@ -11527,7 +11394,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
     percent=1e5*100.0/mcget_ncount();
   }
 }
-#line 11530 "./LIRA_oct.c"
+#line 11397 "LIRA_oct.c"
 #undef minutes
 #undef flag_save
 #undef percent
@@ -11592,7 +11459,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
 #define I3 mccH3_I3
 #define zdepth mccH3_zdepth
 #define target_index mccH3_target_index
-#line 206 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../sources/Source_gen.comp"
+#line 206 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\sources\\Source_gen.comp"
 {
   pTable_xsum=0;
   pTable_ysum=0;
@@ -11864,7 +11731,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
       printf("Source_gen: component %s unactivated", NAME_CURRENT_COMP);
   );
 }
-#line 11867 "./LIRA_oct.c"
+#line 11734 "LIRA_oct.c"
 #undef target_index
 #undef zdepth
 #undef I3
@@ -11960,7 +11827,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
 #define nu mccGuide_bunker_straight_nu
 #define phase mccGuide_bunker_straight_phase
 #define reflect mccGuide_bunker_straight_reflect
-#line 339 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
+#line 339 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_gravity.comp"
 {
   double Gx=0, Gy=-GRAVITY, Gz=0;
   Coords mcLocG;
@@ -12012,7 +11879,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
   } else printf("Guide_gravity: %s: unactivated (l=0 or nelements=0)\n", NAME_CURRENT_COMP);
 
 }
-#line 12015 "./LIRA_oct.c"
+#line 11882 "LIRA_oct.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -12075,7 +11942,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
 #define alpha mccgeks_alpha
 #define m mccgeks_m
 #define W mccgeks_W
-#line 100 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_anyshape.comp"
+#line 100 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_anyshape.comp"
 {
 /* initialize OFF object from the file(s) */
   if (!off_init( geometry, xwidth, yheight, zdepth, !center, &offdata )) exit(-1);
@@ -12088,7 +11955,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
       Table_Rebin(&pTable);         /* rebin as evenly, increasing array */
   }
 }
-#line 12091 "./LIRA_oct.c"
+#line 11958 "LIRA_oct.c"
 #undef W
 #undef m
 #undef alpha
@@ -12139,8 +12006,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
 #define username1 mccOcto_large_username1
 #define username2 mccOcto_large_username2
 #define username3 mccOcto_large_username3
-#define nowritefile mccOcto_large_nowritefile
-#line 230 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 228 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   char tmp[CHAR_BUF_LENGTH];
   strcpy(Vars.compcurname, NAME_CURRENT_COMP);
@@ -12219,8 +12085,7 @@ MPI_MASTER(
 );
 #endif
 }
-#line 12222 "./LIRA_oct.c"
-#undef nowritefile
+#line 12088 "LIRA_oct.c"
 #undef username3
 #undef username2
 #undef username1
@@ -12284,8 +12149,7 @@ MPI_MASTER(
 #define username1 mccOcto_medium_username1
 #define username2 mccOcto_medium_username2
 #define username3 mccOcto_medium_username3
-#define nowritefile mccOcto_medium_nowritefile
-#line 230 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 228 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   char tmp[CHAR_BUF_LENGTH];
   strcpy(Vars.compcurname, NAME_CURRENT_COMP);
@@ -12364,8 +12228,7 @@ MPI_MASTER(
 );
 #endif
 }
-#line 12367 "./LIRA_oct.c"
-#undef nowritefile
+#line 12231 "LIRA_oct.c"
 #undef username3
 #undef username2
 #undef username1
@@ -12429,8 +12292,7 @@ MPI_MASTER(
 #define username1 mccOcto_small_username1
 #define username2 mccOcto_small_username2
 #define username3 mccOcto_small_username3
-#define nowritefile mccOcto_small_nowritefile
-#line 230 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 228 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   char tmp[CHAR_BUF_LENGTH];
   strcpy(Vars.compcurname, NAME_CURRENT_COMP);
@@ -12509,8 +12371,7 @@ MPI_MASTER(
 );
 #endif
 }
-#line 12512 "./LIRA_oct.c"
-#undef nowritefile
+#line 12374 "LIRA_oct.c"
 #undef username3
 #undef username2
 #undef username1
@@ -12651,7 +12512,7 @@ char* profile = mccOrigin_profile;
 MCNUM percent = mccOrigin_percent;
 MCNUM flag_save = mccOrigin_flag_save;
 MCNUM minutes = mccOrigin_minutes;
-#line 70 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../misc/Progress_bar.comp"
+#line 70 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\misc\\Progress_bar.comp"
 {
   double ncount;
   ncount = mcget_run_num();
@@ -12695,7 +12556,7 @@ MCNUM minutes = mccOrigin_minutes;
     if (flag_save) mcsave(NULL);
   }
 }
-#line 12698 "./LIRA_oct.c"
+#line 12559 "LIRA_oct.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -12852,7 +12713,7 @@ MCNUM T3 = mccH3_T3;
 MCNUM I3 = mccH3_I3;
 MCNUM zdepth = mccH3_zdepth;
 int target_index = mccH3_target_index;
-#line 479 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../sources/Source_gen.comp"
+#line 479 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\sources\\Source_gen.comp"
 {
   double dx=0,dy=0,xf,yf,rf,pdir,chi,v,r, lambda;
   double Maxwell;
@@ -12943,7 +12804,7 @@ int target_index = mccH3_target_index;
     SCATTER;
   }
 }
-#line 12946 "./LIRA_oct.c"
+#line 12807 "LIRA_oct.c"
 }   /* End of H3=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -13205,7 +13066,7 @@ MCNUM nelements = mccGuide_bunker_straight_nelements;
 MCNUM nu = mccGuide_bunker_straight_nu;
 MCNUM phase = mccGuide_bunker_straight_phase;
 char* reflect = mccGuide_bunker_straight_reflect;
-#line 392 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
+#line 392 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_gravity.comp"
 {
   if (l > 0 && nelements > 0) {
     double B, C, dt;
@@ -13374,7 +13235,7 @@ char* reflect = mccGuide_bunker_straight_reflect;
 
   } /* if l */
 }
-#line 13377 "./LIRA_oct.c"
+#line 13238 "LIRA_oct.c"
 }   /* End of Guide_bunker_straight=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -13599,7 +13460,7 @@ MCNUM Qc = mccgeks_Qc;
 MCNUM alpha = mccgeks_alpha;
 MCNUM m = mccgeks_m;
 MCNUM W = mccgeks_W;
-#line 114 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_anyshape.comp"
+#line 114 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_anyshape.comp"
 {
   int intersect=0;
   int counter=0;
@@ -13670,7 +13531,7 @@ MCNUM W = mccgeks_W;
   /* end of main loop */
 
 }
-#line 13673 "./LIRA_oct.c"
+#line 13534 "LIRA_oct.c"
 }   /* End of geks=Guide_anyshape() SETTING parameter declarations. */
 #undef offdata
 #undef pTable
@@ -13807,8 +13668,7 @@ char* geometry = mccOcto_large_geometry;
 char* username1 = mccOcto_large_username1;
 char* username2 = mccOcto_large_username2;
 char* username3 = mccOcto_large_username3;
-int nowritefile = mccOcto_large_nowritefile;
-#line 310 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 308 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   double  XY=0;
   double  t0 = 0;
@@ -13954,7 +13814,7 @@ int nowritefile = mccOcto_large_nowritefile;
     if (pp==0.0)
     { ABSORB;
     }
-    else if(pp==1)
+    else
     {
       SCATTER;
     }
@@ -13977,7 +13837,7 @@ int nowritefile = mccOcto_large_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 13980 "./LIRA_oct.c"
+#line 13840 "LIRA_oct.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14117,8 +13977,7 @@ char* geometry = mccOcto_medium_geometry;
 char* username1 = mccOcto_medium_username1;
 char* username2 = mccOcto_medium_username2;
 char* username3 = mccOcto_medium_username3;
-int nowritefile = mccOcto_medium_nowritefile;
-#line 310 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 308 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   double  XY=0;
   double  t0 = 0;
@@ -14264,7 +14123,7 @@ int nowritefile = mccOcto_medium_nowritefile;
     if (pp==0.0)
     { ABSORB;
     }
-    else if(pp==1)
+    else
     {
       SCATTER;
     }
@@ -14287,7 +14146,7 @@ int nowritefile = mccOcto_medium_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 14290 "./LIRA_oct.c"
+#line 14149 "LIRA_oct.c"
 }   /* End of Octo_medium=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14427,8 +14286,7 @@ char* geometry = mccOcto_small_geometry;
 char* username1 = mccOcto_small_username1;
 char* username2 = mccOcto_small_username2;
 char* username3 = mccOcto_small_username3;
-int nowritefile = mccOcto_small_nowritefile;
-#line 310 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 308 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   double  XY=0;
   double  t0 = 0;
@@ -14574,7 +14432,7 @@ int nowritefile = mccOcto_small_nowritefile;
     if (pp==0.0)
     { ABSORB;
     }
-    else if(pp==1)
+    else
     {
       SCATTER;
     }
@@ -14597,7 +14455,7 @@ int nowritefile = mccOcto_small_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 14600 "./LIRA_oct.c"
+#line 14458 "LIRA_oct.c"
 }   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14696,7 +14554,7 @@ char* profile = mccOrigin_profile;
 MCNUM percent = mccOrigin_percent;
 MCNUM flag_save = mccOrigin_flag_save;
 MCNUM minutes = mccOrigin_minutes;
-#line 115 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../misc/Progress_bar.comp"
+#line 115 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\misc\\Progress_bar.comp"
 {
   MPI_MASTER(fprintf(stdout, "\nSave [%s]\n", mcinstrument_name););
   if (profile && strlen(profile) && strcmp(profile,"NULL") && strcmp(profile,"0")) {
@@ -14713,7 +14571,7 @@ MCNUM minutes = mccOrigin_minutes;
 
   }
 }
-#line 14716 "./LIRA_oct.c"
+#line 14574 "LIRA_oct.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -14756,13 +14614,12 @@ char* geometry = mccOcto_large_geometry;
 char* username1 = mccOcto_large_username1;
 char* username2 = mccOcto_large_username2;
 char* username3 = mccOcto_large_username3;
-int nowritefile = mccOcto_large_nowritefile;
-#line 480 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 478 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   /* save results, but do not free pointers */
   detector = Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 14765 "./LIRA_oct.c"
+#line 14622 "LIRA_oct.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14808,13 +14665,12 @@ char* geometry = mccOcto_medium_geometry;
 char* username1 = mccOcto_medium_username1;
 char* username2 = mccOcto_medium_username2;
 char* username3 = mccOcto_medium_username3;
-int nowritefile = mccOcto_medium_nowritefile;
-#line 480 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 478 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   /* save results, but do not free pointers */
   detector = Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 14817 "./LIRA_oct.c"
+#line 14673 "LIRA_oct.c"
 }   /* End of Octo_medium=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14860,13 +14716,12 @@ char* geometry = mccOcto_small_geometry;
 char* username1 = mccOcto_small_username1;
 char* username2 = mccOcto_small_username2;
 char* username3 = mccOcto_small_username3;
-int nowritefile = mccOcto_small_nowritefile;
-#line 480 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 478 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   /* save results, but do not free pointers */
   detector = Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 14869 "./LIRA_oct.c"
+#line 14724 "LIRA_oct.c"
 }   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14900,7 +14755,7 @@ char* profile = mccOrigin_profile;
 MCNUM percent = mccOrigin_percent;
 MCNUM flag_save = mccOrigin_flag_save;
 MCNUM minutes = mccOrigin_minutes;
-#line 133 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../misc/Progress_bar.comp"
+#line 133 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\misc\\Progress_bar.comp"
 {
   time_t NowTime;
   time(&NowTime);
@@ -14913,7 +14768,7 @@ MCNUM minutes = mccOrigin_minutes;
     fprintf(stdout, "%g [min] ", difftime(NowTime,StartTime)/60.0);
   fprintf(stdout, "\n");
 }
-#line 14916 "./LIRA_oct.c"
+#line 14771 "LIRA_oct.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -14979,13 +14834,13 @@ MCNUM T3 = mccH3_T3;
 MCNUM I3 = mccH3_I3;
 MCNUM zdepth = mccH3_zdepth;
 int target_index = mccH3_target_index;
-#line 571 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../sources/Source_gen.comp"
+#line 571 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\sources\\Source_gen.comp"
 {
   Table_Free(&pTable);
   Table_Free(&pTable_x);
   Table_Free(&pTable_y);
 }
-#line 14987 "./LIRA_oct.c"
+#line 14842 "LIRA_oct.c"
 }   /* End of H3=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -15056,14 +14911,14 @@ MCNUM nelements = mccGuide_bunker_straight_nelements;
 MCNUM nu = mccGuide_bunker_straight_nu;
 MCNUM phase = mccGuide_bunker_straight_phase;
 char* reflect = mccGuide_bunker_straight_reflect;
-#line 562 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
+#line 562 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_gravity.comp"
 {
 if (GVars.warnings > 100) {
   fprintf(stderr,"%s: warning: neutron has entered guide, but can not exit !\n", GVars.compcurname);
   fprintf(stderr,"%s: warning: This message has been repeated %g times\n", GVars.compcurname, GVars.warnings);
 }
 }
-#line 15063 "./LIRA_oct.c"
+#line 14918 "LIRA_oct.c"
 }   /* End of Guide_bunker_straight=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -15113,15 +14968,12 @@ char* geometry = mccOcto_large_geometry;
 char* username1 = mccOcto_large_username1;
 char* username2 = mccOcto_large_username2;
 char* username3 = mccOcto_large_username3;
-int nowritefile = mccOcto_large_nowritefile;
-#line 486 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 484 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   /* free pointers */
-  if (!nowritefile) {
-    Monitor_nD_Finally(&DEFS, &Vars);
-  }
+  Monitor_nD_Finally(&DEFS, &Vars);
 }
-#line 15118 "./LIRA_oct.c"
+#line 14970 "LIRA_oct.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15170,15 +15022,12 @@ char* geometry = mccOcto_medium_geometry;
 char* username1 = mccOcto_medium_username1;
 char* username2 = mccOcto_medium_username2;
 char* username3 = mccOcto_medium_username3;
-int nowritefile = mccOcto_medium_nowritefile;
-#line 486 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 484 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   /* free pointers */
-  if (!nowritefile) {
-    Monitor_nD_Finally(&DEFS, &Vars);
-  }
+  Monitor_nD_Finally(&DEFS, &Vars);
 }
-#line 15174 "./LIRA_oct.c"
+#line 15023 "LIRA_oct.c"
 }   /* End of Octo_medium=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15227,15 +15076,12 @@ char* geometry = mccOcto_small_geometry;
 char* username1 = mccOcto_small_username1;
 char* username2 = mccOcto_small_username2;
 char* username3 = mccOcto_small_username3;
-int nowritefile = mccOcto_small_nowritefile;
-#line 486 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 484 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   /* free pointers */
-  if (!nowritefile) {
-    Monitor_nD_Finally(&DEFS, &Vars);
-  }
+  Monitor_nD_Finally(&DEFS, &Vars);
 }
-#line 15230 "./LIRA_oct.c"
+#line 15076 "LIRA_oct.c"
 }   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15260,8 +15106,6 @@ int nowritefile = mccOcto_small_nowritefile;
 #define rectangle mcdis_rectangle
 #define box mcdis_box
 #define circle mcdis_circle
-#define cylinder mcdis_cylinder
-#define sphere mcdis_sphere
 void mcdisplay(void) {
   printf("MCDISPLAY: start\n");
   /* Components MCDISPLAY code. */
@@ -15281,11 +15125,11 @@ char* profile = mccOrigin_profile;
 MCNUM percent = mccOrigin_percent;
 MCNUM flag_save = mccOrigin_flag_save;
 MCNUM minutes = mccOrigin_minutes;
-#line 147 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../misc/Progress_bar.comp"
+#line 147 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\misc\\Progress_bar.comp"
 {
-  
+  magnify("");
 }
-#line 15279 "./LIRA_oct.c"
+#line 15123 "LIRA_oct.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -15349,7 +15193,7 @@ MCNUM T3 = mccH3_T3;
 MCNUM I3 = mccH3_I3;
 MCNUM zdepth = mccH3_zdepth;
 int target_index = mccH3_target_index;
-#line 578 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../sources/Source_gen.comp"
+#line 578 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\sources\\Source_gen.comp"
 {
   double xmin;
   double xmax;
@@ -15358,7 +15202,7 @@ int target_index = mccH3_target_index;
 
   if (radius)
   {
-    
+    magnify("xy");
     circle("xy",0,0,0,radius);
     if (zdepth) {
       circle("xy",0,0,-zdepth/2,radius);
@@ -15370,7 +15214,7 @@ int target_index = mccH3_target_index;
     xmin = -xwidth/2; xmax = xwidth/2;
     ymin = -yheight/2; ymax = yheight/2;
 
-    
+    magnify("xy");
     multiline(5, (double)xmin, (double)ymin, 0.0,
              (double)xmax, (double)ymin, 0.0,
              (double)xmax, (double)ymax, 0.0,
@@ -15398,7 +15242,7 @@ int target_index = mccH3_target_index;
     dashed_line(0,0,0, -focus_xw/2, focus_yh/2,dist, 4);
   }
 }
-#line 15392 "./LIRA_oct.c"
+#line 15236 "LIRA_oct.c"
 }   /* End of H3=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -15427,15 +15271,15 @@ int target_index = mccH3_target_index;
 #define mccompcurname  Guide_start_arm
 #define mccompcurtype  Arm
 #define mccompcurindex 3
-#line 40 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Arm.comp"
+#line 40 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Arm.comp"
 {
   /* A bit ugly; hard-coded dimensions. */
-  
+  magnify("");
   line(0,0,0,0.2,0,0);
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 15429 "./LIRA_oct.c"
+#line 15273 "LIRA_oct.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -15483,7 +15327,7 @@ MCNUM nelements = mccGuide_bunker_straight_nelements;
 MCNUM nu = mccGuide_bunker_straight_nu;
 MCNUM phase = mccGuide_bunker_straight_phase;
 char* reflect = mccGuide_bunker_straight_reflect;
-#line 571 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
+#line 571 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_gravity.comp"
 {
 
   if (l > 0 && nelements > 0) {
@@ -15492,7 +15336,7 @@ char* reflect = mccGuide_bunker_straight_reflect;
     double y1,y2,y3,y4;
     double nel = (nelements > 11 ? 11 : nelements);
 
-    
+    magnify("xy");
     for (n=0; n<nel; n++)
     {
       double z0, z1;
@@ -15539,14 +15383,14 @@ char* reflect = mccGuide_bunker_straight_reflect;
   }
   else {
     /* A bit ugly; hard-coded dimensions. */
-    
+    magnify("");
     line(0,0,0,0.2,0,0);
     line(0,0,0,0,0.2,0);
     line(0,0,0,0,0,0.2);
   }
 
 }
-#line 15540 "./LIRA_oct.c"
+#line 15384 "LIRA_oct.c"
 }   /* End of Guide_bunker_straight=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -15560,15 +15404,15 @@ char* reflect = mccGuide_bunker_straight_reflect;
 #define mccompcurname  arm_geks
 #define mccompcurtype  Arm
 #define mccompcurindex 5
-#line 40 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Arm.comp"
+#line 40 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Arm.comp"
 {
   /* A bit ugly; hard-coded dimensions. */
-  
+  magnify("");
   line(0,0,0,0.2,0,0);
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 15562 "./LIRA_oct.c"
+#line 15406 "LIRA_oct.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -15594,7 +15438,7 @@ MCNUM Qc = mccgeks_Qc;
 MCNUM alpha = mccgeks_alpha;
 MCNUM m = mccgeks_m;
 MCNUM W = mccgeks_W;
-#line 186 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_anyshape.comp"
+#line 186 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\optics\\Guide_anyshape.comp"
 {
   /* display the object */
   off_display(offdata);
@@ -15608,7 +15452,7 @@ MCNUM W = mccgeks_W;
             (-offdata.zmin+offdata.zmax));
   */
 }
-#line 15602 "./LIRA_oct.c"
+#line 15446 "LIRA_oct.c"
 }   /* End of geks=Guide_anyshape() SETTING parameter declarations. */
 #undef offdata
 #undef pTable
@@ -15652,8 +15496,7 @@ char* geometry = mccOcto_large_geometry;
 char* username1 = mccOcto_large_username1;
 char* username2 = mccOcto_large_username2;
 char* username3 = mccOcto_large_username3;
-int nowritefile = mccOcto_large_nowritefile;
-#line 494 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 490 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
   {
@@ -15662,7 +15505,7 @@ int nowritefile = mccOcto_large_nowritefile;
     Monitor_nD_McDisplay(&DEFS, &Vars);
   }
 }
-#line 15656 "./LIRA_oct.c"
+#line 15499 "LIRA_oct.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15709,8 +15552,7 @@ char* geometry = mccOcto_medium_geometry;
 char* username1 = mccOcto_medium_username1;
 char* username2 = mccOcto_medium_username2;
 char* username3 = mccOcto_medium_username3;
-int nowritefile = mccOcto_medium_nowritefile;
-#line 494 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 490 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
   {
@@ -15719,7 +15561,7 @@ int nowritefile = mccOcto_medium_nowritefile;
     Monitor_nD_McDisplay(&DEFS, &Vars);
   }
 }
-#line 15713 "./LIRA_oct.c"
+#line 15555 "LIRA_oct.c"
 }   /* End of Octo_medium=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15766,8 +15608,7 @@ char* geometry = mccOcto_small_geometry;
 char* username1 = mccOcto_small_username1;
 char* username2 = mccOcto_small_username2;
 char* username3 = mccOcto_small_username3;
-int nowritefile = mccOcto_small_nowritefile;
-#line 494 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+#line 490 "C:\\mcstas-2.4.1\\lib\\tools\\Python\\mcrun\\..\\mccodelib\\..\\..\\..\\monitors\\Monitor_nD.comp"
 {
   if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
   {
@@ -15776,7 +15617,7 @@ int nowritefile = mccOcto_small_nowritefile;
     Monitor_nD_McDisplay(&DEFS, &Vars);
   }
 }
-#line 15770 "./LIRA_oct.c"
+#line 15611 "LIRA_oct.c"
 }   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15798,6 +15639,4 @@ int nowritefile = mccOcto_small_nowritefile;
 #undef rectangle
 #undef box
 #undef circle
-#undef cylinder
-#undef sphere
-/* end of generated C code ./LIRA_oct.c */
+/* end of generated C code LIRA_oct.c */

@@ -22,7 +22,8 @@ optargs(1:numvarargs) = varargin;
 
 %guide parameters for geks function
 w = 0.03;
-h = 0.2;
+h = 0.15;
+L1 = 10;
 % a = 0.15;
 % b = a/sqrt(2);
 a_min = 0.01;
@@ -30,7 +31,7 @@ a_step = 0.01;
 a_max = 0.21;
 L_min = 1;
 L_step = 10;
-L_max = 101;
+L_max = 91;
 i=1;
 j=1;
 %Screw param
@@ -43,7 +44,7 @@ lr=1;
 progressbar('a','b');
 for L = L_min:L_step:L_max
     rect(w,h,L+0.01);
-    [p0,m0]=mcstas('screw_str.instr',struct('lambda',lambda,'L',L,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
+    [p0,m0]=mcstas('screw_str.instr',struct('lambda',lambda,'L',2*L+L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
     p0l=p0(1,:,:).Signal;
     p0m=p0(2,:,:).Signal;
     p0s=p0(3,:,:).Signal;
@@ -52,8 +53,8 @@ for L = L_min:L_step:L_max
     I0s(lr) = p0s;
     for a = a_min:a_step:a_max
         b = a/sqrt(2);
-        geks_ps(a,b,w,h,L,0.01);
-        [p1,m1]=mcstas('LIRA_oct.instr',struct('lambda',lambda,'L0',L,'L1',0.01,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
+        geks_ps(a,b,w,h,L,L1);
+        [p1,m1]=mcstas('LIRA_oct.instr',struct('lambda',lambda,'L0',L,'L1',L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
         p1l=p1(1,:,:).Signal;
         p1m=p1(2,:,:).Signal;
         p1s=p1(3,:,:).Signal;
