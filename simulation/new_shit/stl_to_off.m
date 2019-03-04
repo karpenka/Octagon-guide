@@ -1,4 +1,4 @@
-ppath = 'D:\JOB\github\Octagon-guide\simulation\new_shit\data\';
+ppath = 'D:\JOB\github\Octagon-guide\simulation\new_shit\stl\';
 files = dir(fullfile(ppath, '*.stl'));
 filenames = {files.name};
 for j = 1:length(filenames)
@@ -14,5 +14,9 @@ for j = 1:length(filenames)
     dlmwrite([ppath filenames{j} '.off'],x0,'')
     dlmwrite([ppath filenames{j} '.off'],x1,'-append','delimiter','')
     dlmwrite([ppath filenames{j} '.off'],x2,'-append','delimiter',' ')
-    dlmwrite([ppath filenames{j} '.off'],x3,'-append','delimiter',' ')
+    if length(p)>=1e5
+    dlmwrite([ppath filenames{j} '.off'],x3,'precision','%10.0f','-append','delimiter','')
+    else
+        dlmwrite([ppath filenames{j} '.off'],x3,'-append','delimiter',' ')
+    end
 end

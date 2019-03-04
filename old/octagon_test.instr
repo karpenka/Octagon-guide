@@ -101,186 +101,49 @@ AT (-w/2, -h/2, -30) RELATIVE Guide_start_arm
 ROTATED (-90, 0,0) RELATIVE Guide_start_arm
 
   COMPONENT Octo_large = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
+    xwidth = 0.1, yheight = 0.1, bins = 100, options = "x y")
   AT (0, 0, 10+0.001) RELATIVE Guide_start_arm
-
+/*
   COMPONENT COPY(Octo_large) = Monitor_nD(
     xwidth = 0.35, yheight = 0.35, bins = 100, options = "x y")
   AT (0, 0, 0.001) RELATIVE PREVIOUS
-
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(3)
+*/
 
 COMPONENT COPY(geks) = COPY(geks)
 AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
 ROTATED (-90, 0,0) RELATIVE Guide_start_arm
 
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
+  COMPONENT COPY(Octo_large) =COPY(Octo_large)
   AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
 
 COMPONENT COPY(geks) = COPY(geks)
 AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
 ROTATED (-90, 0,0) RELATIVE Guide_start_arm
 
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
+  COMPONENT COPY(Octo_large) =COPY(Octo_large)
   AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
 
 COMPONENT COPY(geks) = COPY(geks)
 AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
 ROTATED (-90, 0,0) RELATIVE Guide_start_arm
 
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
+  COMPONENT COPY(Octo_large) =COPY(Octo_large)
   AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
 
 COMPONENT COPY(geks) = COPY(geks)
 AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
 ROTATED (-90, 0,0) RELATIVE Guide_start_arm
 
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "x y")
-  AT (0, 0, 0.001) RELATIVE PREVIOUS
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(3)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
+  COMPONENT COPY(Octo_large) =COPY(Octo_large)
   AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
 
 COMPONENT COPY(geks) = COPY(geks)
 AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
 ROTATED (-90, 0,0) RELATIVE Guide_start_arm
 
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
+  COMPONENT COPY(Octo_large) =COPY(Octo_large)
   AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
 
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "x y")
-  AT (0, 0, 0.001) RELATIVE PREVIOUS
-
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(3)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-COMPONENT COPY(geks) = COPY(geks)
-AT (-w/2, -h/2, -30+0.05) RELATIVE PREVIOUS
-ROTATED (-90, 0,0) RELATIVE Guide_start_arm
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "dx limits=[-2 2] dy limits=[-2 2]")
-  AT (0, 0, 10+0.06) RELATIVE PREVIOUS(2)
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 100, options = "x y")
-  AT (0, 0, 0.001) RELATIVE PREVIOUS
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 1000, options = "dy limits=[-2 2]")
-  AT (0, 0, 0.02) RELATIVE PREVIOUS
-
-  COMPONENT COPY(Octo_large) = Monitor_nD(
-    xwidth = 0.35, yheight = 0.35, bins = 1000, options = "dx limits=[-2 2]")
-  AT (0, 0, 0.02) RELATIVE PREVIOUS
 
 
 FINALLY

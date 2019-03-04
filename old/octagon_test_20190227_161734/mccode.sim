@@ -1,0 +1,162 @@
+McStas simulation description file for H3.
+Date:    Wed Feb 27 16:17:34 2019
+Program: McStas 2.4.1 - Jun. 26, 2017
+
+begin instrument: H3
+  File: D:\JOB\github\Octagon-guide\old\octagon_test_20190227_161734\mccode
+  Source: octagon_test.instr
+  Parameters:  L0(double) L1(double) lambda(double) guide_m(double) w(double) h(double)
+  Trace_enabled: yes
+  Default_main: yes
+  Embedded_runtime: yes
+end instrument
+
+begin simulation: D:\JOB\github\Octagon-guide\old\octagon_test_20190227_161734
+  Format: McCode with text headers
+  URL: http://www.mccode.org
+  Creator: McStas 2.4.1 - Jun. 26, 2017
+  Instrument: octagon_test.instr
+  Ncount: 100000
+  Trace: no
+  Gravitation: no
+  Seed: 1551281742
+  Directory: D:\JOB\github\Octagon-guide\old\octagon_test_20190227_161734
+  Param: L0=15
+  Param: L1=10
+  Param: lambda=5
+  Param: guide_m=6
+  Param: w=0.03
+  Param: h=0.15
+end simulation
+
+begin data
+  Date: Wed Feb 27 16:17:42 2019 (1551273462)
+  type: array_2d(100, 100)
+  Source: H3 (octagon_test.instr)
+  component: Octo_large
+  position: 0 0 11.821
+  title:  Intensity Position Position Monitor (Square) per bin
+  Ncount: 100000
+  filename: Octo_large_1551273454.x_y
+  statistics: X0=-0.000143657; dX=0.023967; Y0=8.27019e-006; dY=0.0244254;
+  signal: Min=0; Max=5.25804e+006; Mean=757740;
+  values: 7.5774e+009 4.84275e+007 24543
+  xvar: x 
+  yvar: y 
+  xlabel: x [m]
+  ylabel: y [m]
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: -0.05 0.05 -0.05 0.05
+  variables: I I_err N
+end data
+
+begin data
+  Date: Wed Feb 27 16:17:42 2019 (1551273462)
+  type: array_2d(100, 100)
+  Source: H3 (octagon_test.instr)
+  component: Octo_large_7
+  position: 0 0 21.881
+  title:  Intensity Position Position Monitor (Square) per bin
+  Ncount: 100000
+  filename: Octo_large_7_1551273454.x_y
+  statistics: X0=1.2371e-005; dX=0.0213009; Y0=-0.000253624; dY=0.0213473;
+  signal: Min=0; Max=3.60334e+006; Mean=596488;
+  values: 5.96488e+009 4.22165e+007 20127
+  xvar: x 
+  yvar: y 
+  xlabel: x [m]
+  ylabel: y [m]
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: -0.05 0.05 -0.05 0.05
+  variables: I I_err N
+end data
+
+begin data
+  Date: Wed Feb 27 16:17:42 2019 (1551273462)
+  type: array_2d(100, 100)
+  Source: H3 (octagon_test.instr)
+  component: Octo_large_9
+  position: 0 0 31.941
+  title:  Intensity Position Position Monitor (Square) per bin
+  Ncount: 100000
+  filename: Octo_large_9_1551273454.x_y
+  statistics: X0=-0.000184877; dX=0.0199456; Y0=0.000104357; dY=0.0201462;
+  signal: Min=0; Max=3.90516e+006; Mean=533196;
+  values: 5.33196e+009 3.92987e+007 18720
+  xvar: x 
+  yvar: y 
+  xlabel: x [m]
+  ylabel: y [m]
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: -0.05 0.05 -0.05 0.05
+  variables: I I_err N
+end data
+
+begin data
+  Date: Wed Feb 27 16:17:42 2019 (1551273462)
+  type: array_2d(100, 100)
+  Source: H3 (octagon_test.instr)
+  component: Octo_large_11
+  position: 0 0 42.001
+  title:  Intensity Position Position Monitor (Square) per bin
+  Ncount: 100000
+  filename: Octo_large_11_1551273454.x_y
+  statistics: X0=6.75698e-005; dX=0.0194615; Y0=-4.30181e-005; dY=0.0194462;
+  signal: Min=0; Max=4.02654e+006; Mean=497276;
+  values: 4.97276e+009 3.74584e+007 18119
+  xvar: x 
+  yvar: y 
+  xlabel: x [m]
+  ylabel: y [m]
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: -0.05 0.05 -0.05 0.05
+  variables: I I_err N
+end data
+
+begin data
+  Date: Wed Feb 27 16:17:42 2019 (1551273462)
+  type: array_2d(100, 100)
+  Source: H3 (octagon_test.instr)
+  component: Octo_large_13
+  position: 0 0 52.061
+  title:  Intensity Position Position Monitor (Square) per bin
+  Ncount: 100000
+  filename: Octo_large_13_1551273454.x_y
+  statistics: X0=0.000330732; dX=0.0191395; Y0=0.000121219; dY=0.0194047;
+  signal: Min=0; Max=3.40047e+006; Mean=470437;
+  values: 4.70437e+009 3.60397e+007 17737
+  xvar: x 
+  yvar: y 
+  xlabel: x [m]
+  ylabel: y [m]
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: -0.05 0.05 -0.05 0.05
+  variables: I I_err N
+end data
+
+begin data
+  Date: Wed Feb 27 16:17:42 2019 (1551273462)
+  type: array_2d(100, 100)
+  Source: H3 (octagon_test.instr)
+  component: Octo_large_15
+  position: 0 0 62.121
+  title:  Intensity Position Position Monitor (Square) per bin
+  Ncount: 100000
+  filename: Octo_large_15_1551273454.x_y
+  statistics: X0=0.000100911; dX=0.0190471; Y0=-0.000190275; dY=0.0190606;
+  signal: Min=0; Max=3.94901e+006; Mean=448759;
+  values: 4.48759e+009 3.48762e+007 17476
+  xvar: x 
+  yvar: y 
+  xlabel: x [m]
+  ylabel: y [m]
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: -0.05 0.05 -0.05 0.05
+  variables: I I_err N
+end data
