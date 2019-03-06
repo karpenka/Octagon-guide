@@ -1,11 +1,11 @@
 clear all;
 
-name_for_png = 'screw_length_scan_lam8_w3h20';
+name_for_png = 'screw_length_scan_lam2_test';
 m = 6;
-lambda = 8;
-w=0.03;h=0.20;
-f1 = '/w3h20';
-d = 'new_shit/data';
+lambda = 2;
+w=0.01;h=0.14;
+f1 = '/w1h14';
+d = 'new_shit/off';
 ff1 = [d f1];
 filename = ff1;
 files = dir(fullfile(filename, '*.off'));

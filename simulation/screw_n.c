@@ -2,7 +2,7 @@
  * Format:     ANSI C source code
  * Creator:    McStas <http://www.mcstas.org>
  * Instrument: screw_n.instr (H3)
- * Date:       Mon Feb 11 19:19:47 2019
+ * Date:       Thu Feb 28 15:07:21 2019
  * File:       ./screw_n.c
  * Compile:    cc -o H3.out ./screw_n.c 
  * CFLAGS=
@@ -10104,13 +10104,17 @@ void Monitor_nD_McDisplay(MonitornD_Defines_type *DEFS,
 MCNUM mcipL;
 MCNUM mcipguide_m;
 MCNUM mciplambda;
+MCNUM mcipw;
+MCNUM mciph;
 
-#define mcNUMIPAR 3
-int mcnumipar = 3;
+#define mcNUMIPAR 5
+int mcnumipar = 5;
 struct mcinputtable_struct mcinputtable[mcNUMIPAR+1] = {
-  "L", &mcipL, instr_type_double, "10", 
+  "L", &mcipL, instr_type_double, "40", 
   "guide_m", &mcipguide_m, instr_type_double, "6", 
   "lambda", &mciplambda, instr_type_double, "5", 
+  "w", &mcipw, instr_type_double, "0.02", 
+  "h", &mciph, instr_type_double, "0.14", 
   NULL, NULL, instr_type_double, ""
 };
 
@@ -10122,9 +10126,10 @@ struct mcinputtable_struct mcinputtable[mcNUMIPAR+1] = {
 #define L mcipL
 #define guide_m mcipguide_m
 #define lambda mciplambda
+#define w mcipw
+#define h mciph
 #line 6 "screw_n.instr"
 //temp
-double w=0.03,h=0.15;
 double L_st = 0.01;
  
 double cold_regime=1;
@@ -10146,7 +10151,9 @@ double source_no_I1 = 7.05e12;
 //Distance to neutron guides
 double guide_start_dist = 1.82;
  
-#line 10149 "./screw_n.c"
+#line 10154 "./screw_n.c"
+#undef h
+#undef w
 #undef lambda
 #undef guide_m
 #undef L
@@ -10157,17 +10164,17 @@ double guide_start_dist = 1.82;
 
 /* neutron state table at each component input (local coords) */
 /* [x, y, z, vx, vy, vz, t, sx, sy, sz, p] */
-MCNUM mccomp_storein[11*11];
+MCNUM mccomp_storein[11*13];
 /* Components position table (absolute and relative coords) */
-Coords mccomp_posa[11];
-Coords mccomp_posr[11];
+Coords mccomp_posa[13];
+Coords mccomp_posr[13];
 /* Counter for each comp to check for inactive ones */
-MCNUM  mcNCounter[11];
-MCNUM  mcPCounter[11];
-MCNUM  mcP2Counter[11];
-#define mcNUMCOMP 10 /* number of components */
+MCNUM  mcNCounter[13];
+MCNUM  mcPCounter[13];
+MCNUM  mcP2Counter[13];
+#define mcNUMCOMP 12 /* number of components */
 /* Counter for PROP ABSORB */
-MCNUM  mcAbsorbProp[11];
+MCNUM  mcAbsorbProp[13];
 /* Flag true when previous component acted on the neutron (SCATTER) */
 MCNUM mcScattered=0;
 /* Flag true when neutron should be restored (RESTORE) */
@@ -10250,7 +10257,7 @@ char mccGuide_bunker_straight_reflect[16384];
 
 /* Definition parameters for component 'screw' [6]. */
 #define mccscrew_reflect 0 /* declared as a string. May produce warnings at compile */
-#define mccscrew_geometry "data/length/extra_fine/40.off" /* declared as a string. May produce warnings at compile */
+#define mccscrew_geometry "t.off" /* declared as a string. May produce warnings at compile */
 /* Setting parameters for component 'screw' [6]. */
 MCNUM mccscrew_xwidth;
 MCNUM mccscrew_yheight;
@@ -10317,32 +10324,86 @@ char mccOcto_med_username2[16384];
 char mccOcto_med_username3[16384];
 int mccOcto_med_nowritefile;
 
-/* Definition parameters for component 'Octo_sm' [9]. */
-#define mccOcto_sm_user1 FLT_MAX
-#define mccOcto_sm_user2 FLT_MAX
-#define mccOcto_sm_user3 FLT_MAX
-/* Setting parameters for component 'Octo_sm' [9]. */
-MCNUM mccOcto_sm_xwidth;
-MCNUM mccOcto_sm_yheight;
-MCNUM mccOcto_sm_zdepth;
-MCNUM mccOcto_sm_xmin;
-MCNUM mccOcto_sm_xmax;
-MCNUM mccOcto_sm_ymin;
-MCNUM mccOcto_sm_ymax;
-MCNUM mccOcto_sm_zmin;
-MCNUM mccOcto_sm_zmax;
-MCNUM mccOcto_sm_bins;
-MCNUM mccOcto_sm_min;
-MCNUM mccOcto_sm_max;
-MCNUM mccOcto_sm_restore_neutron;
-MCNUM mccOcto_sm_radius;
-char mccOcto_sm_options[16384];
-char mccOcto_sm_filename[16384];
-char mccOcto_sm_geometry[16384];
-char mccOcto_sm_username1[16384];
-char mccOcto_sm_username2[16384];
-char mccOcto_sm_username3[16384];
-int mccOcto_sm_nowritefile;
+/* Definition parameters for component 'Octo_small' [9]. */
+#define mccOcto_small_user1 FLT_MAX
+#define mccOcto_small_user2 FLT_MAX
+#define mccOcto_small_user3 FLT_MAX
+/* Setting parameters for component 'Octo_small' [9]. */
+MCNUM mccOcto_small_xwidth;
+MCNUM mccOcto_small_yheight;
+MCNUM mccOcto_small_zdepth;
+MCNUM mccOcto_small_xmin;
+MCNUM mccOcto_small_xmax;
+MCNUM mccOcto_small_ymin;
+MCNUM mccOcto_small_ymax;
+MCNUM mccOcto_small_zmin;
+MCNUM mccOcto_small_zmax;
+MCNUM mccOcto_small_bins;
+MCNUM mccOcto_small_min;
+MCNUM mccOcto_small_max;
+MCNUM mccOcto_small_restore_neutron;
+MCNUM mccOcto_small_radius;
+char mccOcto_small_options[16384];
+char mccOcto_small_filename[16384];
+char mccOcto_small_geometry[16384];
+char mccOcto_small_username1[16384];
+char mccOcto_small_username2[16384];
+char mccOcto_small_username3[16384];
+int mccOcto_small_nowritefile;
+
+/* Definition parameters for component 'Octo_small2' [10]. */
+#define mccOcto_small2_user1 FLT_MAX
+#define mccOcto_small2_user2 FLT_MAX
+#define mccOcto_small2_user3 FLT_MAX
+/* Setting parameters for component 'Octo_small2' [10]. */
+MCNUM mccOcto_small2_xwidth;
+MCNUM mccOcto_small2_yheight;
+MCNUM mccOcto_small2_zdepth;
+MCNUM mccOcto_small2_xmin;
+MCNUM mccOcto_small2_xmax;
+MCNUM mccOcto_small2_ymin;
+MCNUM mccOcto_small2_ymax;
+MCNUM mccOcto_small2_zmin;
+MCNUM mccOcto_small2_zmax;
+MCNUM mccOcto_small2_bins;
+MCNUM mccOcto_small2_min;
+MCNUM mccOcto_small2_max;
+MCNUM mccOcto_small2_restore_neutron;
+MCNUM mccOcto_small2_radius;
+char mccOcto_small2_options[16384];
+char mccOcto_small2_filename[16384];
+char mccOcto_small2_geometry[16384];
+char mccOcto_small2_username1[16384];
+char mccOcto_small2_username2[16384];
+char mccOcto_small2_username3[16384];
+int mccOcto_small2_nowritefile;
+
+/* Definition parameters for component 'Octo_small23' [11]. */
+#define mccOcto_small23_user1 FLT_MAX
+#define mccOcto_small23_user2 FLT_MAX
+#define mccOcto_small23_user3 FLT_MAX
+/* Setting parameters for component 'Octo_small23' [11]. */
+MCNUM mccOcto_small23_xwidth;
+MCNUM mccOcto_small23_yheight;
+MCNUM mccOcto_small23_zdepth;
+MCNUM mccOcto_small23_xmin;
+MCNUM mccOcto_small23_xmax;
+MCNUM mccOcto_small23_ymin;
+MCNUM mccOcto_small23_ymax;
+MCNUM mccOcto_small23_zmin;
+MCNUM mccOcto_small23_zmax;
+MCNUM mccOcto_small23_bins;
+MCNUM mccOcto_small23_min;
+MCNUM mccOcto_small23_max;
+MCNUM mccOcto_small23_restore_neutron;
+MCNUM mccOcto_small23_radius;
+char mccOcto_small23_options[16384];
+char mccOcto_small23_filename[16384];
+char mccOcto_small23_geometry[16384];
+char mccOcto_small23_username1[16384];
+char mccOcto_small23_username2[16384];
+char mccOcto_small23_username3[16384];
+int mccOcto_small23_nowritefile;
 
 /* User component declarations. */
 
@@ -10369,7 +10430,7 @@ double IntermediateCnts;
 time_t StartTime;
 time_t EndTime;
 time_t CurrentTime;
-#line 10372 "./screw_n.c"
+#line 10433 "./screw_n.c"
 #undef minutes
 #undef flag_save
 #undef percent
@@ -10453,7 +10514,7 @@ time_t CurrentTime;
   double pTable_dymin;
   double pTable_dymax;
 
-#line 10456 "./screw_n.c"
+#line 10517 "./screw_n.c"
 #undef target_index
 #undef zdepth
 #undef I3
@@ -10556,7 +10617,7 @@ time_t CurrentTime;
 #line 334 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_gravity.comp"
   Gravity_guide_Vars_type GVars;
   t_Table pTable;
-#line 10559 "./screw_n.c"
+#line 10620 "./screw_n.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -10626,7 +10687,7 @@ time_t CurrentTime;
 #line 95 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../optics/Guide_anyshape.comp"
 off_struct offdata;
 t_Table pTable;
-#line 10629 "./screw_n.c"
+#line 10690 "./screw_n.c"
 #undef W
 #undef m
 #undef alpha
@@ -10682,7 +10743,7 @@ t_Table pTable;
   MonitornD_Variables_type Vars;
   MCDETECTOR detector;
   off_struct offdata;
-#line 10685 "./screw_n.c"
+#line 10746 "./screw_n.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -10752,7 +10813,7 @@ t_Table pTable;
   MonitornD_Variables_type Vars;
   MCDETECTOR detector;
   off_struct offdata;
-#line 10755 "./screw_n.c"
+#line 10816 "./screw_n.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -10785,44 +10846,184 @@ t_Table pTable;
 #undef mccompcurtype
 #undef mccompcurindex
 
-/* User declarations for component 'Octo_sm' [9]. */
-#define mccompcurname  Octo_sm
+/* User declarations for component 'Octo_small' [9]. */
+#define mccompcurname  Octo_small
 #define mccompcurtype  Monitor_nD
 #define mccompcurindex 9
-#define user1 mccOcto_sm_user1
-#define user2 mccOcto_sm_user2
-#define user3 mccOcto_sm_user3
-#define DEFS mccOcto_sm_DEFS
-#define Vars mccOcto_sm_Vars
-#define detector mccOcto_sm_detector
-#define offdata mccOcto_sm_offdata
-#define xwidth mccOcto_sm_xwidth
-#define yheight mccOcto_sm_yheight
-#define zdepth mccOcto_sm_zdepth
-#define xmin mccOcto_sm_xmin
-#define xmax mccOcto_sm_xmax
-#define ymin mccOcto_sm_ymin
-#define ymax mccOcto_sm_ymax
-#define zmin mccOcto_sm_zmin
-#define zmax mccOcto_sm_zmax
-#define bins mccOcto_sm_bins
-#define min mccOcto_sm_min
-#define max mccOcto_sm_max
-#define restore_neutron mccOcto_sm_restore_neutron
-#define radius mccOcto_sm_radius
-#define options mccOcto_sm_options
-#define filename mccOcto_sm_filename
-#define geometry mccOcto_sm_geometry
-#define username1 mccOcto_sm_username1
-#define username2 mccOcto_sm_username2
-#define username3 mccOcto_sm_username3
-#define nowritefile mccOcto_sm_nowritefile
+#define user1 mccOcto_small_user1
+#define user2 mccOcto_small_user2
+#define user3 mccOcto_small_user3
+#define DEFS mccOcto_small_DEFS
+#define Vars mccOcto_small_Vars
+#define detector mccOcto_small_detector
+#define offdata mccOcto_small_offdata
+#define xwidth mccOcto_small_xwidth
+#define yheight mccOcto_small_yheight
+#define zdepth mccOcto_small_zdepth
+#define xmin mccOcto_small_xmin
+#define xmax mccOcto_small_xmax
+#define ymin mccOcto_small_ymin
+#define ymax mccOcto_small_ymax
+#define zmin mccOcto_small_zmin
+#define zmax mccOcto_small_zmax
+#define bins mccOcto_small_bins
+#define min mccOcto_small_min
+#define max mccOcto_small_max
+#define restore_neutron mccOcto_small_restore_neutron
+#define radius mccOcto_small_radius
+#define options mccOcto_small_options
+#define filename mccOcto_small_filename
+#define geometry mccOcto_small_geometry
+#define username1 mccOcto_small_username1
+#define username2 mccOcto_small_username2
+#define username3 mccOcto_small_username3
+#define nowritefile mccOcto_small_nowritefile
 #line 223 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
   MonitornD_Defines_type DEFS;
   MonitornD_Variables_type Vars;
   MCDETECTOR detector;
   off_struct offdata;
-#line 10825 "./screw_n.c"
+#line 10886 "./screw_n.c"
+#undef nowritefile
+#undef username3
+#undef username2
+#undef username1
+#undef geometry
+#undef filename
+#undef options
+#undef radius
+#undef restore_neutron
+#undef max
+#undef min
+#undef bins
+#undef zmax
+#undef zmin
+#undef ymax
+#undef ymin
+#undef xmax
+#undef xmin
+#undef zdepth
+#undef yheight
+#undef xwidth
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+/* User declarations for component 'Octo_small2' [10]. */
+#define mccompcurname  Octo_small2
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 10
+#define user1 mccOcto_small2_user1
+#define user2 mccOcto_small2_user2
+#define user3 mccOcto_small2_user3
+#define DEFS mccOcto_small2_DEFS
+#define Vars mccOcto_small2_Vars
+#define detector mccOcto_small2_detector
+#define offdata mccOcto_small2_offdata
+#define xwidth mccOcto_small2_xwidth
+#define yheight mccOcto_small2_yheight
+#define zdepth mccOcto_small2_zdepth
+#define xmin mccOcto_small2_xmin
+#define xmax mccOcto_small2_xmax
+#define ymin mccOcto_small2_ymin
+#define ymax mccOcto_small2_ymax
+#define zmin mccOcto_small2_zmin
+#define zmax mccOcto_small2_zmax
+#define bins mccOcto_small2_bins
+#define min mccOcto_small2_min
+#define max mccOcto_small2_max
+#define restore_neutron mccOcto_small2_restore_neutron
+#define radius mccOcto_small2_radius
+#define options mccOcto_small2_options
+#define filename mccOcto_small2_filename
+#define geometry mccOcto_small2_geometry
+#define username1 mccOcto_small2_username1
+#define username2 mccOcto_small2_username2
+#define username3 mccOcto_small2_username3
+#define nowritefile mccOcto_small2_nowritefile
+#line 223 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+  MonitornD_Defines_type DEFS;
+  MonitornD_Variables_type Vars;
+  MCDETECTOR detector;
+  off_struct offdata;
+#line 10956 "./screw_n.c"
+#undef nowritefile
+#undef username3
+#undef username2
+#undef username1
+#undef geometry
+#undef filename
+#undef options
+#undef radius
+#undef restore_neutron
+#undef max
+#undef min
+#undef bins
+#undef zmax
+#undef zmin
+#undef ymax
+#undef ymin
+#undef xmax
+#undef xmin
+#undef zdepth
+#undef yheight
+#undef xwidth
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+/* User declarations for component 'Octo_small23' [11]. */
+#define mccompcurname  Octo_small23
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 11
+#define user1 mccOcto_small23_user1
+#define user2 mccOcto_small23_user2
+#define user3 mccOcto_small23_user3
+#define DEFS mccOcto_small23_DEFS
+#define Vars mccOcto_small23_Vars
+#define detector mccOcto_small23_detector
+#define offdata mccOcto_small23_offdata
+#define xwidth mccOcto_small23_xwidth
+#define yheight mccOcto_small23_yheight
+#define zdepth mccOcto_small23_zdepth
+#define xmin mccOcto_small23_xmin
+#define xmax mccOcto_small23_xmax
+#define ymin mccOcto_small23_ymin
+#define ymax mccOcto_small23_ymax
+#define zmin mccOcto_small23_zmin
+#define zmax mccOcto_small23_zmax
+#define bins mccOcto_small23_bins
+#define min mccOcto_small23_min
+#define max mccOcto_small23_max
+#define restore_neutron mccOcto_small23_restore_neutron
+#define radius mccOcto_small23_radius
+#define options mccOcto_small23_options
+#define filename mccOcto_small23_filename
+#define geometry mccOcto_small23_geometry
+#define username1 mccOcto_small23_username1
+#define username2 mccOcto_small23_username2
+#define username3 mccOcto_small23_username3
+#define nowritefile mccOcto_small23_nowritefile
+#line 223 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+  MonitornD_Defines_type DEFS;
+  MonitornD_Variables_type Vars;
+  MCDETECTOR detector;
+  off_struct offdata;
+#line 11026 "./screw_n.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -10871,8 +11072,12 @@ Coords mcposaOcto_large, mcposrOcto_large;
 Rotation mcrotaOcto_large, mcrotrOcto_large;
 Coords mcposaOcto_med, mcposrOcto_med;
 Rotation mcrotaOcto_med, mcrotrOcto_med;
-Coords mcposaOcto_sm, mcposrOcto_sm;
-Rotation mcrotaOcto_sm, mcrotrOcto_sm;
+Coords mcposaOcto_small, mcposrOcto_small;
+Rotation mcrotaOcto_small, mcrotrOcto_small;
+Coords mcposaOcto_small2, mcposrOcto_small2;
+Rotation mcrotaOcto_small2, mcrotrOcto_small2;
+Coords mcposaOcto_small23, mcposrOcto_small23;
+Rotation mcrotaOcto_small23, mcrotrOcto_small23;
 
 MCNUM mcnx, mcny, mcnz, mcnvx, mcnvy, mcnvz, mcnt, mcnsx, mcnsy, mcnsz, mcnp;
 
@@ -10886,7 +11091,9 @@ void mcinit(void) {
 #define L mcipL
 #define guide_m mcipguide_m
 #define lambda mciplambda
-#line 32 "screw_n.instr"
+#define w mcipw
+#define h mciph
+#line 31 "screw_n.instr"
 {
 //thermal regime of CNS
 if (cold_regime==0){
@@ -10905,7 +11112,9 @@ source_I3 = 0;};
 source_lambda_min = lambda-0.1;
 source_lambda_max = lambda+0.1;
 }
-#line 10908 "./screw_n.c"
+#line 11115 "./screw_n.c"
+#undef h
+#undef w
 #undef lambda
 #undef guide_m
 #undef L
@@ -10934,23 +11143,23 @@ source_lambda_max = lambda+0.1;
   mccOrigin_flag_save = 0;
 #line 39 "screw_n.instr"
   mccOrigin_minutes = 0;
-#line 10937 "./screw_n.c"
+#line 11146 "./screw_n.c"
 
   SIG_MESSAGE("Origin (Init:Place/Rotate)");
   rot_set_rotation(mcrotaOrigin,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 10944 "./screw_n.c"
+#line 11153 "./screw_n.c"
   rot_copy(mcrotrOrigin, mcrotaOrigin);
   mcposaOrigin = coords_set(
-#line 54 "screw_n.instr"
+#line 53 "screw_n.instr"
     0,
-#line 54 "screw_n.instr"
+#line 53 "screw_n.instr"
     0,
-#line 54 "screw_n.instr"
+#line 53 "screw_n.instr"
     0);
-#line 10953 "./screw_n.c"
+#line 11162 "./screw_n.c"
   mctc1 = coords_neg(mcposaOrigin);
   mcposrOrigin = rot_apply(mcrotaOrigin, mctc1);
   mcDEBUG_COMPONENT("Origin", mcposaOrigin, mcrotaOrigin)
@@ -10969,12 +11178,12 @@ source_lambda_max = lambda+0.1;
   if("NULL") strncpy(mccH3_ydiv_file, "NULL" ? "NULL" : "", 16384); else mccH3_ydiv_file[0]='\0';
 #line 130 "screw_n.instr"
   mccH3_radius = 0.0;
-#line 59 "screw_n.instr"
+#line 58 "screw_n.instr"
   mccH3_dist = guide_start_dist;
+#line 58 "screw_n.instr"
+  mccH3_focus_xw = mcipw;
 #line 59 "screw_n.instr"
-  mccH3_focus_xw = w;
-#line 60 "screw_n.instr"
-  mccH3_focus_yh = h;
+  mccH3_focus_yh = mciph;
 #line 130 "screw_n.instr"
   mccH3_focus_aw = 0;
 #line 130 "screw_n.instr"
@@ -10987,59 +11196,59 @@ source_lambda_max = lambda+0.1;
   mccH3_lambda0 = 0;
 #line 131 "screw_n.instr"
   mccH3_dlambda = 0;
-#line 60 "screw_n.instr"
+#line 59 "screw_n.instr"
   mccH3_I1 = source_I1;
-#line 60 "screw_n.instr"
+#line 59 "screw_n.instr"
   mccH3_yheight = source_height;
-#line 61 "screw_n.instr"
+#line 60 "screw_n.instr"
   mccH3_xwidth = source_width;
 #line 132 "screw_n.instr"
   mccH3_verbose = 0;
-#line 61 "screw_n.instr"
+#line 60 "screw_n.instr"
   mccH3_T1 = source_T1;
 #line 133 "screw_n.instr"
   mccH3_flux_file_perAA = 0;
 #line 133 "screw_n.instr"
   mccH3_flux_file_log = 0;
-#line 61 "screw_n.instr"
+#line 60 "screw_n.instr"
   mccH3_Lmin = source_lambda_min;
-#line 62 "screw_n.instr"
+#line 61 "screw_n.instr"
   mccH3_Lmax = source_lambda_max;
 #line 134 "screw_n.instr"
   mccH3_Emin = 0;
 #line 134 "screw_n.instr"
   mccH3_Emax = 0;
-#line 62 "screw_n.instr"
+#line 61 "screw_n.instr"
   mccH3_T2 = source_T2;
-#line 62 "screw_n.instr"
+#line 61 "screw_n.instr"
   mccH3_I2 = source_I2;
-#line 62 "screw_n.instr"
+#line 61 "screw_n.instr"
   mccH3_T3 = source_T3;
-#line 63 "screw_n.instr"
+#line 62 "screw_n.instr"
   mccH3_I3 = source_I3;
 #line 134 "screw_n.instr"
   mccH3_zdepth = 0;
 #line 134 "screw_n.instr"
   mccH3_target_index = + 1;
-#line 11024 "./screw_n.c"
+#line 11233 "./screw_n.c"
 
   SIG_MESSAGE("H3 (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11031 "./screw_n.c"
+#line 11240 "./screw_n.c"
   rot_mul(mctr1, mcrotaOrigin, mcrotaH3);
   rot_transpose(mcrotaOrigin, mctr1);
   rot_mul(mcrotaH3, mctr1, mcrotrH3);
   mctc1 = coords_set(
-#line 64 "screw_n.instr"
+#line 63 "screw_n.instr"
     0,
-#line 64 "screw_n.instr"
+#line 63 "screw_n.instr"
     0,
-#line 64 "screw_n.instr"
+#line 63 "screw_n.instr"
     0);
-#line 11042 "./screw_n.c"
+#line 11251 "./screw_n.c"
   rot_transpose(mcrotaOrigin, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaH3 = coords_add(mcposaOrigin, mctc2);
@@ -11059,18 +11268,18 @@ source_lambda_max = lambda+0.1;
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11062 "./screw_n.c"
+#line 11271 "./screw_n.c"
   rot_mul(mctr1, mcrotaOrigin, mcrotaGuide_start_arm);
   rot_transpose(mcrotaH3, mctr1);
   rot_mul(mcrotaGuide_start_arm, mctr1, mcrotrGuide_start_arm);
   mctc1 = coords_set(
-#line 70 "screw_n.instr"
+#line 69 "screw_n.instr"
     0,
-#line 70 "screw_n.instr"
+#line 69 "screw_n.instr"
     0,
-#line 70 "screw_n.instr"
+#line 69 "screw_n.instr"
     guide_start_dist);
-#line 11073 "./screw_n.c"
+#line 11282 "./screw_n.c"
   rot_transpose(mcrotaOrigin, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaGuide_start_arm = coords_add(mcposaOrigin, mctc2);
@@ -11084,15 +11293,15 @@ source_lambda_max = lambda+0.1;
     /* Component Guide_bunker_straight. */
   /* Setting parameters for component Guide_bunker_straight. */
   SIG_MESSAGE("Guide_bunker_straight (Init:SetPar)");
-#line 76 "screw_n.instr"
-  mccGuide_bunker_straight_w1 = w;
-#line 76 "screw_n.instr"
-  mccGuide_bunker_straight_h1 = h;
+#line 75 "screw_n.instr"
+  mccGuide_bunker_straight_w1 = mcipw;
+#line 75 "screw_n.instr"
+  mccGuide_bunker_straight_h1 = mciph;
 #line 113 "screw_n.instr"
   mccGuide_bunker_straight_w2 = 0;
 #line 113 "screw_n.instr"
   mccGuide_bunker_straight_h2 = 0;
-#line 76 "screw_n.instr"
+#line 75 "screw_n.instr"
   mccGuide_bunker_straight_l = 25;
 #line 114 "screw_n.instr"
   mccGuide_bunker_straight_R0 = 0.995;
@@ -11108,17 +11317,17 @@ source_lambda_max = lambda+0.1;
   mccGuide_bunker_straight_nslit = 1;
 #line 114 "screw_n.instr"
   mccGuide_bunker_straight_d = 0.0005;
-#line 76 "screw_n.instr"
+#line 75 "screw_n.instr"
   mccGuide_bunker_straight_mleft = 1;
-#line 76 "screw_n.instr"
+#line 75 "screw_n.instr"
   mccGuide_bunker_straight_mright = 1;
-#line 77 "screw_n.instr"
+#line 76 "screw_n.instr"
   mccGuide_bunker_straight_mtop = 3;
-#line 77 "screw_n.instr"
+#line 76 "screw_n.instr"
   mccGuide_bunker_straight_mbottom = 3;
 #line 115 "screw_n.instr"
   mccGuide_bunker_straight_nhslit = 1;
-#line 77 "screw_n.instr"
+#line 76 "screw_n.instr"
   mccGuide_bunker_straight_G = -9.81;
 #line 116 "screw_n.instr"
   mccGuide_bunker_straight_aleft = -1;
@@ -11152,25 +11361,25 @@ source_lambda_max = lambda+0.1;
   mccGuide_bunker_straight_phase = 0;
 #line 119 "screw_n.instr"
   if("NULL") strncpy(mccGuide_bunker_straight_reflect, "NULL" ? "NULL" : "", 16384); else mccGuide_bunker_straight_reflect[0]='\0';
-#line 11155 "./screw_n.c"
+#line 11364 "./screw_n.c"
 
   SIG_MESSAGE("Guide_bunker_straight (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11162 "./screw_n.c"
+#line 11371 "./screw_n.c"
   rot_mul(mctr1, mcrotaGuide_start_arm, mcrotaGuide_bunker_straight);
   rot_transpose(mcrotaGuide_start_arm, mctr1);
   rot_mul(mcrotaGuide_bunker_straight, mctr1, mcrotrGuide_bunker_straight);
   mctc1 = coords_set(
-#line 78 "screw_n.instr"
+#line 77 "screw_n.instr"
     0,
-#line 78 "screw_n.instr"
+#line 77 "screw_n.instr"
     0,
-#line 78 "screw_n.instr"
+#line 77 "screw_n.instr"
     0);
-#line 11173 "./screw_n.c"
+#line 11382 "./screw_n.c"
   rot_transpose(mcrotaGuide_start_arm, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaGuide_bunker_straight = coords_add(mcposaGuide_start_arm, mctc2);
@@ -11190,18 +11399,18 @@ source_lambda_max = lambda+0.1;
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11193 "./screw_n.c"
+#line 11402 "./screw_n.c"
   rot_mul(mctr1, mcrotaGuide_bunker_straight, mcrotaarm_geks);
   rot_transpose(mcrotaGuide_bunker_straight, mctr1);
   rot_mul(mcrotaarm_geks, mctr1, mcrotrarm_geks);
   mctc1 = coords_set(
-#line 83 "screw_n.instr"
+#line 81 "screw_n.instr"
     0,
-#line 83 "screw_n.instr"
+#line 81 "screw_n.instr"
     0,
-#line 83 "screw_n.instr"
+#line 81 "screw_n.instr"
     25.02);
-#line 11204 "./screw_n.c"
+#line 11413 "./screw_n.c"
   rot_transpose(mcrotaGuide_bunker_straight, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaarm_geks = coords_add(mcposaGuide_bunker_straight, mctc2);
@@ -11221,42 +11430,42 @@ source_lambda_max = lambda+0.1;
   mccscrew_yheight = 0;
 #line 79 "screw_n.instr"
   mccscrew_zdepth = 0;
-#line 87 "screw_n.instr"
+#line 86 "screw_n.instr"
   mccscrew_center = 0;
 #line 79 "screw_n.instr"
   mccscrew_transmit = 0;
-#line 87 "screw_n.instr"
+#line 86 "screw_n.instr"
   mccscrew_R0 = 0.99;
-#line 87 "screw_n.instr"
+#line 86 "screw_n.instr"
   mccscrew_Qc = 0.0219;
-#line 87 "screw_n.instr"
+#line 86 "screw_n.instr"
   mccscrew_alpha = 2.3;
-#line 87 "screw_n.instr"
+#line 86 "screw_n.instr"
   mccscrew_m = mcipguide_m;
-#line 88 "screw_n.instr"
+#line 87 "screw_n.instr"
   mccscrew_W = 0.003;
-#line 11238 "./screw_n.c"
+#line 11447 "./screw_n.c"
 
   SIG_MESSAGE("screw (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
-#line 90 "screw_n.instr"
+#line 89 "screw_n.instr"
     (-90)*DEG2RAD,
-#line 90 "screw_n.instr"
+#line 89 "screw_n.instr"
     (0)*DEG2RAD,
-#line 90 "screw_n.instr"
+#line 89 "screw_n.instr"
     (0)*DEG2RAD);
-#line 11248 "./screw_n.c"
+#line 11457 "./screw_n.c"
   rot_mul(mctr1, mcrotaarm_geks, mcrotascrew);
   rot_transpose(mcrotaarm_geks, mctr1);
   rot_mul(mcrotascrew, mctr1, mcrotrscrew);
   mctc1 = coords_set(
-#line 89 "screw_n.instr"
-    - w / 2,
-#line 89 "screw_n.instr"
-    - h / 2,
-#line 89 "screw_n.instr"
+#line 88 "screw_n.instr"
+    - mcipw / 2,
+#line 88 "screw_n.instr"
+    - mciph / 2,
+#line 88 "screw_n.instr"
     0);
-#line 11259 "./screw_n.c"
+#line 11468 "./screw_n.c"
   rot_transpose(mcrotaarm_geks, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposascrew = coords_add(mcposaarm_geks, mctc2);
@@ -11270,10 +11479,10 @@ source_lambda_max = lambda+0.1;
     /* Component Octo_large. */
   /* Setting parameters for component Octo_large. */
   SIG_MESSAGE("Octo_large (Init:SetPar)");
-#line 93 "screw_n.instr"
-  mccOcto_large_xwidth = h;
-#line 93 "screw_n.instr"
-  mccOcto_large_yheight = w;
+#line 92 "screw_n.instr"
+  mccOcto_large_xwidth = mciph;
+#line 92 "screw_n.instr"
+  mccOcto_large_yheight = mcipw;
 #line 201 "screw_n.instr"
   mccOcto_large_zdepth = 0;
 #line 202 "screw_n.instr"
@@ -11288,7 +11497,7 @@ source_lambda_max = lambda+0.1;
   mccOcto_large_zmin = 0;
 #line 202 "screw_n.instr"
   mccOcto_large_zmax = 0;
-#line 93 "screw_n.instr"
+#line 92 "screw_n.instr"
   mccOcto_large_bins = 100;
 #line 203 "screw_n.instr"
   mccOcto_large_min = -1e40;
@@ -11298,7 +11507,7 @@ source_lambda_max = lambda+0.1;
   mccOcto_large_restore_neutron = 0;
 #line 203 "screw_n.instr"
   mccOcto_large_radius = 0;
-#line 93 "screw_n.instr"
+#line 92 "screw_n.instr"
   if("dy limits = [-2 2] ") strncpy(mccOcto_large_options, "dy limits = [-2 2] " ? "dy limits = [-2 2] " : "", 16384); else mccOcto_large_options[0]='\0';
 #line 204 "screw_n.instr"
   if("NULL") strncpy(mccOcto_large_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_large_filename[0]='\0';
@@ -11312,25 +11521,25 @@ source_lambda_max = lambda+0.1;
   if("NULL") strncpy(mccOcto_large_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_large_username3[0]='\0';
 #line 206 "screw_n.instr"
   mccOcto_large_nowritefile = 0;
-#line 11315 "./screw_n.c"
+#line 11524 "./screw_n.c"
 
   SIG_MESSAGE("Octo_large (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11322 "./screw_n.c"
+#line 11531 "./screw_n.c"
   rot_mul(mctr1, mcrotaarm_geks, mcrotaOcto_large);
   rot_transpose(mcrotascrew, mctr1);
   rot_mul(mcrotaOcto_large, mctr1, mcrotrOcto_large);
   mctc1 = coords_set(
-#line 94 "screw_n.instr"
+#line 93 "screw_n.instr"
     0,
-#line 94 "screw_n.instr"
+#line 93 "screw_n.instr"
     0,
-#line 94 "screw_n.instr"
-    mcipL + 0.02);
-#line 11333 "./screw_n.c"
+#line 93 "screw_n.instr"
+    mcipL + 0.1);
+#line 11542 "./screw_n.c"
   rot_transpose(mcrotaarm_geks, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaOcto_large = coords_add(mcposaarm_geks, mctc2);
@@ -11344,10 +11553,10 @@ source_lambda_max = lambda+0.1;
     /* Component Octo_med. */
   /* Setting parameters for component Octo_med. */
   SIG_MESSAGE("Octo_med (Init:SetPar)");
-#line 96 "screw_n.instr"
-  mccOcto_med_xwidth = h;
-#line 96 "screw_n.instr"
-  mccOcto_med_yheight = w;
+#line 95 "screw_n.instr"
+  mccOcto_med_xwidth = mciph;
+#line 95 "screw_n.instr"
+  mccOcto_med_yheight = mcipw;
 #line 201 "screw_n.instr"
   mccOcto_med_zdepth = 0;
 #line 202 "screw_n.instr"
@@ -11362,7 +11571,7 @@ source_lambda_max = lambda+0.1;
   mccOcto_med_zmin = 0;
 #line 202 "screw_n.instr"
   mccOcto_med_zmax = 0;
-#line 96 "screw_n.instr"
+#line 95 "screw_n.instr"
   mccOcto_med_bins = 100;
 #line 203 "screw_n.instr"
   mccOcto_med_min = -1e40;
@@ -11372,7 +11581,7 @@ source_lambda_max = lambda+0.1;
   mccOcto_med_restore_neutron = 0;
 #line 203 "screw_n.instr"
   mccOcto_med_radius = 0;
-#line 96 "screw_n.instr"
+#line 95 "screw_n.instr"
   if("dy limits = [-0.5 0.5] ") strncpy(mccOcto_med_options, "dy limits = [-0.5 0.5] " ? "dy limits = [-0.5 0.5] " : "", 16384); else mccOcto_med_options[0]='\0';
 #line 204 "screw_n.instr"
   if("NULL") strncpy(mccOcto_med_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_med_filename[0]='\0';
@@ -11386,25 +11595,25 @@ source_lambda_max = lambda+0.1;
   if("NULL") strncpy(mccOcto_med_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_med_username3[0]='\0';
 #line 206 "screw_n.instr"
   mccOcto_med_nowritefile = 0;
-#line 11389 "./screw_n.c"
+#line 11598 "./screw_n.c"
 
   SIG_MESSAGE("Octo_med (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11396 "./screw_n.c"
+#line 11605 "./screw_n.c"
   rot_mul(mctr1, mcrotaarm_geks, mcrotaOcto_med);
   rot_transpose(mcrotaOcto_large, mctr1);
   rot_mul(mcrotaOcto_med, mctr1, mcrotrOcto_med);
   mctc1 = coords_set(
-#line 97 "screw_n.instr"
+#line 96 "screw_n.instr"
     0,
-#line 97 "screw_n.instr"
+#line 96 "screw_n.instr"
     0,
-#line 97 "screw_n.instr"
-    mcipL + 0.03);
-#line 11407 "./screw_n.c"
+#line 96 "screw_n.instr"
+    mcipL + 0.101);
+#line 11616 "./screw_n.c"
   rot_transpose(mcrotaarm_geks, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
   mcposaOcto_med = coords_add(mcposaarm_geks, mctc2);
@@ -11415,80 +11624,228 @@ source_lambda_max = lambda+0.1;
   mccomp_posr[8] = mcposrOcto_med;
   mcNCounter[8]  = mcPCounter[8] = mcP2Counter[8] = 0;
   mcAbsorbProp[8]= 0;
-    /* Component Octo_sm. */
-  /* Setting parameters for component Octo_sm. */
-  SIG_MESSAGE("Octo_sm (Init:SetPar)");
-#line 99 "screw_n.instr"
-  mccOcto_sm_xwidth = h;
-#line 99 "screw_n.instr"
-  mccOcto_sm_yheight = w;
+    /* Component Octo_small. */
+  /* Setting parameters for component Octo_small. */
+  SIG_MESSAGE("Octo_small (Init:SetPar)");
+#line 98 "screw_n.instr"
+  mccOcto_small_xwidth = mciph;
+#line 98 "screw_n.instr"
+  mccOcto_small_yheight = mcipw;
 #line 201 "screw_n.instr"
-  mccOcto_sm_zdepth = 0;
+  mccOcto_small_zdepth = 0;
 #line 202 "screw_n.instr"
-  mccOcto_sm_xmin = 0;
+  mccOcto_small_xmin = 0;
 #line 202 "screw_n.instr"
-  mccOcto_sm_xmax = 0;
+  mccOcto_small_xmax = 0;
 #line 202 "screw_n.instr"
-  mccOcto_sm_ymin = 0;
+  mccOcto_small_ymin = 0;
 #line 202 "screw_n.instr"
-  mccOcto_sm_ymax = 0;
+  mccOcto_small_ymax = 0;
 #line 202 "screw_n.instr"
-  mccOcto_sm_zmin = 0;
+  mccOcto_small_zmin = 0;
 #line 202 "screw_n.instr"
-  mccOcto_sm_zmax = 0;
-#line 99 "screw_n.instr"
-  mccOcto_sm_bins = 100;
+  mccOcto_small_zmax = 0;
+#line 98 "screw_n.instr"
+  mccOcto_small_bins = 100;
 #line 203 "screw_n.instr"
-  mccOcto_sm_min = -1e40;
+  mccOcto_small_min = -1e40;
 #line 203 "screw_n.instr"
-  mccOcto_sm_max = 1e40;
+  mccOcto_small_max = 1e40;
 #line 203 "screw_n.instr"
-  mccOcto_sm_restore_neutron = 0;
+  mccOcto_small_restore_neutron = 0;
 #line 203 "screw_n.instr"
-  mccOcto_sm_radius = 0;
-#line 99 "screw_n.instr"
-  if("dy limits = [-0.1 0.1] ") strncpy(mccOcto_sm_options, "dy limits = [-0.1 0.1] " ? "dy limits = [-0.1 0.1] " : "", 16384); else mccOcto_sm_options[0]='\0';
+  mccOcto_small_radius = 0;
+#line 98 "screw_n.instr"
+  if("dy limits = [-0.1 0.1] ") strncpy(mccOcto_small_options, "dy limits = [-0.1 0.1] " ? "dy limits = [-0.1 0.1] " : "", 16384); else mccOcto_small_options[0]='\0';
 #line 204 "screw_n.instr"
-  if("NULL") strncpy(mccOcto_sm_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_sm_filename[0]='\0';
+  if("NULL") strncpy(mccOcto_small_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_small_filename[0]='\0';
 #line 204 "screw_n.instr"
-  if("NULL") strncpy(mccOcto_sm_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_sm_geometry[0]='\0';
+  if("NULL") strncpy(mccOcto_small_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_small_geometry[0]='\0';
 #line 205 "screw_n.instr"
-  if("NULL") strncpy(mccOcto_sm_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_sm_username1[0]='\0';
+  if("NULL") strncpy(mccOcto_small_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_small_username1[0]='\0';
 #line 205 "screw_n.instr"
-  if("NULL") strncpy(mccOcto_sm_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_sm_username2[0]='\0';
+  if("NULL") strncpy(mccOcto_small_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_small_username2[0]='\0';
 #line 205 "screw_n.instr"
-  if("NULL") strncpy(mccOcto_sm_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_sm_username3[0]='\0';
+  if("NULL") strncpy(mccOcto_small_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_small_username3[0]='\0';
 #line 206 "screw_n.instr"
-  mccOcto_sm_nowritefile = 0;
-#line 11463 "./screw_n.c"
+  mccOcto_small_nowritefile = 0;
+#line 11672 "./screw_n.c"
 
-  SIG_MESSAGE("Octo_sm (Init:Place/Rotate)");
+  SIG_MESSAGE("Octo_small (Init:Place/Rotate)");
   rot_set_rotation(mctr1,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD,
     (0.0)*DEG2RAD);
-#line 11470 "./screw_n.c"
-  rot_mul(mctr1, mcrotaarm_geks, mcrotaOcto_sm);
+#line 11679 "./screw_n.c"
+  rot_mul(mctr1, mcrotaarm_geks, mcrotaOcto_small);
   rot_transpose(mcrotaOcto_med, mctr1);
-  rot_mul(mcrotaOcto_sm, mctr1, mcrotrOcto_sm);
+  rot_mul(mcrotaOcto_small, mctr1, mcrotrOcto_small);
   mctc1 = coords_set(
-#line 100 "screw_n.instr"
+#line 99 "screw_n.instr"
     0,
-#line 100 "screw_n.instr"
+#line 99 "screw_n.instr"
     0,
-#line 100 "screw_n.instr"
-    mcipL + 0.04);
-#line 11481 "./screw_n.c"
+#line 99 "screw_n.instr"
+    mcipL + 0.102);
+#line 11690 "./screw_n.c"
   rot_transpose(mcrotaarm_geks, mctr1);
   mctc2 = rot_apply(mctr1, mctc1);
-  mcposaOcto_sm = coords_add(mcposaarm_geks, mctc2);
-  mctc1 = coords_sub(mcposaOcto_med, mcposaOcto_sm);
-  mcposrOcto_sm = rot_apply(mcrotaOcto_sm, mctc1);
-  mcDEBUG_COMPONENT("Octo_sm", mcposaOcto_sm, mcrotaOcto_sm)
-  mccomp_posa[9] = mcposaOcto_sm;
-  mccomp_posr[9] = mcposrOcto_sm;
+  mcposaOcto_small = coords_add(mcposaarm_geks, mctc2);
+  mctc1 = coords_sub(mcposaOcto_med, mcposaOcto_small);
+  mcposrOcto_small = rot_apply(mcrotaOcto_small, mctc1);
+  mcDEBUG_COMPONENT("Octo_small", mcposaOcto_small, mcrotaOcto_small)
+  mccomp_posa[9] = mcposaOcto_small;
+  mccomp_posr[9] = mcposrOcto_small;
   mcNCounter[9]  = mcPCounter[9] = mcP2Counter[9] = 0;
   mcAbsorbProp[9]= 0;
+    /* Component Octo_small2. */
+  /* Setting parameters for component Octo_small2. */
+  SIG_MESSAGE("Octo_small2 (Init:SetPar)");
+#line 102 "screw_n.instr"
+  mccOcto_small2_xwidth = mciph;
+#line 102 "screw_n.instr"
+  mccOcto_small2_yheight = mcipw;
+#line 201 "screw_n.instr"
+  mccOcto_small2_zdepth = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small2_xmin = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small2_xmax = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small2_ymin = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small2_ymax = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small2_zmin = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small2_zmax = 0;
+#line 102 "screw_n.instr"
+  mccOcto_small2_bins = 100;
+#line 203 "screw_n.instr"
+  mccOcto_small2_min = -1e40;
+#line 203 "screw_n.instr"
+  mccOcto_small2_max = 1e40;
+#line 203 "screw_n.instr"
+  mccOcto_small2_restore_neutron = 0;
+#line 203 "screw_n.instr"
+  mccOcto_small2_radius = 0;
+#line 102 "screw_n.instr"
+  if("dx limits = [-2 2] dy limits = [-2 2]") strncpy(mccOcto_small2_options, "dx limits = [-2 2] dy limits = [-2 2]" ? "dx limits = [-2 2] dy limits = [-2 2]" : "", 16384); else mccOcto_small2_options[0]='\0';
+#line 204 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small2_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_small2_filename[0]='\0';
+#line 204 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small2_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_small2_geometry[0]='\0';
+#line 205 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small2_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_small2_username1[0]='\0';
+#line 205 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small2_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_small2_username2[0]='\0';
+#line 205 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small2_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_small2_username3[0]='\0';
+#line 206 "screw_n.instr"
+  mccOcto_small2_nowritefile = 0;
+#line 11746 "./screw_n.c"
+
+  SIG_MESSAGE("Octo_small2 (Init:Place/Rotate)");
+  rot_set_rotation(mctr1,
+    (0.0)*DEG2RAD,
+    (0.0)*DEG2RAD,
+    (0.0)*DEG2RAD);
+#line 11753 "./screw_n.c"
+  rot_mul(mctr1, mcrotaarm_geks, mcrotaOcto_small2);
+  rot_transpose(mcrotaOcto_small, mctr1);
+  rot_mul(mcrotaOcto_small2, mctr1, mcrotrOcto_small2);
+  mctc1 = coords_set(
+#line 103 "screw_n.instr"
+    0,
+#line 103 "screw_n.instr"
+    0,
+#line 103 "screw_n.instr"
+    mcipL + 0.103);
+#line 11764 "./screw_n.c"
+  rot_transpose(mcrotaarm_geks, mctr1);
+  mctc2 = rot_apply(mctr1, mctc1);
+  mcposaOcto_small2 = coords_add(mcposaarm_geks, mctc2);
+  mctc1 = coords_sub(mcposaOcto_small, mcposaOcto_small2);
+  mcposrOcto_small2 = rot_apply(mcrotaOcto_small2, mctc1);
+  mcDEBUG_COMPONENT("Octo_small2", mcposaOcto_small2, mcrotaOcto_small2)
+  mccomp_posa[10] = mcposaOcto_small2;
+  mccomp_posr[10] = mcposrOcto_small2;
+  mcNCounter[10]  = mcPCounter[10] = mcP2Counter[10] = 0;
+  mcAbsorbProp[10]= 0;
+    /* Component Octo_small23. */
+  /* Setting parameters for component Octo_small23. */
+  SIG_MESSAGE("Octo_small23 (Init:SetPar)");
+#line 106 "screw_n.instr"
+  mccOcto_small23_xwidth = mciph;
+#line 106 "screw_n.instr"
+  mccOcto_small23_yheight = mcipw;
+#line 201 "screw_n.instr"
+  mccOcto_small23_zdepth = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small23_xmin = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small23_xmax = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small23_ymin = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small23_ymax = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small23_zmin = 0;
+#line 202 "screw_n.instr"
+  mccOcto_small23_zmax = 0;
+#line 106 "screw_n.instr"
+  mccOcto_small23_bins = 100;
+#line 203 "screw_n.instr"
+  mccOcto_small23_min = -1e40;
+#line 203 "screw_n.instr"
+  mccOcto_small23_max = 1e40;
+#line 203 "screw_n.instr"
+  mccOcto_small23_restore_neutron = 0;
+#line 203 "screw_n.instr"
+  mccOcto_small23_radius = 0;
+#line 106 "screw_n.instr"
+  if("y dy limits = [-2 2]") strncpy(mccOcto_small23_options, "y dy limits = [-2 2]" ? "y dy limits = [-2 2]" : "", 16384); else mccOcto_small23_options[0]='\0';
+#line 204 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small23_filename, "NULL" ? "NULL" : "", 16384); else mccOcto_small23_filename[0]='\0';
+#line 204 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small23_geometry, "NULL" ? "NULL" : "", 16384); else mccOcto_small23_geometry[0]='\0';
+#line 205 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small23_username1, "NULL" ? "NULL" : "", 16384); else mccOcto_small23_username1[0]='\0';
+#line 205 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small23_username2, "NULL" ? "NULL" : "", 16384); else mccOcto_small23_username2[0]='\0';
+#line 205 "screw_n.instr"
+  if("NULL") strncpy(mccOcto_small23_username3, "NULL" ? "NULL" : "", 16384); else mccOcto_small23_username3[0]='\0';
+#line 206 "screw_n.instr"
+  mccOcto_small23_nowritefile = 0;
+#line 11820 "./screw_n.c"
+
+  SIG_MESSAGE("Octo_small23 (Init:Place/Rotate)");
+  rot_set_rotation(mctr1,
+    (0.0)*DEG2RAD,
+    (0.0)*DEG2RAD,
+    (0.0)*DEG2RAD);
+#line 11827 "./screw_n.c"
+  rot_mul(mctr1, mcrotaarm_geks, mcrotaOcto_small23);
+  rot_transpose(mcrotaOcto_small2, mctr1);
+  rot_mul(mcrotaOcto_small23, mctr1, mcrotrOcto_small23);
+  mctc1 = coords_set(
+#line 107 "screw_n.instr"
+    0,
+#line 107 "screw_n.instr"
+    0,
+#line 107 "screw_n.instr"
+    mcipL + 0.103);
+#line 11838 "./screw_n.c"
+  rot_transpose(mcrotaarm_geks, mctr1);
+  mctc2 = rot_apply(mctr1, mctc1);
+  mcposaOcto_small23 = coords_add(mcposaarm_geks, mctc2);
+  mctc1 = coords_sub(mcposaOcto_small2, mcposaOcto_small23);
+  mcposrOcto_small23 = rot_apply(mcrotaOcto_small23, mctc1);
+  mcDEBUG_COMPONENT("Octo_small23", mcposaOcto_small23, mcrotaOcto_small23)
+  mccomp_posa[11] = mcposaOcto_small23;
+  mccomp_posr[11] = mcposrOcto_small23;
+  mcNCounter[11]  = mcPCounter[11] = mcP2Counter[11] = 0;
+  mcAbsorbProp[11]= 0;
   /* Component initializations. */
   /* Initializations for component Origin. */
   SIG_MESSAGE("Origin (Init)");
@@ -11515,7 +11872,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
     percent=1e5*100.0/mcget_ncount();
   }
 }
-#line 11518 "./screw_n.c"
+#line 11875 "./screw_n.c"
 #undef minutes
 #undef flag_save
 #undef percent
@@ -11852,7 +12209,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
       printf("Source_gen: component %s unactivated", NAME_CURRENT_COMP);
   );
 }
-#line 11855 "./screw_n.c"
+#line 12212 "./screw_n.c"
 #undef target_index
 #undef zdepth
 #undef I3
@@ -12000,7 +12357,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
   } else printf("Guide_gravity: %s: unactivated (l=0 or nelements=0)\n", NAME_CURRENT_COMP);
 
 }
-#line 12003 "./screw_n.c"
+#line 12360 "./screw_n.c"
 #undef reflect
 #undef phase
 #undef nu
@@ -12076,7 +12433,7 @@ fprintf(stdout, "[%s] Initialize\n", mcinstrument_name);
       Table_Rebin(&pTable);         /* rebin as evenly, increasing array */
   }
 }
-#line 12079 "./screw_n.c"
+#line 12436 "./screw_n.c"
 #undef W
 #undef m
 #undef alpha
@@ -12207,7 +12564,7 @@ MPI_MASTER(
 );
 #endif
 }
-#line 12210 "./screw_n.c"
+#line 12567 "./screw_n.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -12352,7 +12709,7 @@ MPI_MASTER(
 );
 #endif
 }
-#line 12355 "./screw_n.c"
+#line 12712 "./screw_n.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -12385,39 +12742,39 @@ MPI_MASTER(
 #undef mccompcurtype
 #undef mccompcurindex
 
-  /* Initializations for component Octo_sm. */
-  SIG_MESSAGE("Octo_sm (Init)");
-#define mccompcurname  Octo_sm
+  /* Initializations for component Octo_small. */
+  SIG_MESSAGE("Octo_small (Init)");
+#define mccompcurname  Octo_small
 #define mccompcurtype  Monitor_nD
 #define mccompcurindex 9
-#define user1 mccOcto_sm_user1
-#define user2 mccOcto_sm_user2
-#define user3 mccOcto_sm_user3
-#define DEFS mccOcto_sm_DEFS
-#define Vars mccOcto_sm_Vars
-#define detector mccOcto_sm_detector
-#define offdata mccOcto_sm_offdata
-#define xwidth mccOcto_sm_xwidth
-#define yheight mccOcto_sm_yheight
-#define zdepth mccOcto_sm_zdepth
-#define xmin mccOcto_sm_xmin
-#define xmax mccOcto_sm_xmax
-#define ymin mccOcto_sm_ymin
-#define ymax mccOcto_sm_ymax
-#define zmin mccOcto_sm_zmin
-#define zmax mccOcto_sm_zmax
-#define bins mccOcto_sm_bins
-#define min mccOcto_sm_min
-#define max mccOcto_sm_max
-#define restore_neutron mccOcto_sm_restore_neutron
-#define radius mccOcto_sm_radius
-#define options mccOcto_sm_options
-#define filename mccOcto_sm_filename
-#define geometry mccOcto_sm_geometry
-#define username1 mccOcto_sm_username1
-#define username2 mccOcto_sm_username2
-#define username3 mccOcto_sm_username3
-#define nowritefile mccOcto_sm_nowritefile
+#define user1 mccOcto_small_user1
+#define user2 mccOcto_small_user2
+#define user3 mccOcto_small_user3
+#define DEFS mccOcto_small_DEFS
+#define Vars mccOcto_small_Vars
+#define detector mccOcto_small_detector
+#define offdata mccOcto_small_offdata
+#define xwidth mccOcto_small_xwidth
+#define yheight mccOcto_small_yheight
+#define zdepth mccOcto_small_zdepth
+#define xmin mccOcto_small_xmin
+#define xmax mccOcto_small_xmax
+#define ymin mccOcto_small_ymin
+#define ymax mccOcto_small_ymax
+#define zmin mccOcto_small_zmin
+#define zmax mccOcto_small_zmax
+#define bins mccOcto_small_bins
+#define min mccOcto_small_min
+#define max mccOcto_small_max
+#define restore_neutron mccOcto_small_restore_neutron
+#define radius mccOcto_small_radius
+#define options mccOcto_small_options
+#define filename mccOcto_small_filename
+#define geometry mccOcto_small_geometry
+#define username1 mccOcto_small_username1
+#define username2 mccOcto_small_username2
+#define username3 mccOcto_small_username3
+#define nowritefile mccOcto_small_nowritefile
 #line 230 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
 {
   char tmp[CHAR_BUF_LENGTH];
@@ -12497,7 +12854,297 @@ MPI_MASTER(
 );
 #endif
 }
-#line 12500 "./screw_n.c"
+#line 12857 "./screw_n.c"
+#undef nowritefile
+#undef username3
+#undef username2
+#undef username1
+#undef geometry
+#undef filename
+#undef options
+#undef radius
+#undef restore_neutron
+#undef max
+#undef min
+#undef bins
+#undef zmax
+#undef zmin
+#undef ymax
+#undef ymin
+#undef xmax
+#undef xmin
+#undef zdepth
+#undef yheight
+#undef xwidth
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+  /* Initializations for component Octo_small2. */
+  SIG_MESSAGE("Octo_small2 (Init)");
+#define mccompcurname  Octo_small2
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 10
+#define user1 mccOcto_small2_user1
+#define user2 mccOcto_small2_user2
+#define user3 mccOcto_small2_user3
+#define DEFS mccOcto_small2_DEFS
+#define Vars mccOcto_small2_Vars
+#define detector mccOcto_small2_detector
+#define offdata mccOcto_small2_offdata
+#define xwidth mccOcto_small2_xwidth
+#define yheight mccOcto_small2_yheight
+#define zdepth mccOcto_small2_zdepth
+#define xmin mccOcto_small2_xmin
+#define xmax mccOcto_small2_xmax
+#define ymin mccOcto_small2_ymin
+#define ymax mccOcto_small2_ymax
+#define zmin mccOcto_small2_zmin
+#define zmax mccOcto_small2_zmax
+#define bins mccOcto_small2_bins
+#define min mccOcto_small2_min
+#define max mccOcto_small2_max
+#define restore_neutron mccOcto_small2_restore_neutron
+#define radius mccOcto_small2_radius
+#define options mccOcto_small2_options
+#define filename mccOcto_small2_filename
+#define geometry mccOcto_small2_geometry
+#define username1 mccOcto_small2_username1
+#define username2 mccOcto_small2_username2
+#define username3 mccOcto_small2_username3
+#define nowritefile mccOcto_small2_nowritefile
+#line 230 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  char tmp[CHAR_BUF_LENGTH];
+  strcpy(Vars.compcurname, NAME_CURRENT_COMP);
+  if (options != NULL)
+    strncpy(Vars.option, options, CHAR_BUF_LENGTH);
+  else {
+    strcpy(Vars.option, "x y");
+    printf("Monitor_nD: %s has no option specified. Setting to PSD ('x y') monitor.\n", NAME_CURRENT_COMP);
+  }
+  Vars.compcurpos = POS_A_CURRENT_COMP;
+
+  if (strstr(Vars.option, "source"))
+    strcat(Vars.option, " list, x y z vx vy vz t sx sy sz ");
+
+  if (bins) { sprintf(tmp, " all bins=%ld ", (long)bins); strcat(Vars.option, tmp); }
+  if (min > -FLT_MAX && max < FLT_MAX) { sprintf(tmp, " all limits=[%g %g]", min, max); strcat(Vars.option, tmp); }
+  else if (min > -FLT_MAX) { sprintf(tmp, " all min=%g", min); strcat(Vars.option, tmp); }
+  else if (max <  FLT_MAX) { sprintf(tmp, " all max=%g", max); strcat(Vars.option, tmp); }
+
+  strncpy(Vars.UserName1,
+    username1 && strlen(username1) && strcmp(username1, "0") && strcmp(username1, "NULL") ?
+    username1 : "", 128);
+  strncpy(Vars.UserName2,
+    username2 && strlen(username2) && strcmp(username2, "0") && strcmp(username2, "NULL") ?
+    username2 : "", 128);
+  strncpy(Vars.UserName3,
+    username3 && strlen(username3) && strcmp(username3, "0") && strcmp(username3, "NULL") ?
+    username3 : "", 128);
+  if (radius) {
+    xwidth = zdepth = 2*radius;
+    if (yheight && !strstr(Vars.option, "cylinder") && !strstr(Vars.option, "banana") && !strstr(Vars.option, "sphere"))
+      strcat(Vars.option, " banana");
+    else if (!yheight && !strstr(Vars.option ,"sphere")) {
+      strcat(Vars.option, " sphere");
+      yheight=2*radius;
+    }
+  }
+  int offflag=0;
+  if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
+    if (!off_init(  geometry, xwidth, yheight, zdepth, 1, &offdata )) {
+      printf("Monitor_nD: %s could not initiate the OFF geometry %s. \n"
+             "            Defaulting to normal Monitor dimensions.\n",
+             NAME_CURRENT_COMP, geometry);
+      strcpy(geometry, "");
+    } else {
+      offflag=1;
+    }
+
+  if (!radius && !xwidth && !yheight && !zdepth && !xmin && !xmax && !ymin && !ymax &&
+    !strstr(Vars.option, "previous") && (!geometry || !strlen(geometry)))
+    exit(printf("Monitor_nD: %s has no dimension specified. Aborting (radius, xwidth, yheight, zdepth, previous, geometry).\n", NAME_CURRENT_COMP));
+
+  Monitor_nD_Init(&DEFS, &Vars, xwidth, yheight, zdepth, xmin,xmax,ymin,ymax,zmin,zmax,offflag);
+
+  if (Vars.Flag_OFF) {
+    offdata.mantidflag=Vars.Flag_mantid;
+    offdata.mantidoffset=Vars.Coord_Min[Vars.Coord_Number-1];
+  }
+
+
+  if (filename && strlen(filename) && strcmp(filename,"NULL") && strcmp(filename,"0"))
+    strncpy(Vars.Mon_File, filename, 128);
+
+  /* check if user given filename with ext will be used more than once */
+  if ( ((Vars.Flag_Multiple && Vars.Coord_Number > 1) || Vars.Flag_List) && strchr(Vars.Mon_File,'.') )
+  { char *XY; XY = strrchr(Vars.Mon_File,'.'); *XY='_'; }
+
+  if (restore_neutron) Vars.Flag_parallel=1;
+  detector.m = 0;
+
+#ifdef USE_MPI
+MPI_MASTER(
+  if (strstr(Vars.option, "auto") && mpi_node_count > 1)
+    printf("Monitor_nD: %s is using automatic limits option 'auto' together with MPI.\n"
+           "WARNING     this may create incorrect distributions (but integrated flux will be right).\n", NAME_CURRENT_COMP);
+);
+#endif
+}
+#line 13002 "./screw_n.c"
+#undef nowritefile
+#undef username3
+#undef username2
+#undef username1
+#undef geometry
+#undef filename
+#undef options
+#undef radius
+#undef restore_neutron
+#undef max
+#undef min
+#undef bins
+#undef zmax
+#undef zmin
+#undef ymax
+#undef ymin
+#undef xmax
+#undef xmin
+#undef zdepth
+#undef yheight
+#undef xwidth
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+  /* Initializations for component Octo_small23. */
+  SIG_MESSAGE("Octo_small23 (Init)");
+#define mccompcurname  Octo_small23
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 11
+#define user1 mccOcto_small23_user1
+#define user2 mccOcto_small23_user2
+#define user3 mccOcto_small23_user3
+#define DEFS mccOcto_small23_DEFS
+#define Vars mccOcto_small23_Vars
+#define detector mccOcto_small23_detector
+#define offdata mccOcto_small23_offdata
+#define xwidth mccOcto_small23_xwidth
+#define yheight mccOcto_small23_yheight
+#define zdepth mccOcto_small23_zdepth
+#define xmin mccOcto_small23_xmin
+#define xmax mccOcto_small23_xmax
+#define ymin mccOcto_small23_ymin
+#define ymax mccOcto_small23_ymax
+#define zmin mccOcto_small23_zmin
+#define zmax mccOcto_small23_zmax
+#define bins mccOcto_small23_bins
+#define min mccOcto_small23_min
+#define max mccOcto_small23_max
+#define restore_neutron mccOcto_small23_restore_neutron
+#define radius mccOcto_small23_radius
+#define options mccOcto_small23_options
+#define filename mccOcto_small23_filename
+#define geometry mccOcto_small23_geometry
+#define username1 mccOcto_small23_username1
+#define username2 mccOcto_small23_username2
+#define username3 mccOcto_small23_username3
+#define nowritefile mccOcto_small23_nowritefile
+#line 230 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  char tmp[CHAR_BUF_LENGTH];
+  strcpy(Vars.compcurname, NAME_CURRENT_COMP);
+  if (options != NULL)
+    strncpy(Vars.option, options, CHAR_BUF_LENGTH);
+  else {
+    strcpy(Vars.option, "x y");
+    printf("Monitor_nD: %s has no option specified. Setting to PSD ('x y') monitor.\n", NAME_CURRENT_COMP);
+  }
+  Vars.compcurpos = POS_A_CURRENT_COMP;
+
+  if (strstr(Vars.option, "source"))
+    strcat(Vars.option, " list, x y z vx vy vz t sx sy sz ");
+
+  if (bins) { sprintf(tmp, " all bins=%ld ", (long)bins); strcat(Vars.option, tmp); }
+  if (min > -FLT_MAX && max < FLT_MAX) { sprintf(tmp, " all limits=[%g %g]", min, max); strcat(Vars.option, tmp); }
+  else if (min > -FLT_MAX) { sprintf(tmp, " all min=%g", min); strcat(Vars.option, tmp); }
+  else if (max <  FLT_MAX) { sprintf(tmp, " all max=%g", max); strcat(Vars.option, tmp); }
+
+  strncpy(Vars.UserName1,
+    username1 && strlen(username1) && strcmp(username1, "0") && strcmp(username1, "NULL") ?
+    username1 : "", 128);
+  strncpy(Vars.UserName2,
+    username2 && strlen(username2) && strcmp(username2, "0") && strcmp(username2, "NULL") ?
+    username2 : "", 128);
+  strncpy(Vars.UserName3,
+    username3 && strlen(username3) && strcmp(username3, "0") && strcmp(username3, "NULL") ?
+    username3 : "", 128);
+  if (radius) {
+    xwidth = zdepth = 2*radius;
+    if (yheight && !strstr(Vars.option, "cylinder") && !strstr(Vars.option, "banana") && !strstr(Vars.option, "sphere"))
+      strcat(Vars.option, " banana");
+    else if (!yheight && !strstr(Vars.option ,"sphere")) {
+      strcat(Vars.option, " sphere");
+      yheight=2*radius;
+    }
+  }
+  int offflag=0;
+  if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
+    if (!off_init(  geometry, xwidth, yheight, zdepth, 1, &offdata )) {
+      printf("Monitor_nD: %s could not initiate the OFF geometry %s. \n"
+             "            Defaulting to normal Monitor dimensions.\n",
+             NAME_CURRENT_COMP, geometry);
+      strcpy(geometry, "");
+    } else {
+      offflag=1;
+    }
+
+  if (!radius && !xwidth && !yheight && !zdepth && !xmin && !xmax && !ymin && !ymax &&
+    !strstr(Vars.option, "previous") && (!geometry || !strlen(geometry)))
+    exit(printf("Monitor_nD: %s has no dimension specified. Aborting (radius, xwidth, yheight, zdepth, previous, geometry).\n", NAME_CURRENT_COMP));
+
+  Monitor_nD_Init(&DEFS, &Vars, xwidth, yheight, zdepth, xmin,xmax,ymin,ymax,zmin,zmax,offflag);
+
+  if (Vars.Flag_OFF) {
+    offdata.mantidflag=Vars.Flag_mantid;
+    offdata.mantidoffset=Vars.Coord_Min[Vars.Coord_Number-1];
+  }
+
+
+  if (filename && strlen(filename) && strcmp(filename,"NULL") && strcmp(filename,"0"))
+    strncpy(Vars.Mon_File, filename, 128);
+
+  /* check if user given filename with ext will be used more than once */
+  if ( ((Vars.Flag_Multiple && Vars.Coord_Number > 1) || Vars.Flag_List) && strchr(Vars.Mon_File,'.') )
+  { char *XY; XY = strrchr(Vars.Mon_File,'.'); *XY='_'; }
+
+  if (restore_neutron) Vars.Flag_parallel=1;
+  detector.m = 0;
+
+#ifdef USE_MPI
+MPI_MASTER(
+  if (strstr(Vars.option, "auto") && mpi_node_count > 1)
+    printf("Monitor_nD: %s is using automatic limits option 'auto' together with MPI.\n"
+           "WARNING     this may create incorrect distributions (but integrated flux will be right).\n", NAME_CURRENT_COMP);
+);
+#endif
+}
+#line 13147 "./screw_n.c"
 #undef nowritefile
 #undef username3
 #undef username2
@@ -12683,7 +13330,7 @@ MCNUM minutes = mccOrigin_minutes;
     if (flag_save) mcsave(NULL);
   }
 }
-#line 12686 "./screw_n.c"
+#line 13333 "./screw_n.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -12931,7 +13578,7 @@ int target_index = mccH3_target_index;
     SCATTER;
   }
 }
-#line 12934 "./screw_n.c"
+#line 13581 "./screw_n.c"
 }   /* End of H3=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -13362,7 +14009,7 @@ char* reflect = mccGuide_bunker_straight_reflect;
 
   } /* if l */
 }
-#line 13365 "./screw_n.c"
+#line 14012 "./screw_n.c"
 }   /* End of Guide_bunker_straight=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -13658,7 +14305,7 @@ MCNUM W = mccscrew_W;
   /* end of main loop */
 
 }
-#line 13661 "./screw_n.c"
+#line 14308 "./screw_n.c"
 }   /* End of screw=Guide_anyshape() SETTING parameter declarations. */
 #undef offdata
 #undef pTable
@@ -13965,7 +14612,7 @@ int nowritefile = mccOcto_large_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 13968 "./screw_n.c"
+#line 14615 "./screw_n.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14275,7 +14922,7 @@ int nowritefile = mccOcto_med_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 14278 "./screw_n.c"
+#line 14925 "./screw_n.c"
 }   /* End of Octo_med=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14327,8 +14974,8 @@ mcnlsy,
 mcnlsz,
 mcnlp)
 
-  /* TRACE Component Octo_sm [9] */
-  mccoordschange(mcposrOcto_sm, mcrotrOcto_sm,
+  /* TRACE Component Octo_small [9] */
+  mccoordschange(mcposrOcto_small, mcrotrOcto_small,
     &mcnlx,
     &mcnly,
     &mcnlz,
@@ -14338,10 +14985,10 @@ mcnlp)
     &mcnlsx,
     &mcnlsy,
     &mcnlsz);
-  /* define label inside component Octo_sm (without coords transformations) */
-  mcJumpTrace_Octo_sm:
-  SIG_MESSAGE("Octo_sm (Trace)");
-  mcDEBUG_COMP("Octo_sm")
+  /* define label inside component Octo_small (without coords transformations) */
+  mcJumpTrace_Octo_small:
+  SIG_MESSAGE("Octo_small (Trace)");
+  mcDEBUG_COMP("Octo_small")
   mcDEBUG_STATE(
     mcnlx,
     mcnly,
@@ -14366,7 +15013,7 @@ mcnlp)
 #define sz mcnlsz
 #define p mcnlp
 
-#define mcabsorbComp mcabsorbCompOcto_sm
+#define mcabsorbComp mcabsorbCompOcto_small
   STORE_NEUTRON(9,
     mcnlx,
     mcnly,
@@ -14384,38 +15031,38 @@ mcnlp)
   mcNCounter[9]++;
   mcPCounter[9] += p;
   mcP2Counter[9] += p*p;
-#define mccompcurname  Octo_sm
+#define mccompcurname  Octo_small
 #define mccompcurtype  Monitor_nD
 #define mccompcurindex 9
-#define user1 mccOcto_sm_user1
-#define user2 mccOcto_sm_user2
-#define user3 mccOcto_sm_user3
-#define DEFS mccOcto_sm_DEFS
-#define Vars mccOcto_sm_Vars
-#define detector mccOcto_sm_detector
-#define offdata mccOcto_sm_offdata
-{   /* Declarations of Octo_sm=Monitor_nD() SETTING parameters. */
-MCNUM xwidth = mccOcto_sm_xwidth;
-MCNUM yheight = mccOcto_sm_yheight;
-MCNUM zdepth = mccOcto_sm_zdepth;
-MCNUM xmin = mccOcto_sm_xmin;
-MCNUM xmax = mccOcto_sm_xmax;
-MCNUM ymin = mccOcto_sm_ymin;
-MCNUM ymax = mccOcto_sm_ymax;
-MCNUM zmin = mccOcto_sm_zmin;
-MCNUM zmax = mccOcto_sm_zmax;
-MCNUM bins = mccOcto_sm_bins;
-MCNUM min = mccOcto_sm_min;
-MCNUM max = mccOcto_sm_max;
-MCNUM restore_neutron = mccOcto_sm_restore_neutron;
-MCNUM radius = mccOcto_sm_radius;
-char* options = mccOcto_sm_options;
-char* filename = mccOcto_sm_filename;
-char* geometry = mccOcto_sm_geometry;
-char* username1 = mccOcto_sm_username1;
-char* username2 = mccOcto_sm_username2;
-char* username3 = mccOcto_sm_username3;
-int nowritefile = mccOcto_sm_nowritefile;
+#define user1 mccOcto_small_user1
+#define user2 mccOcto_small_user2
+#define user3 mccOcto_small_user3
+#define DEFS mccOcto_small_DEFS
+#define Vars mccOcto_small_Vars
+#define detector mccOcto_small_detector
+#define offdata mccOcto_small_offdata
+{   /* Declarations of Octo_small=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small_xwidth;
+MCNUM yheight = mccOcto_small_yheight;
+MCNUM zdepth = mccOcto_small_zdepth;
+MCNUM xmin = mccOcto_small_xmin;
+MCNUM xmax = mccOcto_small_xmax;
+MCNUM ymin = mccOcto_small_ymin;
+MCNUM ymax = mccOcto_small_ymax;
+MCNUM zmin = mccOcto_small_zmin;
+MCNUM zmax = mccOcto_small_zmax;
+MCNUM bins = mccOcto_small_bins;
+MCNUM min = mccOcto_small_min;
+MCNUM max = mccOcto_small_max;
+MCNUM restore_neutron = mccOcto_small_restore_neutron;
+MCNUM radius = mccOcto_small_radius;
+char* options = mccOcto_small_options;
+char* filename = mccOcto_small_filename;
+char* geometry = mccOcto_small_geometry;
+char* username1 = mccOcto_small_username1;
+char* username2 = mccOcto_small_username2;
+char* username3 = mccOcto_small_username3;
+int nowritefile = mccOcto_small_nowritefile;
 #line 310 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
 {
   double  XY=0;
@@ -14585,8 +15232,8 @@ int nowritefile = mccOcto_sm_nowritefile;
     RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
   }
 }
-#line 14588 "./screw_n.c"
-}   /* End of Octo_sm=Monitor_nD() SETTING parameter declarations. */
+#line 15235 "./screw_n.c"
+}   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
 #undef Vars
@@ -14598,9 +15245,629 @@ int nowritefile = mccOcto_sm_nowritefile;
 #undef mccompcurtype
 #undef mccompcurindex
   /* Label for restoring  neutron */
-  mcabsorbCompOcto_sm:
+  mcabsorbCompOcto_small:
   if (RESTORE) /* restore if needed */
   { RESTORE_NEUTRON(9,
+      mcnlx,
+      mcnly,
+      mcnlz,
+      mcnlvx,
+      mcnlvy,
+      mcnlvz,
+      mcnlt,
+      mcnlsx,
+      mcnlsy,
+      mcnlsz,
+      mcnlp); }
+#undef mcabsorbComp
+#undef p
+#undef sz
+#undef sy
+#undef sx
+#undef t
+#undef vz
+#undef vy
+#undef vx
+#undef z
+#undef y
+#undef x
+  mcDEBUG_STATE(
+mcnlx,
+mcnly,
+mcnlz,
+mcnlvx,
+mcnlvy,
+mcnlvz,
+mcnlt,
+mcnlsx,
+mcnlsy,
+mcnlsz,
+mcnlp)
+
+  /* TRACE Component Octo_small2 [10] */
+  mccoordschange(mcposrOcto_small2, mcrotrOcto_small2,
+    &mcnlx,
+    &mcnly,
+    &mcnlz,
+    &mcnlvx,
+    &mcnlvy,
+    &mcnlvz,
+    &mcnlsx,
+    &mcnlsy,
+    &mcnlsz);
+  /* define label inside component Octo_small2 (without coords transformations) */
+  mcJumpTrace_Octo_small2:
+  SIG_MESSAGE("Octo_small2 (Trace)");
+  mcDEBUG_COMP("Octo_small2")
+  mcDEBUG_STATE(
+    mcnlx,
+    mcnly,
+    mcnlz,
+    mcnlvx,
+    mcnlvy,
+    mcnlvz,
+    mcnlt,
+    mcnlsx,
+    mcnlsy,
+    mcnlsz,
+    mcnlp)
+#define x mcnlx
+#define y mcnly
+#define z mcnlz
+#define vx mcnlvx
+#define vy mcnlvy
+#define vz mcnlvz
+#define t mcnlt
+#define sx mcnlsx
+#define sy mcnlsy
+#define sz mcnlsz
+#define p mcnlp
+
+#define mcabsorbComp mcabsorbCompOcto_small2
+  STORE_NEUTRON(10,
+    mcnlx,
+    mcnly,
+    mcnlz,
+    mcnlvx,
+    mcnlvy,
+    mcnlvz,
+    mcnlt,
+    mcnlsx,
+    mcnlsy,
+    mcnlsz,
+    mcnlp);
+  mcScattered=0;
+  mcRestore=0;
+  mcNCounter[10]++;
+  mcPCounter[10] += p;
+  mcP2Counter[10] += p*p;
+#define mccompcurname  Octo_small2
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 10
+#define user1 mccOcto_small2_user1
+#define user2 mccOcto_small2_user2
+#define user3 mccOcto_small2_user3
+#define DEFS mccOcto_small2_DEFS
+#define Vars mccOcto_small2_Vars
+#define detector mccOcto_small2_detector
+#define offdata mccOcto_small2_offdata
+{   /* Declarations of Octo_small2=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small2_xwidth;
+MCNUM yheight = mccOcto_small2_yheight;
+MCNUM zdepth = mccOcto_small2_zdepth;
+MCNUM xmin = mccOcto_small2_xmin;
+MCNUM xmax = mccOcto_small2_xmax;
+MCNUM ymin = mccOcto_small2_ymin;
+MCNUM ymax = mccOcto_small2_ymax;
+MCNUM zmin = mccOcto_small2_zmin;
+MCNUM zmax = mccOcto_small2_zmax;
+MCNUM bins = mccOcto_small2_bins;
+MCNUM min = mccOcto_small2_min;
+MCNUM max = mccOcto_small2_max;
+MCNUM restore_neutron = mccOcto_small2_restore_neutron;
+MCNUM radius = mccOcto_small2_radius;
+char* options = mccOcto_small2_options;
+char* filename = mccOcto_small2_filename;
+char* geometry = mccOcto_small2_geometry;
+char* username1 = mccOcto_small2_username1;
+char* username2 = mccOcto_small2_username2;
+char* username3 = mccOcto_small2_username3;
+int nowritefile = mccOcto_small2_nowritefile;
+#line 310 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  double  XY=0;
+  double  t0 = 0;
+  double  t1 = 0;
+  double  pp;
+  int     intersect   = 0;
+  char    Flag_Restore = 0;
+
+  if (user1 != FLT_MAX) Vars.UserVariable1 = user1;
+  if (user2 != FLT_MAX) Vars.UserVariable2 = user2;
+  if (user3 != FLT_MAX) Vars.UserVariable3 = user3;
+
+  /* this is done automatically
+    STORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
+  */
+
+  if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
+  {
+    /* determine intersections with object */
+    intersect = off_intersect_all(&t0, &t1, NULL, NULL,
+       x,y,z, vx, vy, vz, &offdata );
+    if (Vars.Flag_mantid) {
+      if(intersect) {
+        Vars.OFF_polyidx=(offdata.intersects[offdata.nextintersect]).index;
+      } else {
+        Vars.OFF_polyidx=-1;
+      }
+    }
+  }
+  else if ( (abs(Vars.Flag_Shape) == DEFS.SHAPE_SQUARE)
+            || (abs(Vars.Flag_Shape) == DEFS.SHAPE_DISK) ) /* square xy or disk xy */
+  {
+    // propagate to xy plane and find intersection
+    // make sure the event is recoverable afterwards
+    t0 = t;
+    ALLOW_BACKPROP;
+    PROP_Z0;
+    if ( (t>=t0) && (z==0.0) ) // forward propagation to xy plane was successful
+    {
+      if (abs(Vars.Flag_Shape) == DEFS.SHAPE_SQUARE)
+      {
+        // square xy
+        intersect = (x>=Vars.mxmin && x<=Vars.mxmax && y>=Vars.mymin && y<=Vars.mymax);
+      }
+      else
+      {
+        // disk xy
+        intersect = (SQR(x) + SQR(y)) <= SQR(Vars.Sphere_Radius);
+      }
+    }
+    else
+    {
+      intersect=0;
+    }
+  }
+  else if (abs(Vars.Flag_Shape) == DEFS.SHAPE_SPHERE) /* sphere */
+  {
+    intersect = sphere_intersect(&t0, &t1, x, y, z, vx, vy, vz, Vars.Sphere_Radius);
+  /*      intersect = (intersect && t0 > 0); */
+  }
+  else if ((abs(Vars.Flag_Shape) == DEFS.SHAPE_CYLIND) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_BANANA)) /* cylinder */
+  {
+    intersect = cylinder_intersect(&t0, &t1, x, y, z, vx, vy, vz, Vars.Sphere_Radius, Vars.Cylinder_Height);
+  }
+  else if (abs(Vars.Flag_Shape) == DEFS.SHAPE_BOX) /* box */
+  {
+    intersect = box_intersect(&t0, &t1, x, y, z, vx, vy, vz,
+                              fabs(Vars.mxmax-Vars.mxmin), fabs(Vars.mymax-Vars.mymin), fabs(Vars.mzmax-Vars.mzmin));
+  }
+  else if (abs(Vars.Flag_Shape) == DEFS.SHAPE_PREVIOUS) /* previous comp */
+  { intersect = 1; }
+
+  if (intersect)
+  {
+    if ((abs(Vars.Flag_Shape) == DEFS.SHAPE_SPHERE) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_CYLIND)
+     || (abs(Vars.Flag_Shape) == DEFS.SHAPE_BOX) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_BANANA)
+     || (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL")) )
+    {
+      /* check if we have to remove the top/bottom with BANANA shape */
+      if ((abs(Vars.Flag_Shape) == DEFS.SHAPE_BANANA) && (intersect != 1)) {
+        double y0,y1;
+        /* propagate to intersection point as temporary variable to check top/bottom */
+        y0 = y+t0*vy;
+        y1 = y+t1*vy;
+        if (fabs(y0) >= Vars.Cylinder_Height/2*0.99) t0 = t1;
+        if (fabs(y1) >= Vars.Cylinder_Height/2*0.99) t1 = t0;
+      }
+      if (t0 < 0 && t1 > 0)
+        t0 = t;  /* neutron was already inside ! */
+      if (t1 < 0 && t0 > 0) /* neutron exit before entering !! */
+        t1 = t;
+      /* t0 is now time of incoming intersection with the detection area */
+      if ((Vars.Flag_Shape < 0) && (t1 > 0))
+        PROP_DT(t1); /* t1 outgoing beam */
+      else
+        PROP_DT(t0); /* t0 incoming beam */
+      /* Final test if we are on lid / bottom of banana/sphere */
+      if (abs(Vars.Flag_Shape) == DEFS.SHAPE_BANANA || abs(Vars.Flag_Shape) == DEFS.SHAPE_SPHERE) {
+        if (fabs(y) >= Vars.Cylinder_Height/2*0.99) {
+          intersect=0;
+          Flag_Restore=1;
+        }
+      }
+    }
+  }
+
+  if (intersect)
+  {
+    /* Now get the data to monitor: current or keep from PreMonitor */
+    if (Vars.Flag_UsePreMonitor != 1)
+    {
+      Vars.cp  = p;
+      Vars.cx  = x;
+      Vars.cvx = vx;
+      Vars.csx = sx;
+      Vars.cy  = y;
+      Vars.cvy = vy;
+      Vars.csy = sy;
+      Vars.cz  = z;
+      Vars.cvz = vz;
+      Vars.csz = sz;
+      Vars.ct  = t;
+    }
+
+    if ((Vars.He3_pressure > 0) && (t1 != t0) && ((abs(Vars.Flag_Shape) == DEFS.SHAPE_SPHERE) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_CYLIND) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_BOX)))
+    {
+      XY = exp(-7.417*Vars.He3_pressure*fabs(t1-t0)*2*PI*K2V);
+      /* will monitor the absorbed part */
+      Vars.cp *= 1-XY;
+      /* and modify the neutron weight after monitor, only remains 1-p_detect */
+      p *= XY;
+    }
+
+    if (Vars.Flag_capture)
+    {
+      XY = sqrt(Vars.cvx*Vars.cvx+Vars.cvy*Vars.cvy+Vars.cvz*Vars.cvz);
+      XY *= V2K;
+      if (XY != 0) XY = 2*PI/XY; /* lambda. lambda(2200 m/2) = 1.7985 Angs  */
+      Vars.cp *= XY/1.7985;
+    }
+
+    pp = Monitor_nD_Trace(&DEFS, &Vars);
+    if (pp==0.0)
+    { ABSORB;
+    }
+    else if(pp==1)
+    {
+      SCATTER;
+    }
+
+    if (Vars.Flag_parallel) /* back to neutron state before detection */
+      Flag_Restore = 1;
+  } /* end if intersection */
+  else {
+    if (Vars.Flag_Absorb && !Vars.Flag_parallel)
+    {
+      // restore neutron ray before absorbing for correct mcdisplay
+      RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
+      ABSORB;
+    }
+    else Flag_Restore = 1;  /* no intersection, back to previous state */
+  }
+
+  if (Flag_Restore)
+  {
+    RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
+  }
+}
+#line 15545 "./screw_n.c"
+}   /* End of Octo_small2=Monitor_nD() SETTING parameter declarations. */
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+  /* Label for restoring  neutron */
+  mcabsorbCompOcto_small2:
+  if (RESTORE) /* restore if needed */
+  { RESTORE_NEUTRON(10,
+      mcnlx,
+      mcnly,
+      mcnlz,
+      mcnlvx,
+      mcnlvy,
+      mcnlvz,
+      mcnlt,
+      mcnlsx,
+      mcnlsy,
+      mcnlsz,
+      mcnlp); }
+#undef mcabsorbComp
+#undef p
+#undef sz
+#undef sy
+#undef sx
+#undef t
+#undef vz
+#undef vy
+#undef vx
+#undef z
+#undef y
+#undef x
+  mcDEBUG_STATE(
+mcnlx,
+mcnly,
+mcnlz,
+mcnlvx,
+mcnlvy,
+mcnlvz,
+mcnlt,
+mcnlsx,
+mcnlsy,
+mcnlsz,
+mcnlp)
+
+  /* TRACE Component Octo_small23 [11] */
+  mccoordschange(mcposrOcto_small23, mcrotrOcto_small23,
+    &mcnlx,
+    &mcnly,
+    &mcnlz,
+    &mcnlvx,
+    &mcnlvy,
+    &mcnlvz,
+    &mcnlsx,
+    &mcnlsy,
+    &mcnlsz);
+  /* define label inside component Octo_small23 (without coords transformations) */
+  mcJumpTrace_Octo_small23:
+  SIG_MESSAGE("Octo_small23 (Trace)");
+  mcDEBUG_COMP("Octo_small23")
+  mcDEBUG_STATE(
+    mcnlx,
+    mcnly,
+    mcnlz,
+    mcnlvx,
+    mcnlvy,
+    mcnlvz,
+    mcnlt,
+    mcnlsx,
+    mcnlsy,
+    mcnlsz,
+    mcnlp)
+#define x mcnlx
+#define y mcnly
+#define z mcnlz
+#define vx mcnlvx
+#define vy mcnlvy
+#define vz mcnlvz
+#define t mcnlt
+#define sx mcnlsx
+#define sy mcnlsy
+#define sz mcnlsz
+#define p mcnlp
+
+#define mcabsorbComp mcabsorbCompOcto_small23
+  STORE_NEUTRON(11,
+    mcnlx,
+    mcnly,
+    mcnlz,
+    mcnlvx,
+    mcnlvy,
+    mcnlvz,
+    mcnlt,
+    mcnlsx,
+    mcnlsy,
+    mcnlsz,
+    mcnlp);
+  mcScattered=0;
+  mcRestore=0;
+  mcNCounter[11]++;
+  mcPCounter[11] += p;
+  mcP2Counter[11] += p*p;
+#define mccompcurname  Octo_small23
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 11
+#define user1 mccOcto_small23_user1
+#define user2 mccOcto_small23_user2
+#define user3 mccOcto_small23_user3
+#define DEFS mccOcto_small23_DEFS
+#define Vars mccOcto_small23_Vars
+#define detector mccOcto_small23_detector
+#define offdata mccOcto_small23_offdata
+{   /* Declarations of Octo_small23=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small23_xwidth;
+MCNUM yheight = mccOcto_small23_yheight;
+MCNUM zdepth = mccOcto_small23_zdepth;
+MCNUM xmin = mccOcto_small23_xmin;
+MCNUM xmax = mccOcto_small23_xmax;
+MCNUM ymin = mccOcto_small23_ymin;
+MCNUM ymax = mccOcto_small23_ymax;
+MCNUM zmin = mccOcto_small23_zmin;
+MCNUM zmax = mccOcto_small23_zmax;
+MCNUM bins = mccOcto_small23_bins;
+MCNUM min = mccOcto_small23_min;
+MCNUM max = mccOcto_small23_max;
+MCNUM restore_neutron = mccOcto_small23_restore_neutron;
+MCNUM radius = mccOcto_small23_radius;
+char* options = mccOcto_small23_options;
+char* filename = mccOcto_small23_filename;
+char* geometry = mccOcto_small23_geometry;
+char* username1 = mccOcto_small23_username1;
+char* username2 = mccOcto_small23_username2;
+char* username3 = mccOcto_small23_username3;
+int nowritefile = mccOcto_small23_nowritefile;
+#line 310 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  double  XY=0;
+  double  t0 = 0;
+  double  t1 = 0;
+  double  pp;
+  int     intersect   = 0;
+  char    Flag_Restore = 0;
+
+  if (user1 != FLT_MAX) Vars.UserVariable1 = user1;
+  if (user2 != FLT_MAX) Vars.UserVariable2 = user2;
+  if (user3 != FLT_MAX) Vars.UserVariable3 = user3;
+
+  /* this is done automatically
+    STORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
+  */
+
+  if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
+  {
+    /* determine intersections with object */
+    intersect = off_intersect_all(&t0, &t1, NULL, NULL,
+       x,y,z, vx, vy, vz, &offdata );
+    if (Vars.Flag_mantid) {
+      if(intersect) {
+        Vars.OFF_polyidx=(offdata.intersects[offdata.nextintersect]).index;
+      } else {
+        Vars.OFF_polyidx=-1;
+      }
+    }
+  }
+  else if ( (abs(Vars.Flag_Shape) == DEFS.SHAPE_SQUARE)
+            || (abs(Vars.Flag_Shape) == DEFS.SHAPE_DISK) ) /* square xy or disk xy */
+  {
+    // propagate to xy plane and find intersection
+    // make sure the event is recoverable afterwards
+    t0 = t;
+    ALLOW_BACKPROP;
+    PROP_Z0;
+    if ( (t>=t0) && (z==0.0) ) // forward propagation to xy plane was successful
+    {
+      if (abs(Vars.Flag_Shape) == DEFS.SHAPE_SQUARE)
+      {
+        // square xy
+        intersect = (x>=Vars.mxmin && x<=Vars.mxmax && y>=Vars.mymin && y<=Vars.mymax);
+      }
+      else
+      {
+        // disk xy
+        intersect = (SQR(x) + SQR(y)) <= SQR(Vars.Sphere_Radius);
+      }
+    }
+    else
+    {
+      intersect=0;
+    }
+  }
+  else if (abs(Vars.Flag_Shape) == DEFS.SHAPE_SPHERE) /* sphere */
+  {
+    intersect = sphere_intersect(&t0, &t1, x, y, z, vx, vy, vz, Vars.Sphere_Radius);
+  /*      intersect = (intersect && t0 > 0); */
+  }
+  else if ((abs(Vars.Flag_Shape) == DEFS.SHAPE_CYLIND) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_BANANA)) /* cylinder */
+  {
+    intersect = cylinder_intersect(&t0, &t1, x, y, z, vx, vy, vz, Vars.Sphere_Radius, Vars.Cylinder_Height);
+  }
+  else if (abs(Vars.Flag_Shape) == DEFS.SHAPE_BOX) /* box */
+  {
+    intersect = box_intersect(&t0, &t1, x, y, z, vx, vy, vz,
+                              fabs(Vars.mxmax-Vars.mxmin), fabs(Vars.mymax-Vars.mymin), fabs(Vars.mzmax-Vars.mzmin));
+  }
+  else if (abs(Vars.Flag_Shape) == DEFS.SHAPE_PREVIOUS) /* previous comp */
+  { intersect = 1; }
+
+  if (intersect)
+  {
+    if ((abs(Vars.Flag_Shape) == DEFS.SHAPE_SPHERE) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_CYLIND)
+     || (abs(Vars.Flag_Shape) == DEFS.SHAPE_BOX) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_BANANA)
+     || (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL")) )
+    {
+      /* check if we have to remove the top/bottom with BANANA shape */
+      if ((abs(Vars.Flag_Shape) == DEFS.SHAPE_BANANA) && (intersect != 1)) {
+        double y0,y1;
+        /* propagate to intersection point as temporary variable to check top/bottom */
+        y0 = y+t0*vy;
+        y1 = y+t1*vy;
+        if (fabs(y0) >= Vars.Cylinder_Height/2*0.99) t0 = t1;
+        if (fabs(y1) >= Vars.Cylinder_Height/2*0.99) t1 = t0;
+      }
+      if (t0 < 0 && t1 > 0)
+        t0 = t;  /* neutron was already inside ! */
+      if (t1 < 0 && t0 > 0) /* neutron exit before entering !! */
+        t1 = t;
+      /* t0 is now time of incoming intersection with the detection area */
+      if ((Vars.Flag_Shape < 0) && (t1 > 0))
+        PROP_DT(t1); /* t1 outgoing beam */
+      else
+        PROP_DT(t0); /* t0 incoming beam */
+      /* Final test if we are on lid / bottom of banana/sphere */
+      if (abs(Vars.Flag_Shape) == DEFS.SHAPE_BANANA || abs(Vars.Flag_Shape) == DEFS.SHAPE_SPHERE) {
+        if (fabs(y) >= Vars.Cylinder_Height/2*0.99) {
+          intersect=0;
+          Flag_Restore=1;
+        }
+      }
+    }
+  }
+
+  if (intersect)
+  {
+    /* Now get the data to monitor: current or keep from PreMonitor */
+    if (Vars.Flag_UsePreMonitor != 1)
+    {
+      Vars.cp  = p;
+      Vars.cx  = x;
+      Vars.cvx = vx;
+      Vars.csx = sx;
+      Vars.cy  = y;
+      Vars.cvy = vy;
+      Vars.csy = sy;
+      Vars.cz  = z;
+      Vars.cvz = vz;
+      Vars.csz = sz;
+      Vars.ct  = t;
+    }
+
+    if ((Vars.He3_pressure > 0) && (t1 != t0) && ((abs(Vars.Flag_Shape) == DEFS.SHAPE_SPHERE) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_CYLIND) || (abs(Vars.Flag_Shape) == DEFS.SHAPE_BOX)))
+    {
+      XY = exp(-7.417*Vars.He3_pressure*fabs(t1-t0)*2*PI*K2V);
+      /* will monitor the absorbed part */
+      Vars.cp *= 1-XY;
+      /* and modify the neutron weight after monitor, only remains 1-p_detect */
+      p *= XY;
+    }
+
+    if (Vars.Flag_capture)
+    {
+      XY = sqrt(Vars.cvx*Vars.cvx+Vars.cvy*Vars.cvy+Vars.cvz*Vars.cvz);
+      XY *= V2K;
+      if (XY != 0) XY = 2*PI/XY; /* lambda. lambda(2200 m/2) = 1.7985 Angs  */
+      Vars.cp *= XY/1.7985;
+    }
+
+    pp = Monitor_nD_Trace(&DEFS, &Vars);
+    if (pp==0.0)
+    { ABSORB;
+    }
+    else if(pp==1)
+    {
+      SCATTER;
+    }
+
+    if (Vars.Flag_parallel) /* back to neutron state before detection */
+      Flag_Restore = 1;
+  } /* end if intersection */
+  else {
+    if (Vars.Flag_Absorb && !Vars.Flag_parallel)
+    {
+      // restore neutron ray before absorbing for correct mcdisplay
+      RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
+      ABSORB;
+    }
+    else Flag_Restore = 1;  /* no intersection, back to previous state */
+  }
+
+  if (Flag_Restore)
+  {
+    RESTORE_NEUTRON(INDEX_CURRENT_COMP, x, y, z, vx, vy, vz, t, sx, sy, sz, p);
+  }
+}
+#line 15855 "./screw_n.c"
+}   /* End of Octo_small23=Monitor_nD() SETTING parameter declarations. */
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+  /* Label for restoring  neutron */
+  mcabsorbCompOcto_small23:
+  if (RESTORE) /* restore if needed */
+  { RESTORE_NEUTRON(11,
       mcnlx,
       mcnly,
       mcnlz,
@@ -14701,7 +15968,7 @@ MCNUM minutes = mccOrigin_minutes;
 
   }
 }
-#line 14704 "./screw_n.c"
+#line 15971 "./screw_n.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -14750,7 +16017,7 @@ int nowritefile = mccOcto_large_nowritefile;
   /* save results, but do not free pointers */
   detector = Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 14753 "./screw_n.c"
+#line 16020 "./screw_n.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14802,7 +16069,7 @@ int nowritefile = mccOcto_med_nowritefile;
   /* save results, but do not free pointers */
   detector = Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 14805 "./screw_n.c"
+#line 16072 "./screw_n.c"
 }   /* End of Octo_med=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -14815,47 +16082,151 @@ int nowritefile = mccOcto_med_nowritefile;
 #undef mccompcurtype
 #undef mccompcurindex
 
-  /* User SAVE code for component 'Octo_sm'. */
-  SIG_MESSAGE("Octo_sm (Save)");
-#define mccompcurname  Octo_sm
+  /* User SAVE code for component 'Octo_small'. */
+  SIG_MESSAGE("Octo_small (Save)");
+#define mccompcurname  Octo_small
 #define mccompcurtype  Monitor_nD
 #define mccompcurindex 9
-#define user1 mccOcto_sm_user1
-#define user2 mccOcto_sm_user2
-#define user3 mccOcto_sm_user3
-#define DEFS mccOcto_sm_DEFS
-#define Vars mccOcto_sm_Vars
-#define detector mccOcto_sm_detector
-#define offdata mccOcto_sm_offdata
-{   /* Declarations of Octo_sm=Monitor_nD() SETTING parameters. */
-MCNUM xwidth = mccOcto_sm_xwidth;
-MCNUM yheight = mccOcto_sm_yheight;
-MCNUM zdepth = mccOcto_sm_zdepth;
-MCNUM xmin = mccOcto_sm_xmin;
-MCNUM xmax = mccOcto_sm_xmax;
-MCNUM ymin = mccOcto_sm_ymin;
-MCNUM ymax = mccOcto_sm_ymax;
-MCNUM zmin = mccOcto_sm_zmin;
-MCNUM zmax = mccOcto_sm_zmax;
-MCNUM bins = mccOcto_sm_bins;
-MCNUM min = mccOcto_sm_min;
-MCNUM max = mccOcto_sm_max;
-MCNUM restore_neutron = mccOcto_sm_restore_neutron;
-MCNUM radius = mccOcto_sm_radius;
-char* options = mccOcto_sm_options;
-char* filename = mccOcto_sm_filename;
-char* geometry = mccOcto_sm_geometry;
-char* username1 = mccOcto_sm_username1;
-char* username2 = mccOcto_sm_username2;
-char* username3 = mccOcto_sm_username3;
-int nowritefile = mccOcto_sm_nowritefile;
+#define user1 mccOcto_small_user1
+#define user2 mccOcto_small_user2
+#define user3 mccOcto_small_user3
+#define DEFS mccOcto_small_DEFS
+#define Vars mccOcto_small_Vars
+#define detector mccOcto_small_detector
+#define offdata mccOcto_small_offdata
+{   /* Declarations of Octo_small=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small_xwidth;
+MCNUM yheight = mccOcto_small_yheight;
+MCNUM zdepth = mccOcto_small_zdepth;
+MCNUM xmin = mccOcto_small_xmin;
+MCNUM xmax = mccOcto_small_xmax;
+MCNUM ymin = mccOcto_small_ymin;
+MCNUM ymax = mccOcto_small_ymax;
+MCNUM zmin = mccOcto_small_zmin;
+MCNUM zmax = mccOcto_small_zmax;
+MCNUM bins = mccOcto_small_bins;
+MCNUM min = mccOcto_small_min;
+MCNUM max = mccOcto_small_max;
+MCNUM restore_neutron = mccOcto_small_restore_neutron;
+MCNUM radius = mccOcto_small_radius;
+char* options = mccOcto_small_options;
+char* filename = mccOcto_small_filename;
+char* geometry = mccOcto_small_geometry;
+char* username1 = mccOcto_small_username1;
+char* username2 = mccOcto_small_username2;
+char* username3 = mccOcto_small_username3;
+int nowritefile = mccOcto_small_nowritefile;
 #line 480 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
 {
   /* save results, but do not free pointers */
   detector = Monitor_nD_Save(&DEFS, &Vars);
 }
-#line 14857 "./screw_n.c"
-}   /* End of Octo_sm=Monitor_nD() SETTING parameter declarations. */
+#line 16124 "./screw_n.c"
+}   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+  /* User SAVE code for component 'Octo_small2'. */
+  SIG_MESSAGE("Octo_small2 (Save)");
+#define mccompcurname  Octo_small2
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 10
+#define user1 mccOcto_small2_user1
+#define user2 mccOcto_small2_user2
+#define user3 mccOcto_small2_user3
+#define DEFS mccOcto_small2_DEFS
+#define Vars mccOcto_small2_Vars
+#define detector mccOcto_small2_detector
+#define offdata mccOcto_small2_offdata
+{   /* Declarations of Octo_small2=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small2_xwidth;
+MCNUM yheight = mccOcto_small2_yheight;
+MCNUM zdepth = mccOcto_small2_zdepth;
+MCNUM xmin = mccOcto_small2_xmin;
+MCNUM xmax = mccOcto_small2_xmax;
+MCNUM ymin = mccOcto_small2_ymin;
+MCNUM ymax = mccOcto_small2_ymax;
+MCNUM zmin = mccOcto_small2_zmin;
+MCNUM zmax = mccOcto_small2_zmax;
+MCNUM bins = mccOcto_small2_bins;
+MCNUM min = mccOcto_small2_min;
+MCNUM max = mccOcto_small2_max;
+MCNUM restore_neutron = mccOcto_small2_restore_neutron;
+MCNUM radius = mccOcto_small2_radius;
+char* options = mccOcto_small2_options;
+char* filename = mccOcto_small2_filename;
+char* geometry = mccOcto_small2_geometry;
+char* username1 = mccOcto_small2_username1;
+char* username2 = mccOcto_small2_username2;
+char* username3 = mccOcto_small2_username3;
+int nowritefile = mccOcto_small2_nowritefile;
+#line 480 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  /* save results, but do not free pointers */
+  detector = Monitor_nD_Save(&DEFS, &Vars);
+}
+#line 16176 "./screw_n.c"
+}   /* End of Octo_small2=Monitor_nD() SETTING parameter declarations. */
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+  /* User SAVE code for component 'Octo_small23'. */
+  SIG_MESSAGE("Octo_small23 (Save)");
+#define mccompcurname  Octo_small23
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 11
+#define user1 mccOcto_small23_user1
+#define user2 mccOcto_small23_user2
+#define user3 mccOcto_small23_user3
+#define DEFS mccOcto_small23_DEFS
+#define Vars mccOcto_small23_Vars
+#define detector mccOcto_small23_detector
+#define offdata mccOcto_small23_offdata
+{   /* Declarations of Octo_small23=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small23_xwidth;
+MCNUM yheight = mccOcto_small23_yheight;
+MCNUM zdepth = mccOcto_small23_zdepth;
+MCNUM xmin = mccOcto_small23_xmin;
+MCNUM xmax = mccOcto_small23_xmax;
+MCNUM ymin = mccOcto_small23_ymin;
+MCNUM ymax = mccOcto_small23_ymax;
+MCNUM zmin = mccOcto_small23_zmin;
+MCNUM zmax = mccOcto_small23_zmax;
+MCNUM bins = mccOcto_small23_bins;
+MCNUM min = mccOcto_small23_min;
+MCNUM max = mccOcto_small23_max;
+MCNUM restore_neutron = mccOcto_small23_restore_neutron;
+MCNUM radius = mccOcto_small23_radius;
+char* options = mccOcto_small23_options;
+char* filename = mccOcto_small23_filename;
+char* geometry = mccOcto_small23_geometry;
+char* username1 = mccOcto_small23_username1;
+char* username2 = mccOcto_small23_username2;
+char* username3 = mccOcto_small23_username3;
+int nowritefile = mccOcto_small23_nowritefile;
+#line 480 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  /* save results, but do not free pointers */
+  detector = Monitor_nD_Save(&DEFS, &Vars);
+}
+#line 16228 "./screw_n.c"
+}   /* End of Octo_small23=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
 #undef Vars
@@ -14901,7 +16272,7 @@ MCNUM minutes = mccOrigin_minutes;
     fprintf(stdout, "%g [min] ", difftime(NowTime,StartTime)/60.0);
   fprintf(stdout, "\n");
 }
-#line 14904 "./screw_n.c"
+#line 16275 "./screw_n.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -14973,7 +16344,7 @@ int target_index = mccH3_target_index;
   Table_Free(&pTable_x);
   Table_Free(&pTable_y);
 }
-#line 14975 "./screw_n.c"
+#line 16346 "./screw_n.c"
 }   /* End of H3=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -15051,7 +16422,7 @@ if (GVars.warnings > 100) {
   fprintf(stderr,"%s: warning: This message has been repeated %g times\n", GVars.compcurname, GVars.warnings);
 }
 }
-#line 15051 "./screw_n.c"
+#line 16422 "./screw_n.c"
 }   /* End of Guide_bunker_straight=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -15109,7 +16480,7 @@ int nowritefile = mccOcto_large_nowritefile;
     Monitor_nD_Finally(&DEFS, &Vars);
   }
 }
-#line 15106 "./screw_n.c"
+#line 16477 "./screw_n.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15166,7 +16537,7 @@ int nowritefile = mccOcto_med_nowritefile;
     Monitor_nD_Finally(&DEFS, &Vars);
   }
 }
-#line 15162 "./screw_n.c"
+#line 16533 "./screw_n.c"
 }   /* End of Octo_med=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15182,40 +16553,40 @@ int nowritefile = mccOcto_med_nowritefile;
     if (!mcNCounter[8]) fprintf(stderr, "Warning: No neutron could reach Component[8] Octo_med\n");
     if (mcAbsorbProp[8]) fprintf(stderr, "Warning: %g events were removed in Component[8] Octo_med=Monitor_nD()\n"
 "         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[8]);
-  /* User FINALLY code for component 'Octo_sm'. */
-  SIG_MESSAGE("Octo_sm (Finally)");
-#define mccompcurname  Octo_sm
+  /* User FINALLY code for component 'Octo_small'. */
+  SIG_MESSAGE("Octo_small (Finally)");
+#define mccompcurname  Octo_small
 #define mccompcurtype  Monitor_nD
 #define mccompcurindex 9
-#define user1 mccOcto_sm_user1
-#define user2 mccOcto_sm_user2
-#define user3 mccOcto_sm_user3
-#define DEFS mccOcto_sm_DEFS
-#define Vars mccOcto_sm_Vars
-#define detector mccOcto_sm_detector
-#define offdata mccOcto_sm_offdata
-{   /* Declarations of Octo_sm=Monitor_nD() SETTING parameters. */
-MCNUM xwidth = mccOcto_sm_xwidth;
-MCNUM yheight = mccOcto_sm_yheight;
-MCNUM zdepth = mccOcto_sm_zdepth;
-MCNUM xmin = mccOcto_sm_xmin;
-MCNUM xmax = mccOcto_sm_xmax;
-MCNUM ymin = mccOcto_sm_ymin;
-MCNUM ymax = mccOcto_sm_ymax;
-MCNUM zmin = mccOcto_sm_zmin;
-MCNUM zmax = mccOcto_sm_zmax;
-MCNUM bins = mccOcto_sm_bins;
-MCNUM min = mccOcto_sm_min;
-MCNUM max = mccOcto_sm_max;
-MCNUM restore_neutron = mccOcto_sm_restore_neutron;
-MCNUM radius = mccOcto_sm_radius;
-char* options = mccOcto_sm_options;
-char* filename = mccOcto_sm_filename;
-char* geometry = mccOcto_sm_geometry;
-char* username1 = mccOcto_sm_username1;
-char* username2 = mccOcto_sm_username2;
-char* username3 = mccOcto_sm_username3;
-int nowritefile = mccOcto_sm_nowritefile;
+#define user1 mccOcto_small_user1
+#define user2 mccOcto_small_user2
+#define user3 mccOcto_small_user3
+#define DEFS mccOcto_small_DEFS
+#define Vars mccOcto_small_Vars
+#define detector mccOcto_small_detector
+#define offdata mccOcto_small_offdata
+{   /* Declarations of Octo_small=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small_xwidth;
+MCNUM yheight = mccOcto_small_yheight;
+MCNUM zdepth = mccOcto_small_zdepth;
+MCNUM xmin = mccOcto_small_xmin;
+MCNUM xmax = mccOcto_small_xmax;
+MCNUM ymin = mccOcto_small_ymin;
+MCNUM ymax = mccOcto_small_ymax;
+MCNUM zmin = mccOcto_small_zmin;
+MCNUM zmax = mccOcto_small_zmax;
+MCNUM bins = mccOcto_small_bins;
+MCNUM min = mccOcto_small_min;
+MCNUM max = mccOcto_small_max;
+MCNUM restore_neutron = mccOcto_small_restore_neutron;
+MCNUM radius = mccOcto_small_radius;
+char* options = mccOcto_small_options;
+char* filename = mccOcto_small_filename;
+char* geometry = mccOcto_small_geometry;
+char* username1 = mccOcto_small_username1;
+char* username2 = mccOcto_small_username2;
+char* username3 = mccOcto_small_username3;
+int nowritefile = mccOcto_small_nowritefile;
 #line 486 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
 {
   /* free pointers */
@@ -15223,8 +16594,8 @@ int nowritefile = mccOcto_sm_nowritefile;
     Monitor_nD_Finally(&DEFS, &Vars);
   }
 }
-#line 15218 "./screw_n.c"
-}   /* End of Octo_sm=Monitor_nD() SETTING parameter declarations. */
+#line 16589 "./screw_n.c"
+}   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
 #undef Vars
@@ -15236,9 +16607,123 @@ int nowritefile = mccOcto_sm_nowritefile;
 #undef mccompcurtype
 #undef mccompcurindex
 
-    if (!mcNCounter[9]) fprintf(stderr, "Warning: No neutron could reach Component[9] Octo_sm\n");
-    if (mcAbsorbProp[9]) fprintf(stderr, "Warning: %g events were removed in Component[9] Octo_sm=Monitor_nD()\n"
+    if (!mcNCounter[9]) fprintf(stderr, "Warning: No neutron could reach Component[9] Octo_small\n");
+    if (mcAbsorbProp[9]) fprintf(stderr, "Warning: %g events were removed in Component[9] Octo_small=Monitor_nD()\n"
 "         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[9]);
+  /* User FINALLY code for component 'Octo_small2'. */
+  SIG_MESSAGE("Octo_small2 (Finally)");
+#define mccompcurname  Octo_small2
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 10
+#define user1 mccOcto_small2_user1
+#define user2 mccOcto_small2_user2
+#define user3 mccOcto_small2_user3
+#define DEFS mccOcto_small2_DEFS
+#define Vars mccOcto_small2_Vars
+#define detector mccOcto_small2_detector
+#define offdata mccOcto_small2_offdata
+{   /* Declarations of Octo_small2=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small2_xwidth;
+MCNUM yheight = mccOcto_small2_yheight;
+MCNUM zdepth = mccOcto_small2_zdepth;
+MCNUM xmin = mccOcto_small2_xmin;
+MCNUM xmax = mccOcto_small2_xmax;
+MCNUM ymin = mccOcto_small2_ymin;
+MCNUM ymax = mccOcto_small2_ymax;
+MCNUM zmin = mccOcto_small2_zmin;
+MCNUM zmax = mccOcto_small2_zmax;
+MCNUM bins = mccOcto_small2_bins;
+MCNUM min = mccOcto_small2_min;
+MCNUM max = mccOcto_small2_max;
+MCNUM restore_neutron = mccOcto_small2_restore_neutron;
+MCNUM radius = mccOcto_small2_radius;
+char* options = mccOcto_small2_options;
+char* filename = mccOcto_small2_filename;
+char* geometry = mccOcto_small2_geometry;
+char* username1 = mccOcto_small2_username1;
+char* username2 = mccOcto_small2_username2;
+char* username3 = mccOcto_small2_username3;
+int nowritefile = mccOcto_small2_nowritefile;
+#line 486 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  /* free pointers */
+  if (!nowritefile) {
+    Monitor_nD_Finally(&DEFS, &Vars);
+  }
+}
+#line 16645 "./screw_n.c"
+}   /* End of Octo_small2=Monitor_nD() SETTING parameter declarations. */
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+    if (!mcNCounter[10]) fprintf(stderr, "Warning: No neutron could reach Component[10] Octo_small2\n");
+    if (mcAbsorbProp[10]) fprintf(stderr, "Warning: %g events were removed in Component[10] Octo_small2=Monitor_nD()\n"
+"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[10]);
+  /* User FINALLY code for component 'Octo_small23'. */
+  SIG_MESSAGE("Octo_small23 (Finally)");
+#define mccompcurname  Octo_small23
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 11
+#define user1 mccOcto_small23_user1
+#define user2 mccOcto_small23_user2
+#define user3 mccOcto_small23_user3
+#define DEFS mccOcto_small23_DEFS
+#define Vars mccOcto_small23_Vars
+#define detector mccOcto_small23_detector
+#define offdata mccOcto_small23_offdata
+{   /* Declarations of Octo_small23=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small23_xwidth;
+MCNUM yheight = mccOcto_small23_yheight;
+MCNUM zdepth = mccOcto_small23_zdepth;
+MCNUM xmin = mccOcto_small23_xmin;
+MCNUM xmax = mccOcto_small23_xmax;
+MCNUM ymin = mccOcto_small23_ymin;
+MCNUM ymax = mccOcto_small23_ymax;
+MCNUM zmin = mccOcto_small23_zmin;
+MCNUM zmax = mccOcto_small23_zmax;
+MCNUM bins = mccOcto_small23_bins;
+MCNUM min = mccOcto_small23_min;
+MCNUM max = mccOcto_small23_max;
+MCNUM restore_neutron = mccOcto_small23_restore_neutron;
+MCNUM radius = mccOcto_small23_radius;
+char* options = mccOcto_small23_options;
+char* filename = mccOcto_small23_filename;
+char* geometry = mccOcto_small23_geometry;
+char* username1 = mccOcto_small23_username1;
+char* username2 = mccOcto_small23_username2;
+char* username3 = mccOcto_small23_username3;
+int nowritefile = mccOcto_small23_nowritefile;
+#line 486 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  /* free pointers */
+  if (!nowritefile) {
+    Monitor_nD_Finally(&DEFS, &Vars);
+  }
+}
+#line 16701 "./screw_n.c"
+}   /* End of Octo_small23=Monitor_nD() SETTING parameter declarations. */
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+    if (!mcNCounter[11]) fprintf(stderr, "Warning: No neutron could reach Component[11] Octo_small23\n");
+    if (mcAbsorbProp[11]) fprintf(stderr, "Warning: %g events were removed in Component[11] Octo_small23=Monitor_nD()\n"
+"         (negative time, miss next components, rounding errors, Nan, Inf).\n", mcAbsorbProp[11]);
   mcsiminfo_close(); 
 } /* end finally */
 #define magnify mcdis_magnify
@@ -15273,7 +16758,7 @@ MCNUM minutes = mccOrigin_minutes;
 {
   
 }
-#line 15267 "./screw_n.c"
+#line 16750 "./screw_n.c"
 }   /* End of Origin=Progress_bar() SETTING parameter declarations. */
 #undef CurrentTime
 #undef EndTime
@@ -15386,7 +16871,7 @@ int target_index = mccH3_target_index;
     dashed_line(0,0,0, -focus_xw/2, focus_yh/2,dist, 4);
   }
 }
-#line 15380 "./screw_n.c"
+#line 16863 "./screw_n.c"
 }   /* End of H3=Source_gen() SETTING parameter declarations. */
 #undef pTable_dymax
 #undef pTable_dymin
@@ -15423,7 +16908,7 @@ int target_index = mccH3_target_index;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 15417 "./screw_n.c"
+#line 16900 "./screw_n.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -15534,7 +17019,7 @@ char* reflect = mccGuide_bunker_straight_reflect;
   }
 
 }
-#line 15528 "./screw_n.c"
+#line 17011 "./screw_n.c"
 }   /* End of Guide_bunker_straight=Guide_gravity() SETTING parameter declarations. */
 #undef pTable
 #undef GVars
@@ -15556,7 +17041,7 @@ char* reflect = mccGuide_bunker_straight_reflect;
   line(0,0,0,0,0.2,0);
   line(0,0,0,0,0,0.2);
 }
-#line 15550 "./screw_n.c"
+#line 17033 "./screw_n.c"
 #undef mccompcurname
 #undef mccompcurtype
 #undef mccompcurindex
@@ -15596,7 +17081,7 @@ MCNUM W = mccscrew_W;
             (-offdata.zmin+offdata.zmax));
   */
 }
-#line 15590 "./screw_n.c"
+#line 17073 "./screw_n.c"
 }   /* End of screw=Guide_anyshape() SETTING parameter declarations. */
 #undef offdata
 #undef pTable
@@ -15650,7 +17135,7 @@ int nowritefile = mccOcto_large_nowritefile;
     Monitor_nD_McDisplay(&DEFS, &Vars);
   }
 }
-#line 15644 "./screw_n.c"
+#line 17127 "./screw_n.c"
 }   /* End of Octo_large=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15707,7 +17192,7 @@ int nowritefile = mccOcto_med_nowritefile;
     Monitor_nD_McDisplay(&DEFS, &Vars);
   }
 }
-#line 15701 "./screw_n.c"
+#line 17184 "./screw_n.c"
 }   /* End of Octo_med=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
@@ -15720,41 +17205,41 @@ int nowritefile = mccOcto_med_nowritefile;
 #undef mccompcurtype
 #undef mccompcurindex
 
-  /* MCDISPLAY code for component 'Octo_sm'. */
-  SIG_MESSAGE("Octo_sm (McDisplay)");
-  printf("MCDISPLAY: component %s\n", "Octo_sm");
-#define mccompcurname  Octo_sm
+  /* MCDISPLAY code for component 'Octo_small'. */
+  SIG_MESSAGE("Octo_small (McDisplay)");
+  printf("MCDISPLAY: component %s\n", "Octo_small");
+#define mccompcurname  Octo_small
 #define mccompcurtype  Monitor_nD
 #define mccompcurindex 9
-#define user1 mccOcto_sm_user1
-#define user2 mccOcto_sm_user2
-#define user3 mccOcto_sm_user3
-#define DEFS mccOcto_sm_DEFS
-#define Vars mccOcto_sm_Vars
-#define detector mccOcto_sm_detector
-#define offdata mccOcto_sm_offdata
-{   /* Declarations of Octo_sm=Monitor_nD() SETTING parameters. */
-MCNUM xwidth = mccOcto_sm_xwidth;
-MCNUM yheight = mccOcto_sm_yheight;
-MCNUM zdepth = mccOcto_sm_zdepth;
-MCNUM xmin = mccOcto_sm_xmin;
-MCNUM xmax = mccOcto_sm_xmax;
-MCNUM ymin = mccOcto_sm_ymin;
-MCNUM ymax = mccOcto_sm_ymax;
-MCNUM zmin = mccOcto_sm_zmin;
-MCNUM zmax = mccOcto_sm_zmax;
-MCNUM bins = mccOcto_sm_bins;
-MCNUM min = mccOcto_sm_min;
-MCNUM max = mccOcto_sm_max;
-MCNUM restore_neutron = mccOcto_sm_restore_neutron;
-MCNUM radius = mccOcto_sm_radius;
-char* options = mccOcto_sm_options;
-char* filename = mccOcto_sm_filename;
-char* geometry = mccOcto_sm_geometry;
-char* username1 = mccOcto_sm_username1;
-char* username2 = mccOcto_sm_username2;
-char* username3 = mccOcto_sm_username3;
-int nowritefile = mccOcto_sm_nowritefile;
+#define user1 mccOcto_small_user1
+#define user2 mccOcto_small_user2
+#define user3 mccOcto_small_user3
+#define DEFS mccOcto_small_DEFS
+#define Vars mccOcto_small_Vars
+#define detector mccOcto_small_detector
+#define offdata mccOcto_small_offdata
+{   /* Declarations of Octo_small=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small_xwidth;
+MCNUM yheight = mccOcto_small_yheight;
+MCNUM zdepth = mccOcto_small_zdepth;
+MCNUM xmin = mccOcto_small_xmin;
+MCNUM xmax = mccOcto_small_xmax;
+MCNUM ymin = mccOcto_small_ymin;
+MCNUM ymax = mccOcto_small_ymax;
+MCNUM zmin = mccOcto_small_zmin;
+MCNUM zmax = mccOcto_small_zmax;
+MCNUM bins = mccOcto_small_bins;
+MCNUM min = mccOcto_small_min;
+MCNUM max = mccOcto_small_max;
+MCNUM restore_neutron = mccOcto_small_restore_neutron;
+MCNUM radius = mccOcto_small_radius;
+char* options = mccOcto_small_options;
+char* filename = mccOcto_small_filename;
+char* geometry = mccOcto_small_geometry;
+char* username1 = mccOcto_small_username1;
+char* username2 = mccOcto_small_username2;
+char* username3 = mccOcto_small_username3;
+int nowritefile = mccOcto_small_nowritefile;
 #line 494 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
 {
   if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
@@ -15764,8 +17249,122 @@ int nowritefile = mccOcto_sm_nowritefile;
     Monitor_nD_McDisplay(&DEFS, &Vars);
   }
 }
-#line 15758 "./screw_n.c"
-}   /* End of Octo_sm=Monitor_nD() SETTING parameter declarations. */
+#line 17241 "./screw_n.c"
+}   /* End of Octo_small=Monitor_nD() SETTING parameter declarations. */
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+  /* MCDISPLAY code for component 'Octo_small2'. */
+  SIG_MESSAGE("Octo_small2 (McDisplay)");
+  printf("MCDISPLAY: component %s\n", "Octo_small2");
+#define mccompcurname  Octo_small2
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 10
+#define user1 mccOcto_small2_user1
+#define user2 mccOcto_small2_user2
+#define user3 mccOcto_small2_user3
+#define DEFS mccOcto_small2_DEFS
+#define Vars mccOcto_small2_Vars
+#define detector mccOcto_small2_detector
+#define offdata mccOcto_small2_offdata
+{   /* Declarations of Octo_small2=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small2_xwidth;
+MCNUM yheight = mccOcto_small2_yheight;
+MCNUM zdepth = mccOcto_small2_zdepth;
+MCNUM xmin = mccOcto_small2_xmin;
+MCNUM xmax = mccOcto_small2_xmax;
+MCNUM ymin = mccOcto_small2_ymin;
+MCNUM ymax = mccOcto_small2_ymax;
+MCNUM zmin = mccOcto_small2_zmin;
+MCNUM zmax = mccOcto_small2_zmax;
+MCNUM bins = mccOcto_small2_bins;
+MCNUM min = mccOcto_small2_min;
+MCNUM max = mccOcto_small2_max;
+MCNUM restore_neutron = mccOcto_small2_restore_neutron;
+MCNUM radius = mccOcto_small2_radius;
+char* options = mccOcto_small2_options;
+char* filename = mccOcto_small2_filename;
+char* geometry = mccOcto_small2_geometry;
+char* username1 = mccOcto_small2_username1;
+char* username2 = mccOcto_small2_username2;
+char* username3 = mccOcto_small2_username3;
+int nowritefile = mccOcto_small2_nowritefile;
+#line 494 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
+  {
+    off_display(offdata);
+  } else {
+    Monitor_nD_McDisplay(&DEFS, &Vars);
+  }
+}
+#line 17298 "./screw_n.c"
+}   /* End of Octo_small2=Monitor_nD() SETTING parameter declarations. */
+#undef offdata
+#undef detector
+#undef Vars
+#undef DEFS
+#undef user3
+#undef user2
+#undef user1
+#undef mccompcurname
+#undef mccompcurtype
+#undef mccompcurindex
+
+  /* MCDISPLAY code for component 'Octo_small23'. */
+  SIG_MESSAGE("Octo_small23 (McDisplay)");
+  printf("MCDISPLAY: component %s\n", "Octo_small23");
+#define mccompcurname  Octo_small23
+#define mccompcurtype  Monitor_nD
+#define mccompcurindex 11
+#define user1 mccOcto_small23_user1
+#define user2 mccOcto_small23_user2
+#define user3 mccOcto_small23_user3
+#define DEFS mccOcto_small23_DEFS
+#define Vars mccOcto_small23_Vars
+#define detector mccOcto_small23_detector
+#define offdata mccOcto_small23_offdata
+{   /* Declarations of Octo_small23=Monitor_nD() SETTING parameters. */
+MCNUM xwidth = mccOcto_small23_xwidth;
+MCNUM yheight = mccOcto_small23_yheight;
+MCNUM zdepth = mccOcto_small23_zdepth;
+MCNUM xmin = mccOcto_small23_xmin;
+MCNUM xmax = mccOcto_small23_xmax;
+MCNUM ymin = mccOcto_small23_ymin;
+MCNUM ymax = mccOcto_small23_ymax;
+MCNUM zmin = mccOcto_small23_zmin;
+MCNUM zmax = mccOcto_small23_zmax;
+MCNUM bins = mccOcto_small23_bins;
+MCNUM min = mccOcto_small23_min;
+MCNUM max = mccOcto_small23_max;
+MCNUM restore_neutron = mccOcto_small23_restore_neutron;
+MCNUM radius = mccOcto_small23_radius;
+char* options = mccOcto_small23_options;
+char* filename = mccOcto_small23_filename;
+char* geometry = mccOcto_small23_geometry;
+char* username1 = mccOcto_small23_username1;
+char* username2 = mccOcto_small23_username2;
+char* username3 = mccOcto_small23_username3;
+int nowritefile = mccOcto_small23_nowritefile;
+#line 494 "/usr/share/mcstas/2.5/tools/Python/mcrun/../mccodelib/../../../monitors/Monitor_nD.comp"
+{
+  if (geometry && strlen(geometry) && strcmp(geometry,"0") && strcmp(geometry, "NULL"))
+  {
+    off_display(offdata);
+  } else {
+    Monitor_nD_McDisplay(&DEFS, &Vars);
+  }
+}
+#line 17355 "./screw_n.c"
+}   /* End of Octo_small23=Monitor_nD() SETTING parameter declarations. */
 #undef offdata
 #undef detector
 #undef Vars
