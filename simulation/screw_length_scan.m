@@ -1,10 +1,10 @@
 clear all;
 
-name_for_png = 'screw_length_scan_lam2_test';
-m = 6;
+name_for_png = 'new_screw_length_scan_lam2_w3h14_m2';
+m = 2;
 lambda = 2;
-w=0.01;h=0.14;
-f1 = '/w1h14';
+w=0.03;h=0.14;
+f1 = '/w3h14';
 d = 'new_shit/off';
 ff1 = [d f1];
 filename = ff1;

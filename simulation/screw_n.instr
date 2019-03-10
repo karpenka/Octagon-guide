@@ -81,7 +81,7 @@ COMPONENT arm_geks = Arm(
 AT (0, 0, 25.02) RELATIVE Guide_bunker_straight
  
 COMPONENT screw = Guide_anyshape(
-geometry = "new_shit/off/w1h14/7.off", 
+geometry = "new_shit/off/w3h14/7.off", 
 center = 0, R0 = 0.99, Qc = 0.0219, alpha = 2.3, m = guide_m,
 W = 0.003)
 AT (-w/2, -h/2, 0) RELATIVE PREVIOUS
