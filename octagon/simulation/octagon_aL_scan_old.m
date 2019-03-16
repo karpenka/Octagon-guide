@@ -1,4 +1,4 @@
-function octagon_ps_ab(lambda,varargin)
+function octagon_aL_scan_old(lambda,varargin)
 %parameters varargin -> f = -2, m = 6, ncount = 1e5
 numvarargs = length(varargin);
 if numvarargs > 3
@@ -6,7 +6,7 @@ if numvarargs > 3
         'requires at most 3 optional inputs');
 end
 % set defaults for optional inputs
-optargs = {6 5e5};
+optargs = {6 1e4};
 % now put these defaults into the valuesToUse cell array, 
 % and overwrite the ones specified in varargin.
 optargs(1:numvarargs) = varargin;
@@ -23,15 +23,15 @@ optargs(1:numvarargs) = varargin;
 %guide parameters for geks function
 w = 0.03;
 h = 0.15;
-L1 = 10;
+L1 = 1;
 % a = 0.15;
 % b = a/sqrt(2);
-a_min = 0.01;
-a_step = 0.01;
-a_max = 0.21;
+a_min = 0.02;
+a_step = 0.1;
+a_max = 0.16;
 L_min = 1;
-L_step = 10;
-L_max = 91;
+L_step = 20;
+L_max = 21;
 i=1;
 j=1;
 %Screw param
