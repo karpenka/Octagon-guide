@@ -6,7 +6,7 @@ if numvarargs > 3
         'requires at most 3 optional inputs');
 end
 % set defaults for optional inputs
-optargs = {6 1e4};
+optargs = {6 1e5};
 % now put these defaults into the valuesToUse cell array, 
 % and overwrite the ones specified in varargin.
 optargs(1:numvarargs) = varargin;
@@ -23,14 +23,14 @@ optargs(1:numvarargs) = varargin;
 %guide parameters for geks function
 w = 0.03;
 h = 0.15;
-L1 = 1;
+L1 = 100;
 % a = 0.15;
 % b = a/sqrt(2);
 a_min = 0.02;
-a_step = 0.1;
+a_step = 0.01;
 a_max = 0.16;
 L_min = 1;
-L_step = 20;
+L_step = 2;
 L_max = 21;
 i=1;
 j=1;
@@ -43,8 +43,8 @@ lr=1;
 
 progressbar('a','b');
 for L = L_min:L_step:L_max
-    rect(w,h,L+0.01);
-    [p0,m0]=mcstas('screw_str.instr',struct('lambda',lambda,'L',2*L+L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
+    rect(w,h,2*L+L1);
+    [p0,m0]=mcstas('screw_str.instr',struct('lambda',lambda,'L',2*L+L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount,'mpi',4));
     p0l=p0(1,:,:).Signal;
     p0m=p0(2,:,:).Signal;
     p0s=p0(3,:,:).Signal;
@@ -54,7 +54,7 @@ for L = L_min:L_step:L_max
     for a = a_min:a_step:a_max
         b = a/sqrt(2);
         geks_ps(a,b,w,h,L,L1);
-        [p1,m1]=mcstas('LIRA_oct.instr',struct('lambda',lambda,'L0',L,'L1',L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
+        [p1,m1]=mcstas('LIRA_oct.instr',struct('lambda',lambda,'L0',L,'L1',L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount,'mpi',4));
         p1l=p1(1,:,:).Signal;
         p1m=p1(2,:,:).Signal;
         p1s=p1(3,:,:).Signal;
@@ -80,44 +80,44 @@ aa=L_min:L_step:L_max;
 [X,Y]=meshgrid(aa,bb);
 figure;
 surf(X,Y,Il)
-xlabel('a [m]')
-ylabel('L [m]')
+xlabel('L [m]')
+ylabel('a [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence = \pm1.5\circ, ','lambda = ',num2str(lambda)}))
 savefig(strjoin({'oct_ab_20','lambda',num2str(lambda),'l'},'_'));
 figure;
 surf(X,Y,Im)
-xlabel('a [m]')
-ylabel('L [m]')
+xlabel('L [m]')
+ylabel('a [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence = \pm0.5\circ, ','lambda = ',num2str(lambda)}))
 savefig(strjoin({'oct_ab_20','lambda',num2str(lambda),'m'},'_'));
 figure;
 surf(X,Y,Is)
-xlabel('a [m]')
-ylabel('L [m]')
+xlabel('L [m]')
+ylabel('a [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence = \pm0.1\circ, ','lambda = ',num2str(lambda)}))
 savefig(strjoin({'oct_ab_20','lambda',num2str(lambda),'s'},'_'));
 
 figure;
 surf(X,Y,I_l)
-xlabel('a [m]')
-ylabel('L [m]')
+xlabel('L [m]')
+ylabel('a [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence(m) = \pm1.5\circ, ','lambda = ',num2str(lambda)}))
 savefig(strjoin({'oct_ab_max_20','lambda',num2str(lambda),'l'},'_'));
 figure;
 surf(X,Y,I_m)
-xlabel('a [m]')
-ylabel('L [m]')
+xlabel('L [m]')
+ylabel('a [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence(m) = \pm0.5\circ, ','lambda = ',num2str(lambda)}))
 savefig(strjoin({'oct_ab_max_20','lambda',num2str(lambda),'m'},'_'));
 figure;
 surf(X,Y,I_s)
-xlabel('a [m]')
-ylabel('L [m]')
+xlabel('L [m]')
+ylabel('a [m]')
 zlabel('I_{oct}/I_{str}')
 title(strjoin({'Divergence(m) = \pm0.1\circ, ','lambda = ',num2str(lambda)}))
 savefig(strjoin({'oct_ab_max_20','lambda',num2str(lambda),'s'},'_'));
