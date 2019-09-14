@@ -1,8 +1,8 @@
 clear all;
 
-name_for_png = 'screw_length_scan_lam2_w3h15_m3';
+name_for_png = 'screw_length_scan_lam5_w3h15_m3';
 m = 3;
-lambda = 2;
+lambda = 5;
 w=0.03;h=0.15;
 f1 = '/';
 d = 'off_w3h15';
