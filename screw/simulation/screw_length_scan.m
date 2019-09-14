@@ -8,7 +8,7 @@ f1 = '/';
 d = 'off_w3h15';
 ff1 = [d f1];
 filename = ff1;
-files = dir(fullfile(filename, '*.off'));
+files = dir(fullfile(fincount=1e5;lename, '*.off'));
 filenames = {files.name};
 %writing a mcstas file
 i = 1;
@@ -36,7 +36,7 @@ while i <= a(2)
     try
     screw_n3([filename '/' filenames{i}])
     rect(w,h,LL(i));
-    model = mccode('screw_n.instr', 'mpi=4');
+    model = mccode('screw_n.instr', 'ncount=1e5;mpi=4');
     parameters.guide_m = m;
     parameters.L = LL(i);
     parameters.lambda = lambda;

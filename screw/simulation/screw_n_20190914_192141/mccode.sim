@@ -1,0 +1,89 @@
+McStas simulation description file for H3.
+Date:    Sat Sep 14 19:21:41 2019
+Program: McStas 2.5 - Dec. 12, 2018
+
+begin instrument: H3
+  File: /home/nerde/JOB/github/Octagon-guide/screw/simulation/screw_n_20190914_192141/mccode
+  Source: screw_n.instr
+  Parameters:  L(double) guide_m(double) lambda(double) w(double) h(double)
+  Trace_enabled: yes
+  Default_main: yes
+  Embedded_runtime: yes
+end instrument
+
+begin simulation: /home/nerde/JOB/github/Octagon-guide/screw/simulation/screw_n_20190914_192141
+  Format: McCode with text headers
+  URL: http://www.mccode.org
+  Creator: McStas 2.5 - Dec. 12, 2018
+  Instrument: screw_n.instr
+  Ncount: 100000
+  Trace: no
+  Gravitation: no
+  Seed: 1568497784
+  Directory: /home/nerde/JOB/github/Octagon-guide/screw/simulation/screw_n_20190914_192141
+  Param: L=40
+  Param: guide_m=6
+  Param: lambda=5
+  Param: w=0.03
+  Param: h=0.15
+end simulation
+
+begin data
+  Date: Sat Sep 14 19:21:42 2019 (1568478102)
+  type: array_1d(100)
+  Source: H3 (screw_n.instr)
+  component: Octo_large
+  position: 0 0 66.94
+  title: Vert. Divergence [deg] monitor
+  ratio: 183/100000
+  filename: Octo_large_1568478101.vd
+  statistics: X0=-0.0348418; dX=0.314841;
+  signal: Min=0; Max=2.50669e+06; Mean=170365;
+  values: 1.70365e+07 4.2612e+06 79
+  xvar: vd
+  yvar: (I,I_err)
+  xlabel: Vert. Divergence [deg]
+  ylabel: Intensity [n/s/bin]
+  xlimits: -2 2
+  variables: vd I I_err N
+end data
+
+begin data
+  Date: Sat Sep 14 19:21:42 2019 (1568478102)
+  type: array_1d(100)
+  Source: H3 (screw_n.instr)
+  component: Octo_med
+  position: 0 0 66.941
+  title: Vert. Divergence [deg] monitor
+  ratio: 183/100000
+  filename: Octo_med_1568478101.vd
+  statistics: X0=-0.0177913; dX=0.242555;
+  signal: Min=0; Max=1.38125e+06; Mean=152557;
+  values: 1.52557e+07 4.137e+06 31
+  xvar: vd
+  yvar: (I,I_err)
+  xlabel: Vert. Divergence [deg]
+  ylabel: Intensity [n/s/bin]
+  xlimits: -0.5 0.5
+  variables: vd I I_err N
+end data
+
+begin data
+  Date: Sat Sep 14 19:21:42 2019 (1568478102)
+  type: array_1d(100)
+  Source: H3 (screw_n.instr)
+  component: Octo_small
+  position: 0 0 66.942
+  title: Vert. Divergence [deg] monitor
+  ratio: 183/100000
+  filename: Octo_small_1568478101.vd
+  statistics: X0=0.00790034; dX=0.0532316;
+  signal: Min=0; Max=1.38125e+06; Mean=59675.7;
+  values: 5.96757e+06 2.76103e+06 7
+  xvar: vd
+  yvar: (I,I_err)
+  xlabel: Vert. Divergence [deg]
+  ylabel: Intensity [n/s/bin]
+  xlimits: -0.1 0.1
+  variables: vd I I_err N
+end data
