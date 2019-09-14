@@ -1,8 +1,8 @@
-width_min = 0.01; width_max = 0.05; width_step = 0.01;
-height_min = 0.05; height_max = 0.2; height_step = 0.03;
-length_num = [1 3 5 7 10 15 20 40];
+width_min = 0.03; width_max = 0.03; width_step = 0.01;
+height_min = 0.15; height_max = 0.15; height_step = 0.03;
+length_num = 1:3:40;
 length_str = sprintfc('%d',length_num);
-ppath = 'D:\JOB\github\Octagon-guide\simulation\new_shit\data\';
+ppath = '/home/nerde/JOB/github/Octagon-guide/screw/simulation/stl/';
 
 for w = width_min:width_step:width_max
     for h = height_min:height_step:height_max

@@ -20,11 +20,11 @@ for j = 1:a(2)
     nn_size = size(nn);
     nn_size = nn_size(2);
     for k = 1:nn_size
-        if  all(ismember(nn(k), '0123456789+-.eEdD')) == 1 && strcmp(nn(k+1),'_') == 1
-            length = nn(k);
+        if  strcmpstrcmp(nn(k),'_') == 1 && strcmp(nn(k+2),'_') == 1
+            length = nn(k+1);
             break
-        elseif all(ismember(nn(k), '0123456789+-.eEdD')) == 1
-            length = nn(k:k+1);
+        elseif 
+            length = nn(k+1:k+2);
             break
         end
     end
@@ -36,7 +36,7 @@ while i <= a(2)
     try
     screw_n3([filename '/' filenames{i}])
     rect(w,h,LL(i));
-    model = mccode('screw_n.instr', 'mpi=4');
+    model = mccode('screw_n.instr', 'ncount=1e6');
     parameters.guide_m = m;
     parameters.L = LL(i);
     parameters.lambda = lambda;
@@ -47,7 +47,7 @@ while i <= a(2)
     sum_Lb_m(i) = results.UserData.monitors(2).Data.values(1);
     sum_Lb_s(i) = results.UserData.monitors(3).Data.values(1);
     
-    model_str = mccode('screw_str.instr','mpi=4');
+    model_str = mccode('screw_str.instr','ncount=1e6');
     parameters_str.guide_m=m;
     parameters_str.L=LL(i);
     parameters_str.lambda = lambda;
@@ -63,7 +63,6 @@ while i <= a(2)
     sum_L_on_L_str_s(i) = sum_Lb_s(i)/sum_L_str_s;
     i = i + 1;
     catch
-        continue
     end
     
 end
